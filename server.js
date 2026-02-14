@@ -108,12 +108,14 @@ const parseNumber = (value) => {
 };
 
 const geocodeAddress = async (location) => {
-  if (!GOOGLE_MAPS_API_KEY) return null;
+  if (!GOOGLE_MAPS_API_KEY) {
+    return { coords: null, error: 'MISSING_KEY' };
+  }
 
   const query = [location.address, location.postcode, location.city, 'Nederland']
     .filter(Boolean)
     .join(', ');
-  if (!query) return null;
+  if (!query) return { coords: null, error: 'EMPTY_QUERY' };
 
   try {
     const params = new URLSearchParams({
@@ -121,16 +123,21 @@ const geocodeAddress = async (location) => {
       key: GOOGLE_MAPS_API_KEY
     });
     const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`);
-    if (!response.ok) return null;
+    if (!response.ok) return { coords: null, error: `HTTP_${response.status}` };
     const data = await response.json();
+    if (data?.status && data.status !== 'OK') {
+      return { coords: null, error: data.status };
+    }
     const first = data?.results?.[0]?.geometry?.location;
-    if (!first) return null;
+    if (!first) return { coords: null, error: 'NO_RESULTS' };
     const lat = Number(first.lat);
     const lng = Number(first.lng);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-    return { lat, lng };
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return { coords: null, error: 'INVALID_COORDS' };
+    }
+    return { coords: { lat, lng }, error: null };
   } catch {
-    return null;
+    return { coords: null, error: 'FETCH_FAILED' };
   }
 };
 
@@ -287,15 +294,18 @@ const writeManualLocations = async (locations) => {
 const finalizeImportedLocations = async (importedLocations) => {
   let geocodedCount = 0;
   let skippedNoCoords = 0;
+  const geocodeErrorCounts = {};
 
   const resolvedLocations = [];
   for (const location of importedLocations) {
     let resolved = location;
     if (!resolved.coords) {
       const geocoded = await geocodeAddress(resolved);
-      if (geocoded) {
-        resolved = { ...resolved, coords: geocoded };
+      if (geocoded.coords) {
+        resolved = { ...resolved, coords: geocoded.coords };
         geocodedCount += 1;
+      } else if (geocoded.error) {
+        geocodeErrorCounts[geocoded.error] = (geocodeErrorCounts[geocoded.error] || 0) + 1;
       }
     }
     if (!resolved.coords) {
@@ -311,7 +321,7 @@ const finalizeImportedLocations = async (importedLocations) => {
   }));
 
   await writeManualLocations(locationsWithIds);
-  return { locationsWithIds, geocodedCount, skippedNoCoords };
+  return { locationsWithIds, geocodedCount, skippedNoCoords, geocodeErrorCounts };
 };
 
 const getAccessToken = async () => {
@@ -480,12 +490,14 @@ app.post('/api/import-locations', async (req, res) => {
       return;
     }
 
-    const { locationsWithIds, geocodedCount, skippedNoCoords } = await finalizeImportedLocations(importedLocations);
+    const { locationsWithIds, geocodedCount, skippedNoCoords, geocodeErrorCounts } =
+      await finalizeImportedLocations(importedLocations);
     if (!locationsWithIds.length) {
       res.status(400).json({
         error: 'Import processed but no mappable locations found',
         detail: 'No coordinates were found or geocoded',
-        skippedNoCoords
+        skippedNoCoords,
+        geocodeErrors: geocodeErrorCounts
       });
       return;
     }
@@ -496,6 +508,7 @@ app.post('/api/import-locations', async (req, res) => {
       imported: locationsWithIds.length,
       geocodedCount,
       skippedNoCoords,
+      geocodeErrors: geocodeErrorCounts,
       file: path.relative(__dirname, dataFilePath)
     });
   } catch (error) {
@@ -524,12 +537,14 @@ app.post('/api/import-from-drop', async (req, res) => {
       return;
     }
 
-    const { locationsWithIds, geocodedCount, skippedNoCoords } = await finalizeImportedLocations(importedLocations);
+    const { locationsWithIds, geocodedCount, skippedNoCoords, geocodeErrorCounts } =
+      await finalizeImportedLocations(importedLocations);
     if (!locationsWithIds.length) {
       res.status(400).json({
         error: 'Drop file processed but no mappable locations found',
         file: path.relative(__dirname, sourcePath),
-        skippedNoCoords
+        skippedNoCoords,
+        geocodeErrors: geocodeErrorCounts
       });
       return;
     }
@@ -540,6 +555,7 @@ app.post('/api/import-from-drop', async (req, res) => {
       imported: locationsWithIds.length,
       geocodedCount,
       skippedNoCoords,
+      geocodeErrors: geocodeErrorCounts,
       fromFile: path.relative(__dirname, sourcePath),
       savedTo: path.relative(__dirname, dataFilePath)
     });
