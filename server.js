@@ -100,7 +100,9 @@ const parseProducts = (value) => {
 };
 
 const parseNumber = (value) => {
-  const raw = normalizeText(value).replace(',', '.');
+  const normalized = normalizeText(value);
+  if (!normalized) return null;
+  const raw = normalized.replace(',', '.');
   const n = Number(raw);
   return Number.isFinite(n) ? n : null;
 };
