@@ -9,19 +9,49 @@ npm install
 ## 2) Environment configureren
 1. Maak een `.env` bestand op basis van `.env.example`.
 2. Vul minimaal in:
+   - `IMPORT_TOKEN`
+   - `DATA_FILE` (mag op default blijven: `data/locations.json`)
+   - `ALLOWED_ORIGINS` (voor CORS)
+3. Alleen nodig voor live koppeling met Google Business Profile:
    - `GBP_CLIENT_ID`
    - `GBP_CLIENT_SECRET`
    - `GBP_REFRESH_TOKEN`
-3. Optioneel:
+4. Optioneel:
    - `GBP_ACCOUNT_ID` (als je meerdere accounts hebt)
-   - `ALLOWED_ORIGINS` (comma-separated, voor CORS)
    - `PORT` (standaard `8000`)
 
-## 3) OAuth scopes (Google Cloud)
+## 3) Lokale database gebruiken (aanrader voor controle)
+De finder leest eerst `data/locations.json`. Als daar locaties in staan, worden die direct gebruikt.
+
+Template ophalen:
+```bash
+curl http://localhost:8000/api/import-template
+```
+
+CSV importeren:
+```bash
+curl -X POST "http://localhost:8000/api/import-locations" \
+  -H "x-import-token: JOUW_IMPORT_TOKEN" \
+  -H "Content-Type: text/csv" \
+  --data-binary @jouw-locaties.csv
+```
+
+JSON importeren:
+```bash
+curl -X POST "http://localhost:8000/api/import-locations" \
+  -H "x-import-token: JOUW_IMPORT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"locations":[{"title":"Quiosk - Station Plaza","city":"Utrecht","postcode":"3511","address":"Stationsplein 1","lat":52.0907,"lng":5.1109,"isOpen":true,"environment":"Indoor","contactless":true,"products":["Drinks","Snacks"]}]}'
+```
+
+## 4) Google Business Profile als fallback (optioneel)
+Als de lokale database leeg is, gebruikt de API automatisch Google Business Profile (als env vars zijn ingevuld).
+
+## 5) OAuth scopes (Google Cloud)
 Voor de refresh token moet je minimaal toegang hebben tot Business Profile data.
 Gebruik in je OAuth-consent flow scopes die Business Profile lezen toestaan.
 
-## 4) Server starten
+## 6) Server starten
 ```bash
 npm run dev
 ```
@@ -29,7 +59,7 @@ npm run dev
 Open daarna:
 - `http://localhost:8000/kiosk-finder.html`
 
-## 5) Test de API direct
+## 7) Test de API direct
 Open:
 - `http://localhost:8000/api/locations`
 
@@ -52,11 +82,10 @@ node server.js
 ```
 
 2. Zet de env vars op je host:
-- `GBP_CLIENT_ID`
-- `GBP_CLIENT_SECRET`
-- `GBP_REFRESH_TOKEN`
-- `GBP_ACCOUNT_ID` (optioneel)
+- `IMPORT_TOKEN`
+- `DATA_FILE=data/locations.json`
 - `ALLOWED_ORIGINS=https://nickquiosk.github.io`
+- (optioneel fallback) `GBP_CLIENT_ID`, `GBP_CLIENT_SECRET`, `GBP_REFRESH_TOKEN`, `GBP_ACCOUNT_ID`
 
 3. Zet in `kiosk-finder.html`:
 ```html
