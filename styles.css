@@ -1081,6 +1081,137 @@ textarea {
   margin-top: auto;
 }
 
+.home-news .container > p {
+  margin-bottom: 24px;
+}
+
+.news-grid {
+  align-items: stretch;
+}
+
+.news-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border-width: 2px;
+  border-color: rgba(52, 171, 178, 0.45);
+  cursor: pointer;
+}
+
+.news-media {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  aspect-ratio: 16 / 9;
+}
+
+.news-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.28s ease;
+}
+
+.news-card:hover .news-media img {
+  transform: scale(1.03);
+}
+
+.news-date {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(52, 171, 178, 0.7);
+  background: rgba(52, 171, 178, 0.12);
+  color: #186c73;
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.news-card h3,
+.news-card p {
+  margin: 0;
+}
+
+.news-card .btn {
+  margin-top: auto;
+}
+
+.news-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(6, 22, 24, 0.56);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.news-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.news-modal-dialog {
+  position: relative;
+  width: min(860px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 16px;
+  border: 2px solid rgba(52, 171, 178, 0.42);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.22);
+}
+
+.news-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: #fff;
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.news-modal-media {
+  aspect-ratio: 16 / 7;
+  border-bottom: 1px solid var(--line);
+}
+
+.news-modal-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.news-modal-body {
+  padding: 20px;
+}
+
+.news-modal-body h3 {
+  margin: 10px 0 12px;
+}
+
+.news-modal-content p {
+  margin: 0 0 10px;
+}
+
 .home-proof-layout {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;

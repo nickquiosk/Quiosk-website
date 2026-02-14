@@ -549,6 +549,67 @@ const initFaqAccordion = () => {
   });
 };
 
+const initNewsModal = () => {
+  const modal = document.querySelector('[data-news-modal]');
+  const modalImage = document.querySelector('[data-news-modal-image]');
+  const modalDate = document.querySelector('[data-news-modal-date]');
+  const modalTitle = document.querySelector('[data-news-modal-title]');
+  const modalContent = document.querySelector('[data-news-modal-content]');
+  const closeBtn = document.querySelector('[data-news-close]');
+  const cards = document.querySelectorAll('[data-news-item]');
+  if (!modal || !modalImage || !modalDate || !modalTitle || !modalContent || !closeBtn || !cards.length) return;
+
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  const openModal = (card) => {
+    const image = card.querySelector('.news-media img');
+    const date = card.dataset.newsDate || '';
+    const title = card.dataset.newsTitle || '';
+    const content = (card.dataset.newsContent || '')
+      .split('|')
+      .map((part) => part.trim())
+      .filter(Boolean);
+
+    if (image) {
+      modalImage.src = image.src;
+      modalImage.alt = image.alt || title;
+    } else {
+      modalImage.removeAttribute('src');
+      modalImage.alt = '';
+    }
+
+    modalDate.textContent = date;
+    modalTitle.textContent = title;
+    modalContent.innerHTML = content.map((paragraph) => `<p>${paragraph}</p>`).join('');
+
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  cards.forEach((card) => {
+    card.addEventListener('click', (event) => {
+      const openButton = event.target.closest('[data-news-open]');
+      if (openButton || event.currentTarget === event.target || event.target.closest('.news-media, h3, p, .news-date')) {
+        openModal(card);
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+};
+
 
 initHeaderCta();
 setActiveNav();
@@ -561,3 +622,4 @@ initInstaSlider();
 initPartnersHeroBalance();
 initImageLightbox();
 initFaqAccordion();
+initNewsModal();
