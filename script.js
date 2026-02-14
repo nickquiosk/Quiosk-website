@@ -191,6 +191,162 @@ const fetchDynamicLocations = async () => {
   }
 };
 
+const normalizeCsvCell = (value) => String(value || '').trim();
+
+const parseCsvRows = (text) => {
+  const input = String(text || '').replace(/^\uFEFF/, '');
+  const firstLine = input.split(/\r?\n/, 1)[0] || '';
+  const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ';' : ',';
+
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < input.length; i += 1) {
+    const ch = input[i];
+
+    if (ch === '"') {
+      if (inQuotes && input[i + 1] === '"') {
+        field += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (!inQuotes && ch === delimiter) {
+      row.push(field);
+      field = '';
+      continue;
+    }
+
+    if (!inQuotes && (ch === '\n' || ch === '\r')) {
+      if (ch === '\r' && input[i + 1] === '\n') i += 1;
+      row.push(field);
+      if (row.some((cell) => normalizeCsvCell(cell))) rows.push(row);
+      row = [];
+      field = '';
+      continue;
+    }
+
+    field += ch;
+  }
+
+  row.push(field);
+  if (row.some((cell) => normalizeCsvCell(cell))) rows.push(row);
+  return rows;
+};
+
+const normalizeCsvHeader = (value) =>
+  normalizeCsvCell(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+
+const pickCsvField = (row, headerMap, aliases) => {
+  for (const alias of aliases) {
+    const index = headerMap.get(alias);
+    if (index !== undefined && row[index] !== undefined) return normalizeCsvCell(row[index]);
+  }
+  return '';
+};
+
+const fetchCsvLocationsFallback = async () => {
+  try {
+    const response = await fetch('/data/import/latest.csv', { headers: { Accept: 'text/csv,text/plain' } });
+    if (!response.ok) return null;
+    const csvText = await response.text();
+    const rows = parseCsvRows(csvText);
+    if (!rows.length) return null;
+
+    const headers = rows[0].map((header) => normalizeCsvHeader(header));
+    const headerMap = new Map();
+    headers.forEach((header, index) => {
+      if (!headerMap.has(header)) headerMap.set(header, index);
+    });
+
+    const parsed = rows
+      .slice(1)
+      .map((row, index) => {
+        const status = pickCsvField(row, headerMap, ['status']).toLowerCase();
+        if (status && !status.includes('gepubliceerd') && !status.includes('published')) return null;
+
+        const name = pickCsvField(row, headerMap, ['bedrijfsnaam', 'businessname', 'name']) || `Quiosk locatie ${index + 1}`;
+        const address = pickCsvField(row, headerMap, ['adresregel1', 'address1', 'address', 'street']);
+        const city =
+          pickCsvField(row, headerMap, ['buurt', 'city', 'locality', 'town']) ||
+          (() => {
+            const postcode = pickCsvField(row, headerMap, ['postcode', 'postalcode']);
+            const m = postcode.match(/^\d{4}\s*[A-Za-z]{2}\s+(.+)$/);
+            return m ? m[1].trim() : '';
+          })();
+        const postcode = pickCsvField(row, headerMap, ['postcode', 'postalcode', 'zipcode']);
+        const categories = pickCsvField(row, headerMap, ['meercategorieen', 'categories']);
+
+        return {
+          id: index + 1,
+          name,
+          city,
+          postcode,
+          address,
+          products: categories
+            ? categories.split(/[|,;/]/).map((part) => part.trim()).filter(Boolean)
+            : ['Drinks', 'Snacks'],
+          isOpen: true,
+          environment: 'Outdoor',
+          contactless: true,
+          coords: null
+        };
+      })
+      .filter(Boolean)
+      .filter((location) => location.address || location.postcode);
+
+    return parsed.length ? parsed : null;
+  } catch (_) {
+    return null;
+  }
+};
+
+const geocodeLocationsInBrowser = async (locations, onBatchUpdate) => {
+  if (!window.google?.maps?.Geocoder || !Array.isArray(locations) || !locations.length) return locations;
+
+  const geocoder = new window.google.maps.Geocoder();
+  let updatedCount = 0;
+  const resolved = [...locations];
+
+  for (let i = 0; i < resolved.length; i += 1) {
+    const item = resolved[i];
+    if (item.coords) continue;
+
+    const query = [item.address, item.postcode, item.city, 'Nederland'].filter(Boolean).join(', ');
+    if (!query) continue;
+
+    await new Promise((resolve) => {
+      geocoder.geocode({ address: query }, (results, status) => {
+        if (status === 'OK' && results?.[0]?.geometry?.location) {
+          const point = results[0].geometry.location;
+          resolved[i] = {
+            ...item,
+            coords: { lat: point.lat(), lng: point.lng() }
+          };
+          updatedCount += 1;
+          if (updatedCount % 8 === 0 && typeof onBatchUpdate === 'function') {
+            onBatchUpdate(resolved);
+          }
+        }
+        // Spread requests to avoid OVER_QUERY_LIMIT spikes.
+        window.setTimeout(resolve, 80);
+      });
+    });
+  }
+
+  if (typeof onBatchUpdate === 'function') onBatchUpdate(resolved);
+  return resolved;
+};
+
 const getDirectionsUrl = (location) =>
   `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address || location.name)}`;
 
@@ -370,13 +526,27 @@ const initFinder = () => {
   };
 
   [searchInput, ...filterInputs].filter(Boolean).forEach((el) => el.addEventListener('input', render));
-  Promise.all([loadGoogleMaps(), fetchDynamicLocations()]).then(([loaded, dynamicLocations]) => {
-    if (dynamicLocations && dynamicLocations.length) {
-      sourceData = dynamicLocations;
+  Promise.all([loadGoogleMaps(), fetchDynamicLocations(), fetchCsvLocationsFallback()]).then(
+    async ([loaded, dynamicLocations, csvFallback]) => {
+      if (dynamicLocations && dynamicLocations.length) {
+        sourceData = dynamicLocations;
+      } else if (csvFallback && csvFallback.length) {
+        sourceData = csvFallback;
+      }
+
+      if (loaded) createMap();
+      render();
+
+      if (loaded && csvFallback && csvFallback.length && (!dynamicLocations || !dynamicLocations.length)) {
+        const geocoded = await geocodeLocationsInBrowser(sourceData, (partial) => {
+          sourceData = partial;
+          render();
+        });
+        sourceData = geocoded;
+        render();
+      }
     }
-    if (loaded) createMap();
-    render();
-  });
+  );
 };
 
 const initHeroSlider = () => {
