@@ -284,7 +284,7 @@ img {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: url("images/hero-partner-background.png") center center / cover no-repeat;
+  background: url("images/hero-partner-background.jpg") center center / cover no-repeat;
 }
 
 .partners-hero-bg::after {
