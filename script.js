@@ -173,8 +173,12 @@ const normalizeLocationFromApi = (item, index) => {
 };
 
 const fetchDynamicLocations = async () => {
+  const configuredApiUrl =
+    typeof window !== 'undefined' ? (window.QUIOSK_LOCATIONS_API_URL || '').trim() : '';
+  const apiUrl = configuredApiUrl || '/api/locations';
+
   try {
-    const response = await fetch('/api/locations', { headers: { Accept: 'application/json' } });
+    const response = await fetch(apiUrl, { headers: { Accept: 'application/json' } });
     if (!response.ok) return null;
     const payload = await response.json();
     if (!payload || !Array.isArray(payload.locations)) return null;

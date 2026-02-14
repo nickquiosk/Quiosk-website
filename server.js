@@ -13,10 +13,35 @@ const {
   GBP_CLIENT_SECRET,
   GBP_REFRESH_TOKEN,
   GBP_ACCOUNT_ID,
-  GOOGLE_MAPS_API_KEY
+  GOOGLE_MAPS_API_KEY,
+  ALLOWED_ORIGINS
 } = process.env;
 
 const hasGbpEnv = () => Boolean(GBP_CLIENT_ID && GBP_CLIENT_SECRET && GBP_REFRESH_TOKEN);
+const allowedOrigins = (ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const setCorsHeaders = (req, res) => {
+  const requestOrigin = req.headers.origin;
+  if (!requestOrigin) return;
+  if (allowedOrigins.includes('*') || allowedOrigins.includes(requestOrigin)) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+    res.setHeader('Vary', 'Origin');
+  }
+};
+
+app.use((req, res, next) => {
+  setCorsHeaders(req, res);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return;
+  }
+  next();
+});
 
 const getAccessToken = async () => {
   const body = new URLSearchParams({
@@ -139,6 +164,14 @@ app.get('/api/locations', async (_req, res) => {
 // Optional endpoint to inject Maps key into the frontend if needed later.
 app.get('/api/config', (_req, res) => {
   res.json({ googleMapsApiKey: GOOGLE_MAPS_API_KEY || '' });
+});
+
+app.get('/api/health', (_req, res) => {
+  res.json({
+    ok: true,
+    sourceConfigured: hasGbpEnv(),
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.use(express.static(__dirname));
