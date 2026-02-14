@@ -17,11 +17,15 @@ const {
   GOOGLE_MAPS_API_KEY,
   ALLOWED_ORIGINS,
   IMPORT_TOKEN,
-  DATA_FILE
+  DATA_FILE,
+  IMPORT_DROP_DIR
 } = process.env;
 
 const hasGbpEnv = () => Boolean(GBP_CLIENT_ID && GBP_CLIENT_SECRET && GBP_REFRESH_TOKEN);
 const dataFilePath = DATA_FILE ? path.resolve(__dirname, DATA_FILE) : path.join(__dirname, 'data', 'locations.json');
+const importDropDirPath = IMPORT_DROP_DIR
+  ? path.resolve(__dirname, IMPORT_DROP_DIR)
+  : path.join(__dirname, 'data', 'import');
 const allowedOrigins = (ALLOWED_ORIGINS || '')
   .split(',')
   .map((origin) => origin.trim())
@@ -35,6 +39,10 @@ const ensureDataFile = async () => {
   } catch {
     await fs.writeFile(dataFilePath, '[]\n', 'utf8');
   }
+};
+
+const ensureImportDropDir = async () => {
+  await fs.mkdir(importDropDirPath, { recursive: true });
 };
 
 const setCorsHeaders = (req, res) => {
@@ -66,7 +74,12 @@ app.use(
 );
 
 const normalizeText = (value) => String(value || '').trim();
-const normalizeKey = (value) => normalizeText(value).toLowerCase().replace(/[^a-z0-9]/g, '');
+const normalizeKey = (value) =>
+  normalizeText(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
 
 const parseBoolean = (value, defaultValue = true) => {
   const v = normalizeText(value).toLowerCase();
@@ -90,6 +103,33 @@ const parseNumber = (value) => {
   const raw = normalizeText(value).replace(',', '.');
   const n = Number(raw);
   return Number.isFinite(n) ? n : null;
+};
+
+const geocodeAddress = async (location) => {
+  if (!GOOGLE_MAPS_API_KEY) return null;
+
+  const query = [location.address, location.postcode, location.city, 'Nederland']
+    .filter(Boolean)
+    .join(', ');
+  if (!query) return null;
+
+  try {
+    const params = new URLSearchParams({
+      address: query,
+      key: GOOGLE_MAPS_API_KEY
+    });
+    const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`);
+    if (!response.ok) return null;
+    const data = await response.json();
+    const first = data?.results?.[0]?.geometry?.location;
+    if (!first) return null;
+    const lat = Number(first.lat);
+    const lng = Number(first.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    return { lat, lng };
+  } catch {
+    return null;
+  }
 };
 
 const parseCsvRows = (text) => {
@@ -186,24 +226,33 @@ const csvToLocations = (csvText) => {
   return rows
     .slice(1)
     .map((row, idx) => {
+      const status = pickField(row, headerMap, ['status', 'publicationstatus']);
+      const normalizedStatus = normalizeText(status).toLowerCase();
+      if (normalizedStatus && !normalizedStatus.includes('gepubliceerd') && !normalizedStatus.includes('published')) {
+        return null;
+      }
+
       const title = pickField(row, headerMap, ['title', 'name', 'locationname', 'businessname']);
+      const dutchTitle = pickField(row, headerMap, ['bedrijfsnaam']);
+      const finalTitle = title || dutchTitle;
       const address1 = pickField(row, headerMap, ['address', 'address1', 'street', 'addressline1']);
+      const dutchAddress1 = pickField(row, headerMap, ['adresregel1']);
       const address2 = pickField(row, headerMap, ['address2', 'addressline2']);
-      const city = pickField(row, headerMap, ['city', 'locality', 'town']);
+      const city = pickField(row, headerMap, ['city', 'locality', 'town', 'buurt', 'plaats']);
       const postcode = pickField(row, headerMap, ['postcode', 'postalcode', 'zipcode']);
       const lat = pickField(row, headerMap, ['lat', 'latitude']);
       const lng = pickField(row, headerMap, ['lng', 'lon', 'longitude']);
       const openStatus = pickField(row, headerMap, ['isopen', 'open', 'openstatus', 'status']);
       const environment = pickField(row, headerMap, ['environment', 'type']);
-      const contactless = pickField(row, headerMap, ['contactless']);
-      const products = pickField(row, headerMap, ['products', 'assortment']);
+      const contactless = pickField(row, headerMap, ['contactless', 'paymobilenfc']);
+      const products = pickField(row, headerMap, ['products', 'assortment', 'meercategorieen']);
 
-      const address = [address1, address2].filter(Boolean).join(', ');
+      const address = [address1 || dutchAddress1, address2].filter(Boolean).join(', ');
 
       return normalizeLocationRecord(
         {
-          title,
-          name: title,
+          title: finalTitle,
+          name: finalTitle,
           city,
           postcode,
           address,
@@ -217,7 +266,7 @@ const csvToLocations = (csvText) => {
         idx
       );
     })
-    .filter((location) => location.coords);
+    .filter(Boolean);
 };
 
 const readManualLocations = async () => {
@@ -231,6 +280,36 @@ const readManualLocations = async () => {
 const writeManualLocations = async (locations) => {
   await ensureDataFile();
   await fs.writeFile(dataFilePath, `${JSON.stringify(locations, null, 2)}\n`, 'utf8');
+};
+
+const finalizeImportedLocations = async (importedLocations) => {
+  let geocodedCount = 0;
+  let skippedNoCoords = 0;
+
+  const resolvedLocations = [];
+  for (const location of importedLocations) {
+    let resolved = location;
+    if (!resolved.coords) {
+      const geocoded = await geocodeAddress(resolved);
+      if (geocoded) {
+        resolved = { ...resolved, coords: geocoded };
+        geocodedCount += 1;
+      }
+    }
+    if (!resolved.coords) {
+      skippedNoCoords += 1;
+      continue;
+    }
+    resolvedLocations.push(resolved);
+  }
+
+  const locationsWithIds = resolvedLocations.map((location, index) => ({
+    ...location,
+    id: index + 1
+  }));
+
+  await writeManualLocations(locationsWithIds);
+  return { locationsWithIds, geocodedCount, skippedNoCoords };
 };
 
 const getAccessToken = async () => {
@@ -385,9 +464,7 @@ app.post('/api/import-locations', async (req, res) => {
 
     if (req.is('application/json')) {
       const payloadLocations = Array.isArray(req.body?.locations) ? req.body.locations : [];
-      importedLocations = payloadLocations
-        .map((record, index) => normalizeLocationRecord(record, index))
-        .filter((location) => location.coords);
+      importedLocations = payloadLocations.map((record, index) => normalizeLocationRecord(record, index));
     } else {
       const csvText = typeof req.body === 'string' ? req.body : '';
       importedLocations = csvToLocations(csvText);
@@ -401,22 +478,72 @@ app.post('/api/import-locations', async (req, res) => {
       return;
     }
 
-    const locationsWithIds = importedLocations.map((location, index) => ({
-      ...location,
-      id: index + 1
-    }));
-
-    await writeManualLocations(locationsWithIds);
+    const { locationsWithIds, geocodedCount, skippedNoCoords } = await finalizeImportedLocations(importedLocations);
+    if (!locationsWithIds.length) {
+      res.status(400).json({
+        error: 'Import processed but no mappable locations found',
+        detail: 'No coordinates were found or geocoded',
+        skippedNoCoords
+      });
+      return;
+    }
 
     res.json({
       ok: true,
       source: 'manual-database',
       imported: locationsWithIds.length,
+      geocodedCount,
+      skippedNoCoords,
       file: path.relative(__dirname, dataFilePath)
     });
   } catch (error) {
     res.status(500).json({
       error: 'Failed to import locations',
+      detail: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+app.post('/api/import-from-drop', async (req, res) => {
+  try {
+    if (!requireImportToken(req, res)) return;
+    await ensureImportDropDir();
+
+    const fileName = path.basename(normalizeText(req.body?.filename) || 'latest.csv');
+    const sourcePath = path.join(importDropDirPath, fileName);
+    const csvText = await fs.readFile(sourcePath, 'utf8');
+    const importedLocations = csvToLocations(csvText);
+
+    if (!importedLocations.length) {
+      res.status(400).json({
+        error: 'No valid locations found in drop file',
+        file: path.relative(__dirname, sourcePath)
+      });
+      return;
+    }
+
+    const { locationsWithIds, geocodedCount, skippedNoCoords } = await finalizeImportedLocations(importedLocations);
+    if (!locationsWithIds.length) {
+      res.status(400).json({
+        error: 'Drop file processed but no mappable locations found',
+        file: path.relative(__dirname, sourcePath),
+        skippedNoCoords
+      });
+      return;
+    }
+
+    res.json({
+      ok: true,
+      source: 'manual-database',
+      imported: locationsWithIds.length,
+      geocodedCount,
+      skippedNoCoords,
+      fromFile: path.relative(__dirname, sourcePath),
+      savedTo: path.relative(__dirname, dataFilePath)
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to import from drop folder',
       detail: error instanceof Error ? error.message : 'Unknown error'
     });
   }
@@ -458,6 +585,7 @@ app.get('*', (_req, res) => {
 
 ensureDataFile()
   .then(() => {
+    ensureImportDropDir().catch(() => {});
     app.listen(PORT, () => {
       console.log(`Quiosk site running on http://localhost:${PORT}`);
     });

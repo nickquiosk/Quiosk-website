@@ -12,6 +12,7 @@ npm install
    - `IMPORT_TOKEN`
    - `DATA_FILE` (mag op default blijven: `data/locations.json`)
    - `ALLOWED_ORIGINS` (voor CORS)
+   - `GOOGLE_MAPS_API_KEY` (nodig om CSV zonder lat/lng automatisch te geocoden)
 3. Alleen nodig voor live koppeling met Google Business Profile:
    - `GBP_CLIENT_ID`
    - `GBP_CLIENT_SECRET`
@@ -22,6 +23,14 @@ npm install
 
 ## 3) Lokale database gebruiken (aanrader voor controle)
 De finder leest eerst `data/locations.json`. Als daar locaties in staan, worden die direct gebruikt.
+
+### Optie A: upload via pagina (makkelijkst)
+Open:
+- `http://localhost:8000/import-locaties.html`
+
+Daar kun je:
+- CSV uploaden, of
+- importeren uit `data/import/latest.csv`
 
 Template ophalen:
 ```bash
@@ -42,6 +51,14 @@ curl -X POST "http://localhost:8000/api/import-locations" \
   -H "x-import-token: JOUW_IMPORT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"locations":[{"title":"Quiosk - Station Plaza","city":"Utrecht","postcode":"3511","address":"Stationsplein 1","lat":52.0907,"lng":5.1109,"isOpen":true,"environment":"Indoor","contactless":true,"products":["Drinks","Snacks"]}]}'
+```
+
+Import vanuit vaste map:
+```bash
+curl -X POST "http://localhost:8000/api/import-from-drop" \
+  -H "x-import-token: JOUW_IMPORT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"filename":"latest.csv"}'
 ```
 
 ## 4) Google Business Profile als fallback (optioneel)

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiosk - Locaties Importeren</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .import-wrap { max-width: 860px; margin: 140px auto 80px; padding: 0 20px; }
+    .import-card { border: 2px solid #34abb2; border-radius: 18px; padding: 24px; background: #fff; margin-bottom: 18px; }
+    .import-card h2 { margin-bottom: 12px; }
+    .import-grid { display: grid; gap: 12px; }
+    .import-grid input, .import-grid button { width: 100%; }
+    .import-help { font-size: 0.95rem; color: #2b3a40; }
+    .import-result { background: #f6f8f9; border-radius: 12px; padding: 14px; white-space: pre-wrap; }
+    .import-muted { opacity: 0.8; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <main class="import-wrap">
+    <section class="import-card">
+      <h1>Locaties importeren</h1>
+      <p class="import-help">Upload hier een Google Business export CSV. De locatie data op de website wordt daarna automatisch bijgewerkt.</p>
+      <div class="import-grid">
+        <input id="import-token" type="password" placeholder="IMPORT_TOKEN" />
+        <input id="import-file" type="file" accept=".csv,text/csv" />
+        <button id="upload-btn" class="btn btn-primary" type="button">Upload en bijwerken</button>
+      </div>
+    </section>
+
+    <section class="import-card">
+      <h2>Import uit vaste map</h2>
+      <p class="import-help">
+        Zet je bestand in <code>data/import/</code> (bijv. <code>latest.csv</code>) en klik daarna op importeren.
+      </p>
+      <div class="import-grid">
+        <input id="drop-file-name" type="text" value="latest.csv" />
+        <button id="drop-import-btn" class="btn btn-secondary" type="button">Importeer uit map</button>
+      </div>
+      <p class="import-muted">Pad op server: <code>data/import/</code></p>
+    </section>
+
+    <section class="import-card">
+      <h2>Resultaat</h2>
+      <pre id="import-result" class="import-result">Nog geen actie uitgevoerd.</pre>
+    </section>
+  </main>
+
+  <script>
+    const resultEl = document.getElementById('import-result');
+    const tokenInput = document.getElementById('import-token');
+    const fileInput = document.getElementById('import-file');
+    const uploadBtn = document.getElementById('upload-btn');
+    const dropImportBtn = document.getElementById('drop-import-btn');
+    const dropFileNameInput = document.getElementById('drop-file-name');
+
+    const showResult = (title, payload) => {
+      resultEl.textContent = `${title}\n\n${typeof payload === 'string' ? payload : JSON.stringify(payload, null, 2)}`;
+    };
+
+    const getToken = () => tokenInput.value.trim();
+
+    uploadBtn.addEventListener('click', async () => {
+      const token = getToken();
+      const file = fileInput.files?.[0];
+      if (!token) return showResult('Fout', 'Vul eerst IMPORT_TOKEN in.');
+      if (!file) return showResult('Fout', 'Kies eerst een CSV-bestand.');
+
+      try {
+        showResult('Bezig', 'Bestand wordt geupload...');
+        const csvText = await file.text();
+        const response = await fetch('/api/import-locations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/csv',
+            'x-import-token': token
+          },
+          body: csvText
+        });
+        const data = await response.json();
+        if (!response.ok) return showResult('Import mislukt', data);
+        showResult('Import geslaagd', data);
+      } catch (error) {
+        showResult('Import mislukt', error.message || String(error));
+      }
+    });
+
+    dropImportBtn.addEventListener('click', async () => {
+      const token = getToken();
+      const fileName = dropFileNameInput.value.trim() || 'latest.csv';
+      if (!token) return showResult('Fout', 'Vul eerst IMPORT_TOKEN in.');
+
+      try {
+        showResult('Bezig', `Bestand ${fileName} wordt verwerkt...`);
+        const response = await fetch('/api/import-from-drop', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-import-token': token
+          },
+          body: JSON.stringify({ filename: fileName })
+        });
+        const data = await response.json();
+        if (!response.ok) return showResult('Import mislukt', data);
+        showResult('Import geslaagd', data);
+      } catch (error) {
+        showResult('Import mislukt', error.message || String(error));
+      }
+    });
+  </script>
+</body>
+</html>
