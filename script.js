@@ -1281,6 +1281,7 @@ const initQuiosk360Viewer = async () => {
   let lastClientX = 0;
   let dragBuffer = 0;
   const DRAG_THRESHOLD = 20;
+  let touchActive = false;
 
   const normalizeFramePath = (value) => {
     const v = String(value || '').trim();
@@ -1377,6 +1378,40 @@ const initQuiosk360Viewer = async () => {
     stage.releasePointerCapture?.(event.pointerId);
   };
 
+  const onTouchStart = (event) => {
+    if (!isOpen || frameCount <= 1) return;
+    if (event.target.closest('.quiosk-360-nav')) return;
+    const touch = event.touches?.[0];
+    if (!touch) return;
+    touchActive = true;
+    dragBuffer = 0;
+    lastClientX = touch.clientX;
+  };
+
+  const onTouchMove = (event) => {
+    if (!isOpen || !touchActive || frameCount <= 1) return;
+    const touch = event.touches?.[0];
+    if (!touch) return;
+    const deltaX = touch.clientX - lastClientX;
+    lastClientX = touch.clientX;
+    dragBuffer += deltaX;
+
+    while (Math.abs(dragBuffer) >= DRAG_THRESHOLD) {
+      if (dragBuffer > 0) {
+        rotateBy(-1);
+        dragBuffer -= DRAG_THRESHOLD;
+      } else {
+        rotateBy(1);
+        dragBuffer += DRAG_THRESHOLD;
+      }
+    }
+  };
+
+  const onTouchEnd = () => {
+    touchActive = false;
+    dragBuffer = 0;
+  };
+
   trigger.addEventListener('click', open);
   closeBtn.addEventListener('click', close);
   prevBtn.addEventListener('click', (event) => {
@@ -1401,6 +1436,10 @@ const initQuiosk360Viewer = async () => {
   stage.addEventListener('pointermove', onDragMove);
   stage.addEventListener('pointerup', onDragEnd);
   stage.addEventListener('pointercancel', onDragEnd);
+  stage.addEventListener('touchstart', onTouchStart, { passive: true });
+  stage.addEventListener('touchmove', onTouchMove, { passive: true });
+  stage.addEventListener('touchend', onTouchEnd, { passive: true });
+  stage.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
   stage.addEventListener(
     'wheel',
