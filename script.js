@@ -172,6 +172,19 @@ const normalizeLocationFromApi = (item, index) => {
   };
 };
 
+const resolveStaticPath = (relativePath) => {
+  const clean = String(relativePath || '').replace(/^\/+/, '');
+  if (!clean) return '/';
+  const host = typeof window !== 'undefined' ? window.location.hostname : '';
+  const pathName = typeof window !== 'undefined' ? window.location.pathname : '';
+  const isGitHubPages = /\.github\.io$/i.test(host);
+  if (!isGitHubPages) return `/${clean}`;
+
+  const firstSegment = pathName.split('/').filter(Boolean)[0] || '';
+  if (!firstSegment || firstSegment.endsWith('.html')) return `/${clean}`;
+  return `/${firstSegment}/${clean}`;
+};
+
 const fetchDynamicLocations = async () => {
   const configuredApiUrl =
     typeof window !== 'undefined' ? (window.QUIOSK_LOCATIONS_API_URL || '').trim() : '';
@@ -208,7 +221,7 @@ const fetchDynamicLocations = async () => {
     const fromApi = normalizePayload(apiPayload);
     if (fromApi?.length) return fromApi;
 
-    const staticPayload = await fetchJson('/data/locations.json');
+    const staticPayload = await fetchJson(resolveStaticPath('data/locations.json'));
     const fromStatic = normalizePayload(staticPayload);
     if (fromStatic?.length) return fromStatic;
 
