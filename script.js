@@ -293,6 +293,10 @@ const initFinder = () => {
 
   const hasGoogleMaps = () => Boolean(window.google && window.google.maps);
 
+  const showMapError = (message) => {
+    map.innerHTML = `<div class="card"><p>${message}</p></div>`;
+  };
+
   const createMap = () => {
     if (!hasGoogleMaps() || mapInstance) return;
     mapInstance = new window.google.maps.Map(map, {
@@ -305,45 +309,61 @@ const initFinder = () => {
     infoWindow = new window.google.maps.InfoWindow();
   };
 
-  const loadGoogleMaps = () =>
-    new Promise((resolve) => {
-      if (hasGoogleMaps()) {
-        resolve(true);
-        return;
-      }
+  const getMapsApiKey = async () => {
+    const inlineKey = (window.QUIOSK_GOOGLE_MAPS_KEY || '').trim();
+    if (inlineKey && !inlineKey.includes('VUL_HIER')) return inlineKey;
 
-      const apiKey = (window.QUIOSK_GOOGLE_MAPS_KEY || '').trim();
-      if (!apiKey || apiKey.includes('VUL_HIER')) {
-        map.innerHTML =
-          '<div class="card"><p><strong>Google Maps API-key ontbreekt.</strong><br>Voeg je key toe in <code>kiosk-finder.html</code> bij <code>window.QUIOSK_GOOGLE_MAPS_KEY</code>.</p></div>';
-        resolve(false);
-        return;
-      }
+    try {
+      const response = await fetch('/api/config', { headers: { Accept: 'application/json' } });
+      if (!response.ok) return '';
+      const payload = await response.json();
+      return String(payload?.googleMapsApiKey || '').trim();
+    } catch (_) {
+      return '';
+    }
+  };
 
-      if (document.querySelector('script[data-google-maps-loader="true"]')) {
-        const waitForGoogle = () => {
-          if (hasGoogleMaps()) {
-            resolve(true);
-            return;
-          }
-          window.setTimeout(waitForGoogle, 80);
-        };
-        waitForGoogle();
-        return;
-      }
+  const loadGoogleMaps = async () => {
+    if (hasGoogleMaps()) return true;
 
+    const apiKey = await getMapsApiKey();
+    if (!apiKey) {
+      showMapError(
+        '<strong>Google Maps API-key ontbreekt.</strong><br>Voeg je key toe in <code>kiosk-finder.html</code> of via <code>.env</code>.'
+      );
+      return false;
+    }
+
+    window.gm_authFailure = () => {
+      showMapError('Google Maps authenticatie mislukt. Controleer API-key, billing en referrer restricties.');
+    };
+
+    const existingLoader = document.querySelector('script[data-google-maps-loader="true"]');
+    if (existingLoader) {
+      for (let i = 0; i < 100; i += 1) {
+        if (hasGoogleMaps()) return true;
+        await new Promise((resolve) => window.setTimeout(resolve, 80));
+      }
+      showMapError('Google Maps laden duurt te lang. Herlaad de pagina of controleer de key-instellingen.');
+      return false;
+    }
+
+    const loaded = await new Promise((resolve) => {
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async`;
       script.async = true;
       script.defer = true;
       script.dataset.googleMapsLoader = 'true';
       script.onload = () => resolve(hasGoogleMaps());
-      script.onerror = () => {
-        map.innerHTML = '<div class="card"><p>Google Maps kon niet geladen worden. Controleer je API-key en domeinrestricties.</p></div>';
-        resolve(false);
-      };
+      script.onerror = () => resolve(false);
       document.head.appendChild(script);
     });
+
+    if (!loaded) {
+      showMapError('Google Maps kon niet geladen worden. Controleer API-key en domeinrestricties.');
+    }
+    return loaded;
+  };
 
   const clearMarkers = () => {
     markers.forEach((marker) => marker.setMap(null));
