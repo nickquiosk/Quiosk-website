@@ -329,7 +329,7 @@ const initFinder = () => {
     const apiKey = await getMapsApiKey();
     if (!apiKey) {
       showMapError(
-        '<strong>Google Maps API-key ontbreekt.</strong><br>Voeg je key toe in <code>kiosk-finder.html</code> of via <code>.env</code>.'
+        '<strong>Google Maps API-key ontbreekt.</strong><br>Voeg je key toe in <code>quiosk-zoeken.html</code> of via <code>.env</code>.'
       );
       return false;
     }
