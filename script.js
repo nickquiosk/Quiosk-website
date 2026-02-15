@@ -5,7 +5,7 @@ const initHeaderCta = () => {
   const item = document.createElement('li');
   item.className = 'nav-cta-item';
   item.innerHTML =
-    '<a class="nav-cta-link btn btn-primary" href="partners.html" data-nav>Word partner</a>';
+    '<a class="nav-cta-link btn btn-primary" href="word-partner.html" data-nav>Word partner</a>';
   navList.appendChild(item);
 };
 
