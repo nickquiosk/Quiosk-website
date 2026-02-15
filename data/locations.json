@@ -1,1 +1,4809 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "Quiosk Wormerveer",
+    "name": "Quiosk Wormerveer",
+    "city": "",
+    "postcode": "1521 AG",
+    "address": "Wandelweg 6",
+    "coords": {
+      "lat": 52.4899971,
+      "lng": 4.7905285
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Quiosk Vriezenveen",
+    "name": "Quiosk Vriezenveen",
+    "city": "",
+    "postcode": "7671 SP",
+    "address": "De Zuivering 46",
+    "coords": {
+      "lat": 52.4044463,
+      "lng": 6.635642100000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Quiosk Sliedrecht",
+    "name": "Quiosk Sliedrecht",
+    "city": "",
+    "postcode": "3364 AZ",
+    "address": "Marisstraat 1",
+    "coords": {
+      "lat": 51.8327294,
+      "lng": 4.755761
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Quiosk Giethoorn",
+    "name": "Quiosk Giethoorn",
+    "city": "",
+    "postcode": "8355 AG",
+    "address": "Beulakerweg 137",
+    "coords": {
+      "lat": 52.7210262,
+      "lng": 6.077545199999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Quiosk Belfeld",
+    "name": "Quiosk Belfeld",
+    "city": "",
+    "postcode": "5951 CC",
+    "address": "Craenakker 6",
+    "coords": {
+      "lat": 51.3190096,
+      "lng": 6.126551099999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Quiosk Apeldoorn",
+    "name": "Quiosk Apeldoorn",
+    "city": "",
+    "postcode": "7328 JN",
+    "address": "Matenpoort 11",
+    "coords": {
+      "lat": 52.2048612,
+      "lng": 5.984568299999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Quiosk Nootdorp",
+    "name": "Quiosk Nootdorp",
+    "city": "",
+    "postcode": "2631 ND",
+    "address": "Kortelandseweg 3",
+    "coords": {
+      "lat": 52.0452762,
+      "lng": 4.386322499999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Quiosk Wanssum",
+    "name": "Quiosk Wanssum",
+    "city": "",
+    "postcode": "5861 BK",
+    "address": "Geijsterseweg 17",
+    "coords": {
+      "lat": 51.5404565,
+      "lng": 6.071836900000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Quiosk B.V.",
+    "name": "Quiosk B.V.",
+    "city": "",
+    "postcode": "",
+    "address": "",
+    "coords": {
+      "lat": 52.132633,
+      "lng": 5.291265999999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Quiosk Nieuwekerk a.d Ijsel",
+    "name": "Quiosk Nieuwekerk a.d Ijsel",
+    "city": "",
+    "postcode": "2913 LB",
+    "address": "Hoofdweg Noord 9E",
+    "coords": {
+      "lat": 51.966654,
+      "lng": 4.595408
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 11,
+    "title": "Quiosk Meerssen",
+    "name": "Quiosk Meerssen",
+    "city": "",
+    "postcode": "6231 RB",
+    "address": "Kruisdonk 3",
+    "coords": {
+      "lat": 50.876199,
+      "lng": 5.7347778
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 12,
+    "title": "Quiosk Venlo",
+    "name": "Quiosk Venlo",
+    "city": "",
+    "postcode": "5928 RH",
+    "address": "Venrayseweg 104 TANK",
+    "coords": {
+      "lat": 51.401751,
+      "lng": 6.1319244
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 13,
+    "title": "Quiosk Heemskerk",
+    "name": "Quiosk Heemskerk",
+    "city": "",
+    "postcode": "1968 LM",
+    "address": "Rijksstraatweg 170",
+    "coords": {
+      "lat": 52.52758979999999,
+      "lng": 4.6515507
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 14,
+    "title": "Quiosk Haarlem",
+    "name": "Quiosk Haarlem",
+    "city": "",
+    "postcode": "2031 EH",
+    "address": "Kuipersweg 1",
+    "coords": {
+      "lat": 52.400039,
+      "lng": 4.659849599999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Quiosk Roosendaal",
+    "name": "Quiosk Roosendaal",
+    "city": "",
+    "postcode": "4706 PL",
+    "address": "Neutronweg 3",
+    "coords": {
+      "lat": 51.5389674,
+      "lng": 4.497528099999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 16,
+    "title": "Quiosk Gorinchem",
+    "name": "Quiosk Gorinchem",
+    "city": "",
+    "postcode": "4203 NJ",
+    "address": "Schelluinsestraat 1-3",
+    "coords": {
+      "lat": 51.8323061,
+      "lng": 4.9617891
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 17,
+    "title": "Quiosk Weesp",
+    "name": "Quiosk Weesp",
+    "city": "",
+    "postcode": "1382 JL",
+    "address": "Hogeweyselaan 179",
+    "coords": {
+      "lat": 52.3151194,
+      "lng": 5.0263111
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 18,
+    "title": "Quiosk Raalte",
+    "name": "Quiosk Raalte",
+    "city": "",
+    "postcode": "8102 ES",
+    "address": "Brugstraat 52",
+    "coords": {
+      "lat": 52.3836544,
+      "lng": 6.278672500000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 19,
+    "title": "Quiosk Kampen Ijsseldijk",
+    "name": "Quiosk Kampen Ijsseldijk",
+    "city": "",
+    "postcode": "8261 LK",
+    "address": "Ijsseldijk 2",
+    "coords": {
+      "lat": 52.55229139999999,
+      "lng": 5.9232003
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 20,
+    "title": "Quiosk Lelystad Zuiveringweg",
+    "name": "Quiosk Lelystad Zuiveringweg",
+    "city": "",
+    "postcode": "8243 PZ",
+    "address": "Zuiveringweg 7",
+    "coords": {
+      "lat": 52.49961,
+      "lng": 5.449097999999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 21,
+    "title": "Quiosk Zelhem",
+    "name": "Quiosk Zelhem",
+    "city": "",
+    "postcode": "7021 LP",
+    "address": "Kruisbergseweg 12 A",
+    "coords": {
+      "lat": 52.0133606,
+      "lng": 6.3017192
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 22,
+    "title": "Quiosk Delft",
+    "name": "Quiosk Delft",
+    "city": "",
+    "postcode": "2623 EW",
+    "address": "Tanthofdreef 5",
+    "coords": {
+      "lat": 51.9878783,
+      "lng": 4.3658226
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 23,
+    "title": "Quiosk Argos Santpoort-Zuid",
+    "name": "Quiosk Argos Santpoort-Zuid",
+    "city": "",
+    "postcode": "2082 BB",
+    "address": "Willem de Zwijgerlaan 57",
+    "coords": {
+      "lat": 52.4201622,
+      "lng": 4.6307528
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 24,
+    "title": "Quiosk Delfgauw",
+    "name": "Quiosk Delfgauw",
+    "city": "",
+    "postcode": "2645 AC",
+    "address": "Delftsestraatweg 72",
+    "coords": {
+      "lat": 52.01095780000001,
+      "lng": 4.3988586
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 25,
+    "title": "Quiosk Rotterdam",
+    "name": "Quiosk Rotterdam",
+    "city": "",
+    "postcode": "3044 BA",
+    "address": "Schuttevaerweg 63",
+    "coords": {
+      "lat": 51.9216598,
+      "lng": 4.426680999999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 26,
+    "title": "Quiosk Noordwijkerhout",
+    "name": "Quiosk Noordwijkerhout",
+    "city": "",
+    "postcode": "2211 VG",
+    "address": "Herenweg 346",
+    "coords": {
+      "lat": 52.2776825,
+      "lng": 4.5146882
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 27,
+    "title": "Quiosk Veenendaal",
+    "name": "Quiosk Veenendaal",
+    "city": "",
+    "postcode": "3903 LA",
+    "address": "Wageningselaan 22",
+    "coords": {
+      "lat": 52.0112391,
+      "lng": 5.5715017
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 28,
+    "title": "Quiosk Esso Eindhoven",
+    "name": "Quiosk Esso Eindhoven",
+    "city": "",
+    "postcode": "5615 JV",
+    "address": "Boutenslaan 34",
+    "coords": {
+      "lat": 51.42508360000001,
+      "lng": 5.4747119
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 29,
+    "title": "Quiosk Peizermade",
+    "name": "Quiosk Peizermade",
+    "city": "",
+    "postcode": "9321 TB",
+    "address": "Groningerweg 61A",
+    "coords": {
+      "lat": 53.1931007,
+      "lng": 6.511082999999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 30,
+    "title": "Quiosk Zutphen",
+    "name": "Quiosk Zutphen",
+    "city": "",
+    "postcode": "7207 AB",
+    "address": "Den Elterweg 106",
+    "coords": {
+      "lat": 52.1088903,
+      "lng": 6.220000700000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 31,
+    "title": "Quiosk Schoonoord",
+    "name": "Quiosk Schoonoord",
+    "city": "",
+    "postcode": "7848 AM",
+    "address": "Maatschappijweg 1",
+    "coords": {
+      "lat": 52.8396795,
+      "lng": 6.762156099999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 32,
+    "title": "Quiosk Son",
+    "name": "Quiosk Son",
+    "city": "",
+    "postcode": "5692 CA",
+    "address": "Ekkersrijt 3012",
+    "coords": {
+      "lat": 51.5036482,
+      "lng": 5.491394
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 33,
+    "title": "Quiosk Tinq Roelofarendsveen",
+    "name": "Quiosk Tinq Roelofarendsveen",
+    "city": "",
+    "postcode": "2371 EX",
+    "address": "Alkemadelaan 1",
+    "coords": {
+      "lat": 52.2038868,
+      "lng": 4.6232676
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 34,
+    "title": "Quiosk Heerde",
+    "name": "Quiosk Heerde",
+    "city": "",
+    "postcode": "8181 BG",
+    "address": "Europaweg 13-15",
+    "coords": {
+      "lat": 52.398991,
+      "lng": 6.046189
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 35,
+    "title": "Quiosk Beek en Donk",
+    "name": "Quiosk Beek en Donk",
+    "city": "",
+    "postcode": "5741 GT",
+    "address": "Brugstraat 2",
+    "coords": {
+      "lat": 51.5292237,
+      "lng": 5.6432573
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 36,
+    "title": "Quiosk Harlingen",
+    "name": "Quiosk Harlingen",
+    "city": "",
+    "postcode": "8861 GA",
+    "address": "Stationsweg 8",
+    "coords": {
+      "lat": 53.17072470000001,
+      "lng": 5.4269484
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 37,
+    "title": "Quiosk Drachten",
+    "name": "Quiosk Drachten",
+    "city": "",
+    "postcode": "9206 AH",
+    "address": "Loswal 2",
+    "coords": {
+      "lat": 53.1099242,
+      "lng": 6.0798697
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 38,
+    "title": "Quiosk Leap24 Enschede",
+    "name": "Quiosk Leap24 Enschede",
+    "city": "",
+    "postcode": "7545 LV",
+    "address": "Het Poolman 13",
+    "coords": {
+      "lat": 52.2178215,
+      "lng": 6.867292699999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 39,
+    "title": "Quiosk Doornspijk",
+    "name": "Quiosk Doornspijk",
+    "city": "",
+    "postcode": "8085 AE",
+    "address": "Zuiderzeestraatweg West 24B",
+    "coords": {
+      "lat": 52.4260963,
+      "lng": 5.8269252
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 40,
+    "title": "Quiosk Badhoevedorp",
+    "name": "Quiosk Badhoevedorp",
+    "city": "",
+    "postcode": "1171 PK",
+    "address": "Schipholweg 275",
+    "coords": {
+      "lat": 52.32904300000001,
+      "lng": 4.7857283
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 41,
+    "title": "Quiosk Hulshorst",
+    "name": "Quiosk Hulshorst",
+    "city": "",
+    "postcode": "8077 SV",
+    "address": "Schotweg 2",
+    "coords": {
+      "lat": 52.3708168,
+      "lng": 5.7548267
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 42,
+    "title": "Quiosk Valkenswaard",
+    "name": "Quiosk Valkenswaard",
+    "city": "",
+    "postcode": "5552 LZ",
+    "address": "Tienendreef 2",
+    "coords": {
+      "lat": 51.3564213,
+      "lng": 5.4443252
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 43,
+    "title": "Quiosk Delft",
+    "name": "Quiosk Delft",
+    "city": "",
+    "postcode": "2627 AT",
+    "address": "Schieweg 81-2",
+    "coords": {
+      "lat": 51.9846259,
+      "lng": 4.3715388
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 44,
+    "title": "Quiosk TinQ Harderwijk",
+    "name": "Quiosk TinQ Harderwijk",
+    "city": "",
+    "postcode": "3845 LC",
+    "address": "Zuiderbreedte 9",
+    "coords": {
+      "lat": 52.3243965,
+      "lng": 5.6136165
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 45,
+    "title": "Quiosk Baexem",
+    "name": "Quiosk Baexem",
+    "city": "",
+    "postcode": "6095 BR",
+    "address": "Stationstraat 17A",
+    "coords": {
+      "lat": 51.2319232,
+      "lng": 5.8816714
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 46,
+    "title": "Quiosk BP Bergen op Zoom",
+    "name": "Quiosk BP Bergen op Zoom",
+    "city": "",
+    "postcode": "4612 PD",
+    "address": "Randweg-West 1",
+    "coords": {
+      "lat": 51.5110199,
+      "lng": 4.275077899999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 47,
+    "title": "Quiosk Tamoil Maastricht",
+    "name": "Quiosk Tamoil Maastricht",
+    "city": "",
+    "postcode": "6217 JZ",
+    "address": "Via Regia 170",
+    "coords": {
+      "lat": 50.8537141,
+      "lng": 5.666504
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 48,
+    "title": "Quiosk Waarder",
+    "name": "Quiosk Waarder",
+    "city": "",
+    "postcode": "3466 NV",
+    "address": "Verlengde Tuurluur 2",
+    "coords": {
+      "lat": 52.06482829999999,
+      "lng": 4.824137800000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 49,
+    "title": "Quiosk Leeuwarden",
+    "name": "Quiosk Leeuwarden",
+    "city": "",
+    "postcode": "8912 AD",
+    "address": "Ampèrestraat 14",
+    "coords": {
+      "lat": 53.1951817,
+      "lng": 5.773891100000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 50,
+    "title": "Quiosk Zoetermeer",
+    "name": "Quiosk Zoetermeer",
+    "city": "",
+    "postcode": "2725 BL",
+    "address": "Kadelaan 2",
+    "coords": {
+      "lat": 52.0711704,
+      "lng": 4.4997102
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 51,
+    "title": "Quiosk Den Haag",
+    "name": "Quiosk Den Haag",
+    "city": "",
+    "postcode": "2495 AH",
+    "address": "Jan Thijssenweg 14b",
+    "coords": {
+      "lat": 52.05577659999999,
+      "lng": 4.3475903
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 52,
+    "title": "Quiosk Groningen Peizerweg",
+    "name": "Quiosk Groningen Peizerweg",
+    "city": "",
+    "postcode": "9727 AJ",
+    "address": "Peizerweg 97",
+    "coords": {
+      "lat": 53.2083618,
+      "lng": 6.5381687
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 53,
+    "title": "Quiosk Rotterdam",
+    "name": "Quiosk Rotterdam",
+    "city": "",
+    "postcode": "3059 VJ",
+    "address": "Andries Copierhof 10",
+    "coords": {
+      "lat": 51.97074019999999,
+      "lng": 4.5939856
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 54,
+    "title": "Quiosk Den Bosch Bruitensingel",
+    "name": "Quiosk Den Bosch Bruitensingel",
+    "city": "",
+    "postcode": "5232 AA",
+    "address": "Bruistensingel 21",
+    "coords": {
+      "lat": 51.7067541,
+      "lng": 5.318791099999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 55,
+    "title": "Quiosk Almelo Bornebroek",
+    "name": "Quiosk Almelo Bornebroek",
+    "city": "",
+    "postcode": "7609 PK",
+    "address": "Bornerbroeksestraat 455",
+    "coords": {
+      "lat": 52.33430329999999,
+      "lng": 6.656771
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 56,
+    "title": "Quiosk Oostzaan",
+    "name": "Quiosk Oostzaan",
+    "city": "",
+    "postcode": "1511 MA",
+    "address": "Westeinde 12",
+    "coords": {
+      "lat": 52.42714059999999,
+      "lng": 4.877980099999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 57,
+    "title": "Quiosk Oldenzaal",
+    "name": "Quiosk Oldenzaal",
+    "city": "",
+    "postcode": "7575 AC",
+    "address": "Enschedesestraat 50",
+    "coords": {
+      "lat": 52.3005852,
+      "lng": 6.9312079
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 58,
+    "title": "Quiosk Deurne",
+    "name": "Quiosk Deurne",
+    "city": "",
+    "postcode": "5753 DA",
+    "address": "Boxs-it Selfstorage Hendrik Mesdagstraat 8",
+    "coords": {
+      "lat": 51.4516415,
+      "lng": 5.795040699999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 59,
+    "title": "Quiosk Tinq Gorinchem",
+    "name": "Quiosk Tinq Gorinchem",
+    "city": "",
+    "postcode": "4206 BB",
+    "address": "Concordiaweg 22",
+    "coords": {
+      "lat": 51.8363344,
+      "lng": 4.97512
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 60,
+    "title": "Quiosk Zierikzee",
+    "name": "Quiosk Zierikzee",
+    "city": "",
+    "postcode": "4301 RX",
+    "address": "Ruigendijkweg 5",
+    "coords": {
+      "lat": 51.6445635,
+      "lng": 3.9365322
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 61,
+    "title": "Quiosk Lochem",
+    "name": "Quiosk Lochem",
+    "city": "",
+    "postcode": "7241 CW",
+    "address": "Kwinkweerd 19",
+    "coords": {
+      "lat": 52.16890739999999,
+      "lng": 6.3958566
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 62,
+    "title": "Quiosk Amstelveen",
+    "name": "Quiosk Amstelveen",
+    "city": "",
+    "postcode": "1183 ZZ",
+    "address": "Beneluxbaan 10",
+    "coords": {
+      "lat": 52.31773459999999,
+      "lng": 4.870156199999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 63,
+    "title": "Quiosk Lichtenvoorde",
+    "name": "Quiosk Lichtenvoorde",
+    "city": "",
+    "postcode": "7131 PG",
+    "address": "Albert Schweitzerstraat 5",
+    "coords": {
+      "lat": 51.9924963,
+      "lng": 6.5867495
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 64,
+    "title": "Quiosk Emmeloord",
+    "name": "Quiosk Emmeloord",
+    "city": "",
+    "postcode": "8305 BS",
+    "address": "Franc 70",
+    "coords": {
+      "lat": 52.7177093,
+      "lng": 5.784612699999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 65,
+    "title": "Quiosk Nieuwegein",
+    "name": "Quiosk Nieuwegein",
+    "city": "",
+    "postcode": "3439 NZ",
+    "address": "Grote Wade 2",
+    "coords": {
+      "lat": 52.0499564,
+      "lng": 5.1116991
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 66,
+    "title": "Quiosk Alblasserdam",
+    "name": "Quiosk Alblasserdam",
+    "city": "",
+    "postcode": "2952 DG",
+    "address": "Nieuwland Parc 430",
+    "coords": {
+      "lat": 51.845425,
+      "lng": 4.6698244
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 67,
+    "title": "Quiosk TinQ Emmeloord",
+    "name": "Quiosk TinQ Emmeloord",
+    "city": "",
+    "postcode": "8305 AH",
+    "address": "Marknesserweg 8",
+    "coords": {
+      "lat": 52.7087842,
+      "lng": 5.8147419
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 68,
+    "title": "Quiosk Leap24 Schagen",
+    "name": "Quiosk Leap24 Schagen",
+    "city": "",
+    "postcode": "1742 PH",
+    "address": "De Lus 9h",
+    "coords": {
+      "lat": 52.7966007,
+      "lng": 4.777211299999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 69,
+    "title": "Quiosk Hoogezand",
+    "name": "Quiosk Hoogezand",
+    "city": "",
+    "postcode": "9601 EN",
+    "address": "Hoofdstraat 236",
+    "coords": {
+      "lat": 53.1629351,
+      "lng": 6.7713253
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 70,
+    "title": "Quiosk Rosmalen",
+    "name": "Quiosk Rosmalen",
+    "city": "",
+    "postcode": "5248 NV",
+    "address": "Kloosterstraat 1",
+    "coords": {
+      "lat": 51.7007401,
+      "lng": 5.362500199999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 71,
+    "title": "Quiosk Leeuwarden",
+    "name": "Quiosk Leeuwarden",
+    "city": "",
+    "postcode": "8912 AH",
+    "address": "Zwettestraat 12",
+    "coords": {
+      "lat": 53.1956019,
+      "lng": 5.7692043
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 72,
+    "title": "Quiosk Groningen Wadwerd",
+    "name": "Quiosk Groningen Wadwerd",
+    "city": "",
+    "postcode": "9746 TJ",
+    "address": "Professor Uilkensweg 1",
+    "coords": {
+      "lat": 53.2368219,
+      "lng": 6.519666
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 73,
+    "title": "Quiosk Roosendaal",
+    "name": "Quiosk Roosendaal",
+    "city": "",
+    "postcode": "4704 SR",
+    "address": "Stepvelden 23",
+    "coords": {
+      "lat": 51.5540932,
+      "lng": 4.4627374
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 74,
+    "title": "Quiosk Stadskanaal",
+    "name": "Quiosk Stadskanaal",
+    "city": "",
+    "postcode": "9501 ER",
+    "address": "Poststraat 21",
+    "coords": {
+      "lat": 52.9929858,
+      "lng": 6.9440865
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 75,
+    "title": "Quiosk Monster",
+    "name": "Quiosk Monster",
+    "city": "",
+    "postcode": "2681 SM",
+    "address": "Rijnweg 359",
+    "coords": {
+      "lat": 52.0328013,
+      "lng": 4.1799703
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 76,
+    "title": "Quiosk AviaXpress Breda",
+    "name": "Quiosk AviaXpress Breda",
+    "city": "",
+    "postcode": "4815 HA",
+    "address": "Belcrumweg 5",
+    "coords": {
+      "lat": 51.59679269999999,
+      "lng": 4.7700116
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 77,
+    "title": "Quiosk Eerbeek",
+    "name": "Quiosk Eerbeek",
+    "city": "",
+    "postcode": "6961 VS",
+    "address": "Poelkampstraat 85",
+    "coords": {
+      "lat": 52.0985229,
+      "lng": 6.060826
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 78,
+    "title": "Quiosk Leerdam",
+    "name": "Quiosk Leerdam",
+    "city": "",
+    "postcode": "4143 HX",
+    "address": "Constructiestraat 4",
+    "coords": {
+      "lat": 51.9001264,
+      "lng": 5.1052311
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 79,
+    "title": "Quiosk Vlissingen",
+    "name": "Quiosk Vlissingen",
+    "city": "",
+    "postcode": "4389 WB",
+    "address": "Marie Curieweg 1",
+    "coords": {
+      "lat": 51.4596198,
+      "lng": 3.6089595
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 80,
+    "title": "Quiosk Doorn",
+    "name": "Quiosk Doorn",
+    "city": "",
+    "postcode": "3941 ZT",
+    "address": "Driebergsestraatweg 73",
+    "coords": {
+      "lat": 52.0430778,
+      "lng": 5.3028783
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 81,
+    "title": "Quiosk Esso Den Haag",
+    "name": "Quiosk Esso Den Haag",
+    "city": "",
+    "postcode": "2531 PS",
+    "address": "Middachtenweg 287",
+    "coords": {
+      "lat": 52.04799389999999,
+      "lng": 4.3025375
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 82,
+    "title": "Quiosk Argos Emmen",
+    "name": "Quiosk Argos Emmen",
+    "city": "",
+    "postcode": "7823 EL",
+    "address": "Het Weeld 218",
+    "coords": {
+      "lat": 52.792206,
+      "lng": 6.9402911
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 83,
+    "title": "Quiosk Oud Gastel",
+    "name": "Quiosk Oud Gastel",
+    "city": "",
+    "postcode": "4751 GZ",
+    "address": "Vaccaweg 9",
+    "coords": {
+      "lat": 51.5804346,
+      "lng": 4.465468899999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 84,
+    "title": "Quiosk Tilburg Spoorlaan",
+    "name": "Quiosk Tilburg Spoorlaan",
+    "city": "",
+    "postcode": "5017 JR",
+    "address": "Spoorlaan 3",
+    "coords": {
+      "lat": 51.5596462,
+      "lng": 5.094275300000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 85,
+    "title": "Quiosk Dongen",
+    "name": "Quiosk Dongen",
+    "city": "",
+    "postcode": "5107 RJ",
+    "address": "De Slof 54",
+    "coords": {
+      "lat": 51.6136924,
+      "lng": 4.9343606
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 86,
+    "title": "Quiosk Nieuwegein",
+    "name": "Quiosk Nieuwegein",
+    "city": "",
+    "postcode": "3439 LD",
+    "address": "Ravenswade 200",
+    "coords": {
+      "lat": 52.0510032,
+      "lng": 5.1095723
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 87,
+    "title": "Quiosk Meeden",
+    "name": "Quiosk Meeden",
+    "city": "",
+    "postcode": "9651 CH",
+    "address": "Beneden Veensloot 1a",
+    "coords": {
+      "lat": 53.1344313,
+      "lng": 6.901603199999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 88,
+    "title": "Quiosk Drachten",
+    "name": "Quiosk Drachten",
+    "city": "",
+    "postcode": "9207 JD",
+    "address": "Janssenlaan 124",
+    "coords": {
+      "lat": 53.1145864,
+      "lng": 6.141253100000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 89,
+    "title": "Quiosk Zandvoort",
+    "name": "Quiosk Zandvoort",
+    "city": "",
+    "postcode": "2041 JA",
+    "address": "Boulevard Barnaart 58",
+    "coords": {
+      "lat": 52.38760019999999,
+      "lng": 4.535794999999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 90,
+    "title": "Quiosk Aarle-Rixtel",
+    "name": "Quiosk Aarle-Rixtel",
+    "city": "",
+    "postcode": "5735 GX",
+    "address": "Bosscheweg 96",
+    "coords": {
+      "lat": 51.5043564,
+      "lng": 5.645245
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 91,
+    "title": "Quiosk Scheveningen",
+    "name": "Quiosk Scheveningen",
+    "city": "",
+    "postcode": "2587 VK",
+    "address": "Zwolsestraat 424",
+    "coords": {
+      "lat": 52.113345,
+      "lng": 4.2934052
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 92,
+    "title": "Quiosk Rijssen",
+    "name": "Quiosk Rijssen",
+    "city": "",
+    "postcode": "7463 PG",
+    "address": "Butaanstraat 6",
+    "coords": {
+      "lat": 52.3174018,
+      "lng": 6.5017801
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 93,
+    "title": "Quiosk Damwâld",
+    "name": "Quiosk Damwâld",
+    "city": "",
+    "postcode": "9104 BG",
+    "address": "Haadwei 8",
+    "coords": {
+      "lat": 53.29398399999999,
+      "lng": 5.9969396
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 94,
+    "title": "Quiosk Bleiswijk",
+    "name": "Quiosk Bleiswijk",
+    "city": "",
+    "postcode": "2665 CA",
+    "address": "Overbuurtseweg 26",
+    "coords": {
+      "lat": 52.018038,
+      "lng": 4.5333687
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 95,
+    "title": "Quiosk Esso Veenendaal",
+    "name": "Quiosk Esso Veenendaal",
+    "city": "",
+    "postcode": "3901 ED",
+    "address": "Industrielaan 1A",
+    "coords": {
+      "lat": 52.01970129999999,
+      "lng": 5.5523922
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 96,
+    "title": "Quiosk Genemuiden",
+    "name": "Quiosk Genemuiden",
+    "city": "",
+    "postcode": "8281 JE",
+    "address": "Nijverheidstraat 4",
+    "coords": {
+      "lat": 52.6261632,
+      "lng": 6.0542557
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 97,
+    "title": "Quiosk Oss",
+    "name": "Quiosk Oss",
+    "city": "",
+    "postcode": "5349 AJ",
+    "address": "Kantsingel 8",
+    "coords": {
+      "lat": 51.7644231,
+      "lng": 5.546155
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 98,
+    "title": "Quiosk Epe",
+    "name": "Quiosk Epe",
+    "city": "",
+    "postcode": "8161 TC",
+    "address": "Padland 1 a",
+    "coords": {
+      "lat": 52.3444574,
+      "lng": 6.0004403
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 99,
+    "title": "Quiosk Haaksbergen",
+    "name": "Quiosk Haaksbergen",
+    "city": "",
+    "postcode": "7482 AE",
+    "address": "Hengelosestraat 176",
+    "coords": {
+      "lat": 52.1712645,
+      "lng": 6.7414229
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 100,
+    "title": "Quiosk Winschoten",
+    "name": "Quiosk Winschoten",
+    "city": "",
+    "postcode": "9672 BM",
+    "address": "Hellingbaan 1",
+    "coords": {
+      "lat": 53.1438867,
+      "lng": 7.0470213
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 101,
+    "title": "Quiosk Echt",
+    "name": "Quiosk Echt",
+    "city": "",
+    "postcode": "6101 XK",
+    "address": "Voltaweg 33A",
+    "coords": {
+      "lat": 51.1170913,
+      "lng": 5.8847637
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 102,
+    "title": "Quiosk Heerlen",
+    "name": "Quiosk Heerlen",
+    "city": "",
+    "postcode": "6422 PC",
+    "address": "Euregioweg 1",
+    "coords": {
+      "lat": 50.8585051,
+      "lng": 6.0012355
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 103,
+    "title": "Quiosk Zuidbroek",
+    "name": "Quiosk Zuidbroek",
+    "city": "",
+    "postcode": "9636 HT",
+    "address": "Europaweg 7",
+    "coords": {
+      "lat": 53.16733989999999,
+      "lng": 6.8658362
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 104,
+    "title": "Quiosk Nieuwstadt",
+    "name": "Quiosk Nieuwstadt",
+    "city": "",
+    "postcode": "6118 CK",
+    "address": "Gouverneur Houbenstraat 1A",
+    "coords": {
+      "lat": 51.0346948,
+      "lng": 5.8625875
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 105,
+    "title": "Quiosk TinQ Apeldoorn",
+    "name": "Quiosk TinQ Apeldoorn",
+    "city": "",
+    "postcode": "7331 JC",
+    "address": "Arnhemseweg 221",
+    "coords": {
+      "lat": 52.1955022,
+      "lng": 5.9624296
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 106,
+    "title": "Quiosk Lelystad Binnenhavenweg Oostervaart",
+    "name": "Quiosk Lelystad Binnenhavenweg Oostervaart",
+    "city": "",
+    "postcode": "8211 AZ",
+    "address": "Binnenhavenweg 40",
+    "coords": {
+      "lat": 52.53903620000001,
+      "lng": 5.521147
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 107,
+    "title": "Quiosk Sittard",
+    "name": "Quiosk Sittard",
+    "city": "",
+    "postcode": "6132 CH",
+    "address": "Leyenbroekerweg 102",
+    "coords": {
+      "lat": 50.9909805,
+      "lng": 5.869498999999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 108,
+    "title": "Quiosk Uithoorn",
+    "name": "Quiosk Uithoorn",
+    "city": "",
+    "postcode": "1421 LC",
+    "address": "Kon. Máximalaan 101",
+    "coords": {
+      "lat": 52.2449403,
+      "lng": 4.809806
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 109,
+    "title": "Quiosk Heerlen",
+    "name": "Quiosk Heerlen",
+    "city": "",
+    "postcode": "6416 AA",
+    "address": "Wickraderweg 201, 6413 VA Heerlen",
+    "coords": {
+      "lat": 50.9026501,
+      "lng": 5.9665536
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 110,
+    "title": "Quiosk Stadskanaal",
+    "name": "Quiosk Stadskanaal",
+    "city": "",
+    "postcode": "9502 EX",
+    "address": "Tinnegieter 23",
+    "coords": {
+      "lat": 52.9837087,
+      "lng": 6.9798962
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 111,
+    "title": "Quiosk Bodegraven",
+    "name": "Quiosk Bodegraven",
+    "city": "",
+    "postcode": "2411 HK",
+    "address": "Goudseweg 131",
+    "coords": {
+      "lat": 52.0754347,
+      "lng": 4.7445062
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 112,
+    "title": "Quiosk Sato Almere",
+    "name": "Quiosk Sato Almere",
+    "city": "",
+    "postcode": "1317 PZ",
+    "address": "Barbeelstraat 14",
+    "coords": {
+      "lat": 52.3924594,
+      "lng": 5.2298506
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 113,
+    "title": "Quiosk Esso Ermelo",
+    "name": "Quiosk Esso Ermelo",
+    "city": "",
+    "postcode": "3853 LV",
+    "address": "Buitenbrinkweg 83",
+    "coords": {
+      "lat": 52.3113737,
+      "lng": 5.5648642
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 114,
+    "title": "Quiosk Heeze",
+    "name": "Quiosk Heeze",
+    "city": "",
+    "postcode": "5591 JD",
+    "address": "Leenderweg 5",
+    "coords": {
+      "lat": 51.37386799999999,
+      "lng": 5.576068999999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 115,
+    "title": "Quiosk Helmond",
+    "name": "Quiosk Helmond",
+    "city": "",
+    "postcode": "5701 CG",
+    "address": "Deurnseweg 136",
+    "coords": {
+      "lat": 51.4757956,
+      "lng": 5.674282799999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 116,
+    "title": "Quiosk Dronryp",
+    "name": "Quiosk Dronryp",
+    "city": "",
+    "postcode": "9035 VM",
+    "address": "Strjitwei 3",
+    "coords": {
+      "lat": 53.2003766,
+      "lng": 5.6495123
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 117,
+    "title": "Quiosk Druten",
+    "name": "Quiosk Druten",
+    "city": "",
+    "postcode": "6651 EE",
+    "address": "Van Heemstraweg 75",
+    "coords": {
+      "lat": 51.8859443,
+      "lng": 5.584376199999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 118,
+    "title": "Quiosk",
+    "name": "Quiosk",
+    "city": "",
+    "postcode": "4651 SK",
+    "address": "Koperslagerij 2a",
+    "coords": {
+      "lat": 51.5886078,
+      "lng": 4.302714600000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 119,
+    "title": "Quiosk Kerkrade",
+    "name": "Quiosk Kerkrade",
+    "city": "",
+    "postcode": "6466 NG",
+    "address": "Wiebachstraat 5",
+    "coords": {
+      "lat": 50.8507121,
+      "lng": 6.0086444
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 120,
+    "title": "Quiosk Heesch",
+    "name": "Quiosk Heesch",
+    "city": "",
+    "postcode": "5384 VT",
+    "address": "Cereslaan 22",
+    "coords": {
+      "lat": 51.7354329,
+      "lng": 5.5117866
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 121,
+    "title": "Quiosk Tinq Raalte",
+    "name": "Quiosk Tinq Raalte",
+    "city": "",
+    "postcode": "8102 RN",
+    "address": "Heinoseweg 1",
+    "coords": {
+      "lat": 52.4035271,
+      "lng": 6.262814499999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 122,
+    "title": "Quiosk Middelburg Kanaalweg",
+    "name": "Quiosk Middelburg Kanaalweg",
+    "city": "",
+    "postcode": "4337 PA",
+    "address": "Kanaalweg 5",
+    "coords": {
+      "lat": 51.497857,
+      "lng": 3.6254842
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 123,
+    "title": "Quiosk Rogat",
+    "name": "Quiosk Rogat",
+    "city": "",
+    "postcode": "7949 AJ",
+    "address": "Industrieweg 4",
+    "coords": {
+      "lat": 52.6871345,
+      "lng": 6.2687253
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 124,
+    "title": "Quiosk Drachten",
+    "name": "Quiosk Drachten",
+    "city": "",
+    "postcode": "9207 HB",
+    "address": "Curielaan 1",
+    "coords": {
+      "lat": 53.0961636,
+      "lng": 6.1351096
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 125,
+    "title": "Quiosk Soest",
+    "name": "Quiosk Soest",
+    "city": "",
+    "postcode": "3768 EK",
+    "address": "Soesterbergsestraat 76",
+    "coords": {
+      "lat": 52.1624896,
+      "lng": 5.308352699999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 126,
+    "title": "Quiosk Gouda",
+    "name": "Quiosk Gouda",
+    "city": "",
+    "postcode": "2801 SB",
+    "address": "Nieuwe Gouwe O.Z 13D",
+    "coords": {
+      "lat": 52.01887259999999,
+      "lng": 4.6827881
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 127,
+    "title": "Quiosk TinQ Hengelo",
+    "name": "Quiosk TinQ Hengelo",
+    "city": "",
+    "postcode": "7255 KW",
+    "address": "Rondweg 10",
+    "coords": {
+      "lat": 52.0517746,
+      "lng": 6.3048762
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 128,
+    "title": "Quiosk Maassluis",
+    "name": "Quiosk Maassluis",
+    "city": "",
+    "postcode": "3144 BA",
+    "address": "Koningshoek 92303",
+    "coords": {
+      "lat": 51.9296769,
+      "lng": 4.2400685
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 129,
+    "title": "Quiosk Boskoop",
+    "name": "Quiosk Boskoop",
+    "city": "",
+    "postcode": "2771 XH",
+    "address": "Nieuwstraat 75",
+    "coords": {
+      "lat": 52.0766429,
+      "lng": 4.6621083
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 130,
+    "title": "Quiosk Esso Enschede",
+    "name": "Quiosk Esso Enschede",
+    "city": "",
+    "postcode": "7543 AB",
+    "address": "Burgemeester van Veenlaan 130",
+    "coords": {
+      "lat": 52.2050142,
+      "lng": 6.879858899999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 131,
+    "title": "Quiosk Boxtel",
+    "name": "Quiosk Boxtel",
+    "city": "",
+    "postcode": "5281 AC",
+    "address": "Brederodeweg 26",
+    "coords": {
+      "lat": 51.585111,
+      "lng": 5.3315494
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 132,
+    "title": "Quiosk Nieuw-Vennep | Tamoil",
+    "name": "Quiosk Nieuw-Vennep | Tamoil",
+    "city": "",
+    "postcode": "2153 PJ",
+    "address": "Pesetaweg 14",
+    "coords": {
+      "lat": 52.253277,
+      "lng": 4.62699
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 133,
+    "title": "Quiosk Wolvega",
+    "name": "Quiosk Wolvega",
+    "city": "",
+    "postcode": "8471 BH",
+    "address": "Heerenveenseweg 80",
+    "coords": {
+      "lat": 52.882357,
+      "lng": 6.001363
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 134,
+    "title": "Quiosk Middenmeer",
+    "name": "Quiosk Middenmeer",
+    "city": "",
+    "postcode": "1775 PS",
+    "address": "Zuiderzeeweg 2A",
+    "coords": {
+      "lat": 52.8127201,
+      "lng": 4.9906896
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 135,
+    "title": "Quiosk Emmen",
+    "name": "Quiosk Emmen",
+    "city": "",
+    "postcode": "7825 VJ",
+    "address": "Vasco Da Gamastraat 1",
+    "coords": {
+      "lat": 52.7554449,
+      "lng": 6.916103799999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 136,
+    "title": "Quiosk Bergen op Zoom",
+    "name": "Quiosk Bergen op Zoom",
+    "city": "",
+    "postcode": "4614 AD",
+    "address": "Buitenvest 40",
+    "coords": {
+      "lat": 51.49953319999999,
+      "lng": 4.2964833
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 137,
+    "title": "Quiosk Den Bosch",
+    "name": "Quiosk Den Bosch",
+    "city": "",
+    "postcode": "5222 AP",
+    "address": "Rietveldenweg 13-F",
+    "coords": {
+      "lat": 51.6971134,
+      "lng": 5.283487399999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 138,
+    "title": "Quiosk Ermelo",
+    "name": "Quiosk Ermelo",
+    "city": "",
+    "postcode": "3853 JP",
+    "address": "Kolbaanweg 25",
+    "coords": {
+      "lat": 52.3174258,
+      "lng": 5.6140381
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 139,
+    "title": "Quiosk Avia Rotterdam",
+    "name": "Quiosk Avia Rotterdam",
+    "city": "",
+    "postcode": "3033 HK",
+    "address": "Walenburghof 17",
+    "coords": {
+      "lat": 51.9253132,
+      "lng": 4.4633647
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 140,
+    "title": "Quiosk Velsen",
+    "name": "Quiosk Velsen",
+    "city": "",
+    "postcode": "1951 AS",
+    "address": "Concordiastraat 75",
+    "coords": {
+      "lat": 52.4674992,
+      "lng": 4.6431172
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 141,
+    "title": "Quiosk Tamoil Tilburg",
+    "name": "Quiosk Tamoil Tilburg",
+    "city": "",
+    "postcode": "5011 JE",
+    "address": "Elgarstraat 50",
+    "coords": {
+      "lat": 51.590671,
+      "lng": 5.0843459
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 142,
+    "title": "Quiosk Rijswijk",
+    "name": "Quiosk Rijswijk",
+    "city": "",
+    "postcode": "2288 GB",
+    "address": "Van Gijnstraat 13",
+    "coords": {
+      "lat": 52.0382174,
+      "lng": 4.3310342
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 143,
+    "title": "Quiosk Dordrecht",
+    "name": "Quiosk Dordrecht",
+    "city": "",
+    "postcode": "3314 AG",
+    "address": "Hugo de Grootlaan 93",
+    "coords": {
+      "lat": 51.8051598,
+      "lng": 4.655215399999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 144,
+    "title": "Quiosk Coevorden",
+    "name": "Quiosk Coevorden",
+    "city": "",
+    "postcode": "7741 EK",
+    "address": "Stationsstraat 1",
+    "coords": {
+      "lat": 52.66635059999999,
+      "lng": 6.736360200000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 145,
+    "title": "Quiosk Tilburg Emma Goldmanweg",
+    "name": "Quiosk Tilburg Emma Goldmanweg",
+    "city": "",
+    "postcode": "5032 MN",
+    "address": "Emma Goldmanweg 4",
+    "coords": {
+      "lat": 51.5374857,
+      "lng": 5.0409945
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 146,
+    "title": "Quiosk Tilburg",
+    "name": "Quiosk Tilburg",
+    "city": "",
+    "postcode": "5048 AN",
+    "address": "Zevenheuvelenweg 24",
+    "coords": {
+      "lat": 51.5847376,
+      "lng": 5.0579389
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 147,
+    "title": "Quiosk Veghel",
+    "name": "Quiosk Veghel",
+    "city": "",
+    "postcode": "5465 TC",
+    "address": "Doornhoek 3910",
+    "coords": {
+      "lat": 51.6036736,
+      "lng": 5.5269948
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 148,
+    "title": "Quiosk Aalsmeer",
+    "name": "Quiosk Aalsmeer",
+    "city": "",
+    "postcode": "1431 GC",
+    "address": "Legmeerdijk 324",
+    "coords": {
+      "lat": 52.2547293,
+      "lng": 4.7812321
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 149,
+    "title": "Quiosk Hank",
+    "name": "Quiosk Hank",
+    "city": "",
+    "postcode": "4273 XD",
+    "address": "Jachtsloot 6",
+    "coords": {
+      "lat": 51.73571889999999,
+      "lng": 4.9053337
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 150,
+    "title": "Quiosk Supertank Zwolle",
+    "name": "Quiosk Supertank Zwolle",
+    "city": "",
+    "postcode": "8013 PK",
+    "address": "Marconistraat 17",
+    "coords": {
+      "lat": 52.4970954,
+      "lng": 6.1272183
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 151,
+    "title": "Quiosk Oegstgeest",
+    "name": "Quiosk Oegstgeest",
+    "city": "",
+    "postcode": "2343 HK",
+    "address": "De Boeg 4b",
+    "coords": {
+      "lat": 52.1981443,
+      "lng": 4.4766282
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 152,
+    "title": "Quiosk Maastricht Limmelderweg",
+    "name": "Quiosk Maastricht Limmelderweg",
+    "city": "",
+    "postcode": "6222 PB",
+    "address": "Limmelderweg 6",
+    "coords": {
+      "lat": 50.8739498,
+      "lng": 5.7208349
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 153,
+    "title": "Quiosk Argos Apeldoorn",
+    "name": "Quiosk Argos Apeldoorn",
+    "city": "",
+    "postcode": "7317 AS",
+    "address": "Anklaarseweg 121",
+    "coords": {
+      "lat": 52.2353605,
+      "lng": 5.974813
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 154,
+    "title": "Quiosk Eindhoven Rooijakkersstraat",
+    "name": "Quiosk Eindhoven Rooijakkersstraat",
+    "city": "",
+    "postcode": "5652 BB",
+    "address": "Rooijakkersstraat 12a",
+    "coords": {
+      "lat": 51.4300641,
+      "lng": 5.4409673
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 155,
+    "title": "Quiosk Vessem",
+    "name": "Quiosk Vessem",
+    "city": "",
+    "postcode": "5512 NJ",
+    "address": "Heike 4A",
+    "coords": {
+      "lat": 51.4242901,
+      "lng": 5.2848431
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 156,
+    "title": "Quiosk Zwijndrecht",
+    "name": "Quiosk Zwijndrecht",
+    "city": "",
+    "postcode": "3334 KA",
+    "address": "Fruiteniersstraat 19-20",
+    "coords": {
+      "lat": 51.8118643,
+      "lng": 4.5988846
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 157,
+    "title": "Quiosk Assen",
+    "name": "Quiosk Assen",
+    "city": "",
+    "postcode": "9405 CG",
+    "address": "Balkengracht 4",
+    "coords": {
+      "lat": 52.9950002,
+      "lng": 6.5285603
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 158,
+    "title": "Quiosk Oud Gastel Standerdmolen",
+    "name": "Quiosk Oud Gastel Standerdmolen",
+    "city": "",
+    "postcode": "4751 VJ",
+    "address": "Standerdmolen 2",
+    "coords": {
+      "lat": 51.58204920000001,
+      "lng": 4.4558995
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 159,
+    "title": "Quiosk Zeeland",
+    "name": "Quiosk Zeeland",
+    "city": "",
+    "postcode": "5411 RV",
+    "address": "Bergmaas 2",
+    "coords": {
+      "lat": 51.68667900000001,
+      "lng": 5.6590573
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 160,
+    "title": "Quiosk Supertank Heerenveen",
+    "name": "Quiosk Supertank Heerenveen",
+    "city": "",
+    "postcode": "8448 CC",
+    "address": "Saturnus 6",
+    "coords": {
+      "lat": 52.9722246,
+      "lng": 5.933141399999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 161,
+    "title": "Quiosk Marum",
+    "name": "Quiosk Marum",
+    "city": "",
+    "postcode": "9363 TG",
+    "address": "Parallelweg 1b",
+    "coords": {
+      "lat": 53.1543386,
+      "lng": 6.2679561
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 162,
+    "title": "Quiosk Basic Wash Zoetermeer",
+    "name": "Quiosk Basic Wash Zoetermeer",
+    "city": "",
+    "postcode": "2716 KA",
+    "address": "Zalkerbos 1",
+    "coords": {
+      "lat": 52.0602743,
+      "lng": 4.4654863
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 163,
+    "title": "Quiosk Maasbracht",
+    "name": "Quiosk Maasbracht",
+    "city": "",
+    "postcode": "6051 HE",
+    "address": "Sint Joosterweg 7",
+    "coords": {
+      "lat": 51.1381494,
+      "lng": 5.8954941
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 164,
+    "title": "Quiosk Groningen Helperzoom",
+    "name": "Quiosk Groningen Helperzoom",
+    "city": "",
+    "postcode": "9722 BD",
+    "address": "Helperzoom 4",
+    "coords": {
+      "lat": 53.2058365,
+      "lng": 6.582662300000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 165,
+    "title": "Quiosk Boxtel",
+    "name": "Quiosk Boxtel",
+    "city": "",
+    "postcode": "5282 TS",
+    "address": "Baandervrouwenlaan 60",
+    "coords": {
+      "lat": 51.6019223,
+      "lng": 5.316648199999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 166,
+    "title": "Quiosk Tinq Rotterdam Duifhuisweg",
+    "name": "Quiosk Tinq Rotterdam Duifhuisweg",
+    "city": "",
+    "postcode": "3191 LC",
+    "address": "Duifhuisweg 1",
+    "coords": {
+      "lat": 51.8578728,
+      "lng": 4.3801855
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 167,
+    "title": "Quiosk Udenhout",
+    "name": "Quiosk Udenhout",
+    "city": "",
+    "postcode": "5071 BL",
+    "address": "Kreitenmolenstraat 203",
+    "coords": {
+      "lat": 51.6048584,
+      "lng": 5.1607756
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 168,
+    "title": "Quiosk Maastricht Cabergerweg",
+    "name": "Quiosk Maastricht Cabergerweg",
+    "city": "",
+    "postcode": "6217 SC",
+    "address": "Cabergerweg 50",
+    "coords": {
+      "lat": 50.86019169999999,
+      "lng": 5.6769428
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 169,
+    "title": "Quiosk Tamoil Amersfoort",
+    "name": "Quiosk Tamoil Amersfoort",
+    "city": "",
+    "postcode": "3812 PR",
+    "address": "Havenweg 25a",
+    "coords": {
+      "lat": 52.1681551,
+      "lng": 5.3663622
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 170,
+    "title": "Quiosk Waalwijk",
+    "name": "Quiosk Waalwijk",
+    "city": "",
+    "postcode": "5142 GZ",
+    "address": "Noorder Parallelweg 53",
+    "coords": {
+      "lat": 51.685762,
+      "lng": 5.072748
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 171,
+    "title": "Quiosk Utrecht",
+    "name": "Quiosk Utrecht",
+    "city": "",
+    "postcode": "3542 AB",
+    "address": "Atoomweg 2",
+    "coords": {
+      "lat": 52.09959,
+      "lng": 5.0691804
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 172,
+    "title": "Quiosk TinQ Emmen",
+    "name": "Quiosk TinQ Emmen",
+    "city": "",
+    "postcode": "7821 AB",
+    "address": "Kapitein Nemostraat 17A",
+    "coords": {
+      "lat": 52.7702731,
+      "lng": 6.922042599999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 173,
+    "title": "Quiosk Meppel",
+    "name": "Quiosk Meppel",
+    "city": "",
+    "postcode": "7943 KA",
+    "address": "Hoogeveenseweg 44",
+    "coords": {
+      "lat": 52.6900808,
+      "lng": 6.224741799999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 174,
+    "title": "Quiosk Rijnsburg",
+    "name": "Quiosk Rijnsburg",
+    "city": "",
+    "postcode": "2231 NM",
+    "address": "Noordwijkerweg 43",
+    "coords": {
+      "lat": 52.2018728,
+      "lng": 4.4457013
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 175,
+    "title": "Quiosk Argos Groningen",
+    "name": "Quiosk Argos Groningen",
+    "city": "",
+    "postcode": "9723 AW",
+    "address": "Bornholmstraat 1",
+    "coords": {
+      "lat": 53.2194467,
+      "lng": 6.5923267
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 176,
+    "title": "Quiosk Berkel en Roderijs",
+    "name": "Quiosk Berkel en Roderijs",
+    "city": "",
+    "postcode": "2652 XT",
+    "address": "Archimedesstraat 3",
+    "coords": {
+      "lat": 51.9818535,
+      "lng": 4.4521401
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 177,
+    "title": "Quiosk Doesburg",
+    "name": "Quiosk Doesburg",
+    "city": "",
+    "postcode": "6983 BB",
+    "address": "Didamseweg 8",
+    "coords": {
+      "lat": 52.0025069,
+      "lng": 6.1375734
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 178,
+    "title": "Quiosk Bunde",
+    "name": "Quiosk Bunde",
+    "city": "",
+    "postcode": "6241 AA",
+    "address": "Maastrichterlaan 1a",
+    "coords": {
+      "lat": 50.8938303,
+      "lng": 5.727736699999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 179,
+    "title": "Quiosk Roden",
+    "name": "Quiosk Roden",
+    "city": "",
+    "postcode": "9301 ZW",
+    "address": "Westeresch 15",
+    "coords": {
+      "lat": 53.14845810000001,
+      "lng": 6.429637
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 180,
+    "title": "Quiosk Amersfoort",
+    "name": "Quiosk Amersfoort",
+    "city": "",
+    "postcode": "3828 NR",
+    "address": "Bunschoterstraat 9",
+    "coords": {
+      "lat": 52.1792799,
+      "lng": 5.369051
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 181,
+    "title": "Quiosk Kolham",
+    "name": "Quiosk Kolham",
+    "city": "",
+    "postcode": "9615 TM",
+    "address": "A.B. Nobellaan",
+    "coords": {
+      "lat": 53.173289,
+      "lng": 6.7414967
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 182,
+    "title": "Quiosk Tinq Waalwijk",
+    "name": "Quiosk Tinq Waalwijk",
+    "city": "",
+    "postcode": "5145 NJ",
+    "address": "Havenweg 25",
+    "coords": {
+      "lat": 51.6934292,
+      "lng": 5.043333899999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 183,
+    "title": "Quiosk Avia Emmen",
+    "name": "Quiosk Avia Emmen",
+    "city": "",
+    "postcode": "7811 KV",
+    "address": "Ermerweg 7",
+    "coords": {
+      "lat": 52.7769665,
+      "lng": 6.894691399999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 184,
+    "title": "Quiosk Nistelrode",
+    "name": "Quiosk Nistelrode",
+    "city": "",
+    "postcode": "5388 TX",
+    "address": "Maxend 20",
+    "coords": {
+      "lat": 51.692128,
+      "lng": 5.556980299999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 185,
+    "title": "Quiosk Argos Den Bosch",
+    "name": "Quiosk Argos Den Bosch",
+    "city": "",
+    "postcode": "5231 XW",
+    "address": "Zandzuigerstraat 100",
+    "coords": {
+      "lat": 51.7020481,
+      "lng": 5.3063791
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 186,
+    "title": "Quiosk Supertank Wezep",
+    "name": "Quiosk Supertank Wezep",
+    "city": "",
+    "postcode": "8091 XK",
+    "address": "Rondweg 90",
+    "coords": {
+      "lat": 52.4673753,
+      "lng": 5.9903859
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 187,
+    "title": "Quiosk Bennekom",
+    "name": "Quiosk Bennekom",
+    "city": "",
+    "postcode": "6721 RX",
+    "address": "Kaardebol 8",
+    "coords": {
+      "lat": 52.0017518,
+      "lng": 5.659634
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 188,
+    "title": "Quiosk Sassenheim",
+    "name": "Quiosk Sassenheim",
+    "city": "",
+    "postcode": "2171 KW",
+    "address": "Stationslaan 5",
+    "coords": {
+      "lat": 52.2142744,
+      "lng": 4.5124676
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 189,
+    "title": "Quiosk Argos Wormerveer",
+    "name": "Quiosk Argos Wormerveer",
+    "city": "",
+    "postcode": "1521 RA",
+    "address": "Samsonweg 1",
+    "coords": {
+      "lat": 52.5035746,
+      "lng": 4.783651100000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 190,
+    "title": "Quiosk Geleen",
+    "name": "Quiosk Geleen",
+    "city": "",
+    "postcode": "6163 AH",
+    "address": "Industrieweg 1",
+    "coords": {
+      "lat": 50.9814023,
+      "lng": 5.8265502
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 191,
+    "title": "Quiosk Esso Apeldoorn",
+    "name": "Quiosk Esso Apeldoorn",
+    "city": "",
+    "postcode": "7322 PG",
+    "address": "Laan van Zevenhuizen 396",
+    "coords": {
+      "lat": 52.2207242,
+      "lng": 5.998497599999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 192,
+    "title": "Quiosk Eindhoven Brussellaan",
+    "name": "Quiosk Eindhoven Brussellaan",
+    "city": "",
+    "postcode": "5628 TA",
+    "address": "Brussellaan 5",
+    "coords": {
+      "lat": 51.4775641,
+      "lng": 5.4840957
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 193,
+    "title": "Quiosk Venray",
+    "name": "Quiosk Venray",
+    "city": "",
+    "postcode": "5812 PB",
+    "address": "Deurneseweg 12",
+    "coords": {
+      "lat": 51.5136901,
+      "lng": 5.9622033
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 194,
+    "title": "Quiosk Roelofarendsveen",
+    "name": "Quiosk Roelofarendsveen",
+    "city": "",
+    "postcode": "2371 TV",
+    "address": "Veenderveld 8D",
+    "coords": {
+      "lat": 52.1980002,
+      "lng": 4.6145397
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 195,
+    "title": "Quiosk Breda Spinveld",
+    "name": "Quiosk Breda Spinveld",
+    "city": "",
+    "postcode": "4815 HT",
+    "address": "Spinveld 74",
+    "coords": {
+      "lat": 51.59727239999999,
+      "lng": 4.7508308
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 196,
+    "title": "Quiosk Tilburg Noordhoekring",
+    "name": "Quiosk Tilburg Noordhoekring",
+    "city": "",
+    "postcode": "5038 GG",
+    "address": "Noordhoekring 180",
+    "coords": {
+      "lat": 51.5583391,
+      "lng": 5.0778522
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 197,
+    "title": "Quiosk Tiel",
+    "name": "Quiosk Tiel",
+    "city": "",
+    "postcode": "4003 AZ",
+    "address": "Laan van Westroijen 10",
+    "coords": {
+      "lat": 51.8996862,
+      "lng": 5.4354399
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 198,
+    "title": "Quiosk Oisterwijk Quick",
+    "name": "Quiosk Oisterwijk Quick",
+    "city": "",
+    "postcode": "5061 KM",
+    "address": "Belgiestraat 9",
+    "coords": {
+      "lat": 51.586456,
+      "lng": 5.1948897
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 199,
+    "title": "Quiosk Agri Sneltank Goes",
+    "name": "Quiosk Agri Sneltank Goes",
+    "city": "",
+    "postcode": "4462 HJ",
+    "address": "Hudsonweg 21",
+    "coords": {
+      "lat": 51.48294430000001,
+      "lng": 3.8943849
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 200,
+    "title": "Quiosk Ruurlo",
+    "name": "Quiosk Ruurlo",
+    "city": "",
+    "postcode": "7261 ST",
+    "address": "De Vente 7",
+    "coords": {
+      "lat": 52.0774108,
+      "lng": 6.458139999999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 201,
+    "title": "Quiosk Uden",
+    "name": "Quiosk Uden",
+    "city": "",
+    "postcode": "5401 JB",
+    "address": "Bitswijk 4",
+    "coords": {
+      "lat": 51.6703282,
+      "lng": 5.6082176
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 202,
+    "title": "Quiosk Waddinxveen",
+    "name": "Quiosk Waddinxveen",
+    "city": "",
+    "postcode": "2741 KS",
+    "address": "Henegouwerweg 26",
+    "coords": {
+      "lat": 52.0446967,
+      "lng": 4.6605997
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 203,
+    "title": "Quiosk Mook",
+    "name": "Quiosk Mook",
+    "city": "",
+    "postcode": "6585 AH",
+    "address": "Rijksweg 104",
+    "coords": {
+      "lat": 51.7495205,
+      "lng": 5.883898599999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 204,
+    "title": "Quiosk Balkbrug",
+    "name": "Quiosk Balkbrug",
+    "city": "",
+    "postcode": "7707 AP",
+    "address": "Coevorderweg 1",
+    "coords": {
+      "lat": 52.6011172,
+      "lng": 6.3964442
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 205,
+    "title": "Quiosk Kerkdriel",
+    "name": "Quiosk Kerkdriel",
+    "city": "",
+    "postcode": "5331 CJ",
+    "address": "Kerkstraat 116",
+    "coords": {
+      "lat": 51.7693837,
+      "lng": 5.3254114
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 206,
+    "title": "Quiosk Rijswijk",
+    "name": "Quiosk Rijswijk",
+    "city": "",
+    "postcode": "2284 BK",
+    "address": "Pr. Beatrixlaan 975",
+    "coords": {
+      "lat": 52.0346082,
+      "lng": 4.315553299999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 207,
+    "title": "Quiosk Middelburg",
+    "name": "Quiosk Middelburg",
+    "city": "",
+    "postcode": "4332 SC",
+    "address": "Heerlijkheidsweg 3",
+    "coords": {
+      "lat": 51.5037641,
+      "lng": 3.6297584
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 208,
+    "title": "Quiosk Arnhem",
+    "name": "Quiosk Arnhem",
+    "city": "",
+    "postcode": "6831 AE",
+    "address": "De Overmaat 1",
+    "coords": {
+      "lat": 51.9512776,
+      "lng": 5.882371699999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 209,
+    "title": "Quiosk Hengelo",
+    "name": "Quiosk Hengelo",
+    "city": "",
+    "postcode": "7552 BJ",
+    "address": "Kuipersdijk 26",
+    "coords": {
+      "lat": 52.2528173,
+      "lng": 6.806312600000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 210,
+    "title": "Quiosk Goor",
+    "name": "Quiosk Goor",
+    "city": "",
+    "postcode": "7471 AN",
+    "address": "Kerkstraat 125",
+    "coords": {
+      "lat": 52.23351049999999,
+      "lng": 6.576562399999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 211,
+    "title": "Quiosk Goes",
+    "name": "Quiosk Goes",
+    "city": "",
+    "postcode": "4462 HJ",
+    "address": "Hudsonweg 20",
+    "coords": {
+      "lat": 51.4831253,
+      "lng": 3.892571899999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 212,
+    "title": "Quiosk JP Carwash Groningen",
+    "name": "Quiosk JP Carwash Groningen",
+    "city": "",
+    "postcode": "9744 AH",
+    "address": "Zuiderweg 409",
+    "coords": {
+      "lat": 53.2007422,
+      "lng": 6.5118119
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 213,
+    "title": "Quiosk Oosterhout",
+    "name": "Quiosk Oosterhout",
+    "city": "",
+    "postcode": "4905 BJ",
+    "address": "Kanaalstraat 22",
+    "coords": {
+      "lat": 51.6483417,
+      "lng": 4.850575699999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 214,
+    "title": "Quiosk Kruiningen",
+    "name": "Quiosk Kruiningen",
+    "city": "",
+    "postcode": "4416 PX",
+    "address": "Weihoek 21",
+    "coords": {
+      "lat": 51.4651894,
+      "lng": 4.029465
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 215,
+    "title": "Quiosk Wijk en Aalburg",
+    "name": "Quiosk Wijk en Aalburg",
+    "city": "",
+    "postcode": "4261RG",
+    "address": "Groeneweg 8",
+    "coords": {
+      "lat": 51.7660674,
+      "lng": 5.1034457
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 216,
+    "title": "Quiosk Geffen",
+    "name": "Quiosk Geffen",
+    "city": "",
+    "postcode": "5386 KA",
+    "address": "Bedrijvenweg 10",
+    "coords": {
+      "lat": 51.7368278,
+      "lng": 5.474028100000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 217,
+    "title": "Quiosk Almere",
+    "name": "Quiosk Almere",
+    "city": "",
+    "postcode": "1332 BH",
+    "address": "Dukdalfweg 11",
+    "coords": {
+      "lat": 52.4091578,
+      "lng": 5.254756299999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 218,
+    "title": "Quiosk Schinveld",
+    "name": "Quiosk Schinveld",
+    "city": "",
+    "postcode": "6451 PA",
+    "address": "Echterbaan 2",
+    "coords": {
+      "lat": 50.9653699,
+      "lng": 5.9731362
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 219,
+    "title": "Quiosk 's-Gravenzande",
+    "name": "Quiosk 's-Gravenzande",
+    "city": "",
+    "postcode": "2691 KH",
+    "address": "Noordlandseweg 59 a",
+    "coords": {
+      "lat": 51.9997745,
+      "lng": 4.1415442
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 220,
+    "title": "Quiosk Groningen Pop Dijkemaweg",
+    "name": "Quiosk Groningen Pop Dijkemaweg",
+    "city": "",
+    "postcode": "9731 BB",
+    "address": "Pop Dijkemaweg 31A",
+    "coords": {
+      "lat": 53.2272739,
+      "lng": 6.5946191
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 221,
+    "title": "Quiosk Stramproy",
+    "name": "Quiosk Stramproy",
+    "city": "",
+    "postcode": "6039 RA",
+    "address": "Amentstraat 2",
+    "coords": {
+      "lat": 51.1980717,
+      "lng": 5.7220067
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 222,
+    "title": "Quiosk Nuth",
+    "name": "Quiosk Nuth",
+    "city": "",
+    "postcode": "6361 EB",
+    "address": "Valkenburgerweg 81",
+    "coords": {
+      "lat": 50.9116541,
+      "lng": 5.8738729
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 223,
+    "title": "Quiosk Nieuwleusen",
+    "name": "Quiosk Nieuwleusen",
+    "city": "",
+    "postcode": "7711 GT",
+    "address": "Den Hulst 142",
+    "coords": {
+      "lat": 52.5926741,
+      "lng": 6.2701822
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 224,
+    "title": "Quiosk Alkmaar",
+    "name": "Quiosk Alkmaar",
+    "city": "",
+    "postcode": "1821 BN",
+    "address": "Edisonweg 2a",
+    "coords": {
+      "lat": 52.625835,
+      "lng": 4.7711859
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 225,
+    "title": "Quiosk Almelo",
+    "name": "Quiosk Almelo",
+    "city": "",
+    "postcode": "7602KM",
+    "address": "Bedrijvenpark Twente 454",
+    "coords": {
+      "lat": 52.3811713,
+      "lng": 6.6090908
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 226,
+    "title": "Quiosk Winterswijk",
+    "name": "Quiosk Winterswijk",
+    "city": "",
+    "postcode": "7102 EZ",
+    "address": "Tuunterstraat 42",
+    "coords": {
+      "lat": 51.9723459,
+      "lng": 6.707817599999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 227,
+    "title": "Quiosk Ochten",
+    "name": "Quiosk Ochten",
+    "city": "",
+    "postcode": "4051 CE",
+    "address": "Cuneraweg 13",
+    "coords": {
+      "lat": 51.9180246,
+      "lng": 5.5682453
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 228,
+    "title": "Quiosk Supertank Schagen",
+    "name": "Quiosk Supertank Schagen",
+    "city": "",
+    "postcode": "1742 PD",
+    "address": "De Fok 4-6",
+    "coords": {
+      "lat": 52.79074,
+      "lng": 4.7829862
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 229,
+    "title": "Quiosk Kampen",
+    "name": "Quiosk Kampen",
+    "city": "",
+    "postcode": "8263 AJ",
+    "address": "Ambachtsstraat 5",
+    "coords": {
+      "lat": 52.562095,
+      "lng": 5.890803
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 230,
+    "title": "Quiosk Gilze",
+    "name": "Quiosk Gilze",
+    "city": "",
+    "postcode": "5126 TB",
+    "address": "Nerhoven 40",
+    "coords": {
+      "lat": 51.5543746,
+      "lng": 4.9524396
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 231,
+    "title": "Quiosk Almelo Plesmanweg",
+    "name": "Quiosk Almelo Plesmanweg",
+    "city": "",
+    "postcode": "7602 PE",
+    "address": "Plesmanweg 16",
+    "coords": {
+      "lat": 52.371376,
+      "lng": 6.6410354
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 232,
+    "title": "Quiosk Nijverdal",
+    "name": "Quiosk Nijverdal",
+    "city": "",
+    "postcode": "7442 CZ",
+    "address": "Burgemeester H. Boersingel 15",
+    "coords": {
+      "lat": 52.355826,
+      "lng": 6.505234199999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 233,
+    "title": "Quiosk Leap24 Vlissingen",
+    "name": "Quiosk Leap24 Vlissingen",
+    "city": "",
+    "postcode": "4382 WW",
+    "address": "Energieweg 1",
+    "coords": {
+      "lat": 51.4552202,
+      "lng": 3.5925736
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 234,
+    "title": "Quiosk Breda",
+    "name": "Quiosk Breda",
+    "city": "",
+    "postcode": "4825 AT",
+    "address": "Regenbeemd 42",
+    "coords": {
+      "lat": 51.6166278,
+      "lng": 4.7675071
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 235,
+    "title": "Quiosk Ede",
+    "name": "Quiosk Ede",
+    "city": "",
+    "postcode": "6716 AE",
+    "address": "Galvanistraat 93",
+    "coords": {
+      "lat": 52.0322598,
+      "lng": 5.6226211
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 236,
+    "title": "Quiosk Culemborg",
+    "name": "Quiosk Culemborg",
+    "city": "",
+    "postcode": "4104 AC",
+    "address": "Randweg 12",
+    "coords": {
+      "lat": 51.9444195,
+      "lng": 5.221868199999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 237,
+    "title": "Quiosk Kloetinge",
+    "name": "Quiosk Kloetinge",
+    "city": "",
+    "postcode": "4481 BT",
+    "address": "Westeinde 1",
+    "coords": {
+      "lat": 51.4976188,
+      "lng": 3.9078515
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 238,
+    "title": "Quiosk Heerde",
+    "name": "Quiosk Heerde",
+    "city": "",
+    "postcode": "8181 PD",
+    "address": "Zwarteweg 2",
+    "coords": {
+      "lat": 52.3727296,
+      "lng": 6.0181393
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 239,
+    "title": "Quiosk Tilburg Geminiweg",
+    "name": "Quiosk Tilburg Geminiweg",
+    "city": "",
+    "postcode": "5015 BP",
+    "address": "Geminiweg 21",
+    "coords": {
+      "lat": 51.571088,
+      "lng": 5.1105058
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 240,
+    "title": "Quiosk Oisterwijk",
+    "name": "Quiosk Oisterwijk",
+    "city": "",
+    "postcode": "5061 KC",
+    "address": "Industrielaan 5",
+    "coords": {
+      "lat": 51.5835265,
+      "lng": 5.1932495
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 241,
+    "title": "Quiosk Bolsward",
+    "name": "Quiosk Bolsward",
+    "city": "",
+    "postcode": "8701 XA",
+    "address": "Snekerstraat 9",
+    "coords": {
+      "lat": 53.0615688,
+      "lng": 5.5293967
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 242,
+    "title": "Quiosk Hoeven",
+    "name": "Quiosk Hoeven",
+    "city": "",
+    "postcode": "4741 RP",
+    "address": "Sint Bernardusstraat 17",
+    "coords": {
+      "lat": 51.5857997,
+      "lng": 4.5749428
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 243,
+    "title": "Quiosk Zwolle",
+    "name": "Quiosk Zwolle",
+    "city": "",
+    "postcode": "8019 AG",
+    "address": "Nieuwe Veerallee 12",
+    "coords": {
+      "lat": 52.5081149,
+      "lng": 6.0820785
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 244,
+    "title": "Quiosk Hoensbroek",
+    "name": "Quiosk Hoensbroek",
+    "city": "",
+    "postcode": "6431 KS",
+    "address": "Nieuwstraat 191",
+    "coords": {
+      "lat": 50.91884169999999,
+      "lng": 5.930494599999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 245,
+    "title": "Quiosk Baarn",
+    "name": "Quiosk Baarn",
+    "city": "",
+    "postcode": "3744 MA",
+    "address": "Amsterdamsestraatweg 61",
+    "coords": {
+      "lat": 52.2217378,
+      "lng": 5.257545899999999
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 246,
+    "title": "Quiosk Maurik",
+    "name": "Quiosk Maurik",
+    "city": "",
+    "postcode": "4021 HG",
+    "address": "Doejenburg 200",
+    "coords": {
+      "lat": 51.9622981,
+      "lng": 5.4371507
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 247,
+    "title": "Quiosk Wezep",
+    "name": "Quiosk Wezep",
+    "city": "",
+    "postcode": "8091 PA",
+    "address": "Zuiderzeestraatweg 443",
+    "coords": {
+      "lat": 52.47046599999999,
+      "lng": 5.965259700000001
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 248,
+    "title": "Quiosk Terneuzen",
+    "name": "Quiosk Terneuzen",
+    "city": "",
+    "postcode": "4538 AB",
+    "address": "Stationsweg 33",
+    "coords": {
+      "lat": 51.3310119,
+      "lng": 3.8267969
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 249,
+    "title": "Quiosk Eibergen",
+    "name": "Quiosk Eibergen",
+    "city": "",
+    "postcode": "7151 HX",
+    "address": "Groenloseweg 7",
+    "coords": {
+      "lat": 52.09411910000001,
+      "lng": 6.6507979
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 250,
+    "title": "Quiosk Nunspeet",
+    "name": "Quiosk Nunspeet",
+    "city": "",
+    "postcode": "8072 TC",
+    "address": "Draaiing 1",
+    "coords": {
+      "lat": 52.39222179999999,
+      "lng": 5.8115798
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 251,
+    "title": "Quiosk Avia Vollenhoven Venray",
+    "name": "Quiosk Avia Vollenhoven Venray",
+    "city": "",
+    "postcode": "5801 AG",
+    "address": "Langstraat 110",
+    "coords": {
+      "lat": 51.5175638,
+      "lng": 5.9686963
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 252,
+    "title": "Quiosk Rotterdam Tandwielstraat",
+    "name": "Quiosk Rotterdam Tandwielstraat",
+    "city": "",
+    "postcode": "3083 AV",
+    "address": "Tandwielstraat 2",
+    "coords": {
+      "lat": 51.8862967,
+      "lng": 4.4970207
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  },
+  {
+    "id": 253,
+    "title": "Quiosk Esso Utrecht",
+    "name": "Quiosk Esso Utrecht",
+    "city": "",
+    "postcode": "3573 PR",
+    "address": "Biltse Rading 100",
+    "coords": {
+      "lat": 52.1025293,
+      "lng": 5.1471104
+    },
+    "isOpen": true,
+    "environment": "Indoor",
+    "contactless": true,
+    "products": [
+      "Drinks",
+      "Snacks"
+    ]
+  }
+]
