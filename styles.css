@@ -1423,6 +1423,7 @@ textarea {
 
 .quick-search-form input {
   min-height: 48px;
+  font-size: 16px;
 }
 
 .product-showcase .container > p {
@@ -2398,6 +2399,53 @@ textarea {
 
   .spotlight-panel {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .spotlight {
+    padding: 12px;
+  }
+
+  .spotlight-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .spotlight-tab {
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+    min-height: 40px;
+    padding: 6px 10px;
+    line-height: 1.2;
+  }
+
+  .spotlight-copy,
+  .highlight-product-card,
+  .quick-search-copy,
+  .quick-search-form {
+    min-width: 0;
+  }
+
+  .spotlight-copy {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .spotlight-usp {
+    gap: 6px;
+  }
+
+  .usp-item {
+    min-height: 32px;
+    padding: 8px 10px;
+    align-items: flex-start;
+    line-height: 1.25;
+  }
+
+  .usp-item span {
+    line-height: 1;
   }
 
   .product-card {
@@ -2406,10 +2454,16 @@ textarea {
 
   .quick-search-band {
     grid-template-columns: 1fr;
+    padding: 14px;
+    gap: 12px;
   }
 
   .quick-search-form {
     grid-template-columns: 1fr;
+  }
+
+  .quick-search-form .btn {
+    width: 100%;
   }
 }
 
@@ -2511,6 +2565,16 @@ textarea {
     flex-basis: calc((100% - var(--s-3)) / 2);
   }
 
+  .spotlight-chips {
+    gap: 6px;
+  }
+
+  .spot-chip {
+    min-height: 28px;
+    font-size: 0.72rem;
+    padding: 0 9px;
+  }
+
   .home-core {
     margin-top: -64px;
   }
@@ -2537,6 +2601,19 @@ textarea {
   .cta-row .btn-link {
     width: 100%;
     flex-basis: 100%;
+  }
+
+  .quick-search-kicker {
+    align-self: flex-start;
+  }
+
+  .quick-search-copy h2 {
+    margin-bottom: 6px;
+  }
+
+  .spotlight-copy h3 {
+    font-size: 1.08rem;
+    line-height: 1.28;
   }
 
   .btn {
