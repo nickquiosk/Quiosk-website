@@ -176,9 +176,14 @@ const fetchDynamicLocations = async () => {
   const configuredApiUrl =
     typeof window !== 'undefined' ? (window.QUIOSK_LOCATIONS_API_URL || '').trim() : '';
   const apiUrl = configuredApiUrl || '/api/locations';
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 2500);
 
   try {
-    const response = await fetch(apiUrl, { headers: { Accept: 'application/json' } });
+    const response = await fetch(apiUrl, {
+      headers: { Accept: 'application/json' },
+      signal: controller.signal
+    });
     if (!response.ok) return null;
     const payload = await response.json();
     if (!payload || !Array.isArray(payload.locations)) return null;
@@ -188,163 +193,50 @@ const fetchDynamicLocations = async () => {
     return mapped.length ? mapped : null;
   } catch (_) {
     return null;
+  } finally {
+    window.clearTimeout(timeout);
   }
 };
 
-const normalizeCsvCell = (value) => String(value || '').trim();
+const FINDER_LOCATIONS_CACHE_KEY = 'quioskFinderLocationsCacheV1';
+const FINDER_LOCATIONS_CACHE_TTL_MS = 1000 * 60 * 60 * 6;
 
-const parseCsvRows = (text) => {
-  const input = String(text || '').replace(/^\uFEFF/, '');
-  const firstLine = input.split(/\r?\n/, 1)[0] || '';
-  const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ';' : ',';
-
-  const rows = [];
-  let row = [];
-  let field = '';
-  let inQuotes = false;
-
-  for (let i = 0; i < input.length; i += 1) {
-    const ch = input[i];
-
-    if (ch === '"') {
-      if (inQuotes && input[i + 1] === '"') {
-        field += '"';
-        i += 1;
-      } else {
-        inQuotes = !inQuotes;
-      }
-      continue;
-    }
-
-    if (!inQuotes && ch === delimiter) {
-      row.push(field);
-      field = '';
-      continue;
-    }
-
-    if (!inQuotes && (ch === '\n' || ch === '\r')) {
-      if (ch === '\r' && input[i + 1] === '\n') i += 1;
-      row.push(field);
-      if (row.some((cell) => normalizeCsvCell(cell))) rows.push(row);
-      row = [];
-      field = '';
-      continue;
-    }
-
-    field += ch;
-  }
-
-  row.push(field);
-  if (row.some((cell) => normalizeCsvCell(cell))) rows.push(row);
-  return rows;
-};
-
-const normalizeCsvHeader = (value) =>
-  normalizeCsvCell(value)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '');
-
-const pickCsvField = (row, headerMap, aliases) => {
-  for (const alias of aliases) {
-    const index = headerMap.get(alias);
-    if (index !== undefined && row[index] !== undefined) return normalizeCsvCell(row[index]);
-  }
-  return '';
-};
-
-const fetchCsvLocationsFallback = async () => {
+const readJsonCache = (key) => {
   try {
-    const response = await fetch('/data/import/latest.csv', { headers: { Accept: 'text/csv,text/plain' } });
-    if (!response.ok) return null;
-    const csvText = await response.text();
-    const rows = parseCsvRows(csvText);
-    if (!rows.length) return null;
-
-    const headers = rows[0].map((header) => normalizeCsvHeader(header));
-    const headerMap = new Map();
-    headers.forEach((header, index) => {
-      if (!headerMap.has(header)) headerMap.set(header, index);
-    });
-
-    const parsed = rows
-      .slice(1)
-      .map((row, index) => {
-        const status = pickCsvField(row, headerMap, ['status']).toLowerCase();
-        if (status && !status.includes('gepubliceerd') && !status.includes('published')) return null;
-
-        const name = pickCsvField(row, headerMap, ['bedrijfsnaam', 'businessname', 'name']) || `Quiosk locatie ${index + 1}`;
-        const address = pickCsvField(row, headerMap, ['adresregel1', 'address1', 'address', 'street']);
-        const city =
-          pickCsvField(row, headerMap, ['buurt', 'city', 'locality', 'town']) ||
-          (() => {
-            const postcode = pickCsvField(row, headerMap, ['postcode', 'postalcode']);
-            const m = postcode.match(/^\d{4}\s*[A-Za-z]{2}\s+(.+)$/);
-            return m ? m[1].trim() : '';
-          })();
-        const postcode = pickCsvField(row, headerMap, ['postcode', 'postalcode', 'zipcode']);
-        const categories = pickCsvField(row, headerMap, ['meercategorieen', 'categories']);
-
-        return {
-          id: index + 1,
-          name,
-          city,
-          postcode,
-          address,
-          products: categories
-            ? categories.split(/[|,;/]/).map((part) => part.trim()).filter(Boolean)
-            : ['Drinks', 'Snacks'],
-          isOpen: true,
-          environment: 'Outdoor',
-          contactless: true,
-          coords: null
-        };
-      })
-      .filter(Boolean)
-      .filter((location) => location.address || location.postcode);
-
-    return parsed.length ? parsed : null;
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw);
   } catch (_) {
     return null;
   }
 };
 
-const geocodeLocationsInBrowser = async (locations, onBatchUpdate) => {
-  if (!window.google?.maps?.Geocoder || !Array.isArray(locations) || !locations.length) return locations;
-
-  const geocoder = new window.google.maps.Geocoder();
-  let updatedCount = 0;
-  const resolved = [...locations];
-
-  for (let i = 0; i < resolved.length; i += 1) {
-    const item = resolved[i];
-    if (item.coords) continue;
-
-    const query = [item.address, item.postcode, item.city, 'Nederland'].filter(Boolean).join(', ');
-    if (!query) continue;
-
-    await new Promise((resolve) => {
-      geocoder.geocode({ address: query }, (results, status) => {
-        if (status === 'OK' && results?.[0]?.geometry?.location) {
-          const point = results[0].geometry.location;
-          resolved[i] = {
-            ...item,
-            coords: { lat: point.lat(), lng: point.lng() }
-          };
-          updatedCount += 1;
-          if (updatedCount % 8 === 0 && typeof onBatchUpdate === 'function') {
-            onBatchUpdate(resolved);
-          }
-        }
-        // Spread requests to avoid OVER_QUERY_LIMIT spikes.
-        window.setTimeout(resolve, 80);
-      });
-    });
+const writeJsonCache = (key, value) => {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (_) {
+    // Ignore storage failures (private mode/quota).
   }
+};
 
-  if (typeof onBatchUpdate === 'function') onBatchUpdate(resolved);
-  return resolved;
+const readFinderLocationsCache = () => {
+  const cached = readJsonCache(FINDER_LOCATIONS_CACHE_KEY);
+  if (!cached || !Array.isArray(cached.locations)) return null;
+  return cached;
+};
+
+const writeFinderLocationsCache = (locations, source = 'unknown') => {
+  if (!Array.isArray(locations) || !locations.length) return;
+  writeJsonCache(FINDER_LOCATIONS_CACHE_KEY, {
+    source,
+    createdAt: Date.now(),
+    locations
+  });
+};
+
+const isFinderLocationsCacheFresh = (cached) => {
+  if (!cached?.createdAt) return false;
+  return Date.now() - Number(cached.createdAt) < FINDER_LOCATIONS_CACHE_TTL_MS;
 };
 
 const getDirectionsUrl = (location) =>
@@ -358,6 +250,8 @@ const initFinder = () => {
   if (!root) return;
 
   const searchInput = root.querySelector('[data-search]');
+  const urlQuery = new URLSearchParams(window.location.search).get('q') || '';
+  const initialQuery = urlQuery.trim();
   const filterInputs = root.querySelectorAll('[data-filter]');
   const list = root.querySelector('[data-results]');
   const map = root.querySelector('[data-map]');
@@ -367,6 +261,15 @@ const initFinder = () => {
   let mapInstance = null;
   let infoWindow = null;
   let markers = [];
+  let finderStatusMessage = '';
+
+  const locationMatchesQuery = (kiosk, queryText) => {
+    if (!queryText) return true;
+    return [kiosk.city, kiosk.postcode, kiosk.name, kiosk.address]
+      .join(' ')
+      .toLowerCase()
+      .includes(queryText);
+  };
 
   const hasGoogleMaps = () => Boolean(window.google && window.google.maps);
 
@@ -482,11 +385,12 @@ const initFinder = () => {
   };
 
   const render = () => {
-    const q = searchInput ? (searchInput.value || '').toLowerCase().trim() : '';
+    const inputValue = searchInput ? (searchInput.value || '').trim() : '';
+    const q = (inputValue || initialQuery).toLowerCase().trim();
     const activeFilters = [...filterInputs].filter((el) => el.checked).map((el) => el.value);
 
     const filtered = sourceData.filter((kiosk) => {
-      const textMatch = [kiosk.city, kiosk.postcode, kiosk.name, kiosk.address].join(' ').toLowerCase().includes(q);
+      const textMatch = locationMatchesQuery(kiosk, q);
       if (!textMatch) return false;
 
       const checks = {
@@ -519,34 +423,59 @@ const initFinder = () => {
       .join('');
 
     if (!filtered.length) {
-      list.innerHTML = '<p>Geen Quiosks gevonden met deze filters.</p>';
+      if (!sourceData.length && finderStatusMessage) {
+        list.innerHTML = `<article class="card"><p><strong>${finderStatusMessage}</strong><br>Importeer eerst locaties via de backend-import en refresh daarna deze pagina.</p></article>`;
+      } else {
+        list.innerHTML = '<p>Geen Quiosks gevonden met deze filters.</p>';
+      }
     }
     bindMapFocusButtons(filtered);
     renderMap(filtered);
   };
 
+  if (searchInput && initialQuery) {
+    searchInput.value = initialQuery;
+  }
+
   [searchInput, ...filterInputs].filter(Boolean).forEach((el) => el.addEventListener('input', render));
-  Promise.all([loadGoogleMaps(), fetchDynamicLocations(), fetchCsvLocationsFallback()]).then(
-    async ([loaded, dynamicLocations, csvFallback]) => {
-      if (dynamicLocations && dynamicLocations.length) {
-        sourceData = dynamicLocations;
-      } else if (csvFallback && csvFallback.length) {
-        sourceData = csvFallback;
-      }
+  const applyInitialQueryFilter = (locations) => {
+    if (!initialQuery) return locations;
+    const onlyRelevant = locations.filter((location) =>
+      locationMatchesQuery(location, initialQuery.toLowerCase())
+    );
+    return onlyRelevant.length ? onlyRelevant : locations;
+  };
 
-      if (loaded) createMap();
-      render();
+  const renderWithSource = (locations) => {
+    sourceData = applyInitialQueryFilter(locations);
+    render();
+  };
 
-      if (loaded && csvFallback && csvFallback.length && (!dynamicLocations || !dynamicLocations.length)) {
-        const geocoded = await geocodeLocationsInBrowser(sourceData, (partial) => {
-          sourceData = partial;
-          render();
-        });
-        sourceData = geocoded;
-        render();
-      }
+  (async () => {
+    const loaded = await loadGoogleMaps();
+    if (loaded) createMap();
+
+    const cached = readFinderLocationsCache();
+    const hasFreshCachedLocations = cached?.locations?.length && isFinderLocationsCacheFresh(cached);
+
+    if (hasFreshCachedLocations) {
+      renderWithSource(cached.locations);
     }
-  );
+
+    const dynamicLocations = await fetchDynamicLocations();
+    if (dynamicLocations && dynamicLocations.length) {
+      finderStatusMessage = '';
+      writeFinderLocationsCache(dynamicLocations, 'api');
+      renderWithSource(dynamicLocations);
+      return;
+    }
+
+    if (!hasFreshCachedLocations) {
+      finderStatusMessage = 'Nog geen locaties beschikbaar in de database';
+      sourceData = [];
+      render();
+    }
+  })();
 };
 
 const initHeroSlider = () => {
@@ -909,28 +838,27 @@ const initDynamicProductImages = async () => {
     const update = () => {
       const perView = getPerView();
       const maxIndex = Math.max(0, cards.length - perView);
-      if (index > maxIndex) index = maxIndex;
+      if (maxIndex === 0) {
+        index = 0;
+      } else {
+        if (index > maxIndex) index = 0;
+        if (index < 0) index = maxIndex;
+      }
 
       const firstCard = cards[0];
       if (!firstCard) return;
       const gap = parseFloat(getComputedStyle(grid).gap || '0');
       const step = firstCard.getBoundingClientRect().width + gap;
       grid.style.transform = `translateX(-${index * step}px)`;
-
-      prevBtn.disabled = index <= 0;
-      nextBtn.disabled = index >= maxIndex;
     };
 
     prevBtn.addEventListener('click', () => {
-      const perView = getPerView();
-      index = Math.max(0, index - perView);
+      index -= 1;
       update();
     });
 
     nextBtn.addEventListener('click', () => {
-      const perView = getPerView();
-      const maxIndex = Math.max(0, cards.length - perView);
-      index = Math.min(maxIndex, index + perView);
+      index += 1;
       update();
     });
 
@@ -942,6 +870,38 @@ const initDynamicProductImages = async () => {
     prevBtn.disabled = true;
     nextBtn.disabled = true;
   }
+};
+
+const initSpotlight = () => {
+  const root = document.querySelector('[data-spotlight]');
+  if (!root) return;
+
+  const tabs = Array.from(root.querySelectorAll('[data-spotlight-tab]'));
+  const dots = Array.from(root.querySelectorAll('[data-spotlight-dot]'));
+  const panels = Array.from(root.querySelectorAll('[data-spotlight-panel]'));
+  if (!tabs.length || !panels.length) return;
+
+  const setActive = (targetId) => {
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.target === targetId;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+    });
+    dots.forEach((dot) => {
+      dot.classList.toggle('is-active', dot.dataset.target === targetId);
+    });
+    panels.forEach((panel) => {
+      panel.classList.toggle('is-active', panel.id === targetId);
+    });
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => setActive(tab.dataset.target));
+  });
+
+  dots.forEach((dot) => {
+    dot.addEventListener('click', () => setActive(dot.dataset.target));
+  });
 };
 
 
@@ -959,3 +919,4 @@ initFaqAccordion();
 initNewsModal();
 initProductModal();
 initDynamicProductImages();
+initSpotlight();

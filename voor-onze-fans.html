@@ -50,20 +50,102 @@
       <div class="container">
         <div class="grid-3">
           <article class="card reveal">
-            <img class="section-icon" src="icons/icon-fans.svg" alt="" />
-            <h2>24/7 gemak</h2>
-            <p>Veel locaties zijn dag en nacht beschikbaar, zodat je altijd snel iets kunt halen.</p>
+            <img class="section-icon" src="icons/icon-24-7.svg" alt="" />
+            <h2>24/7 beschikbaar</h2>
+            <p>Altijd open. Of het nu vroeg, laat of tussendoor is. Quiosk is er voor jou.</p>
           </article>
           <article class="card reveal delay">
             <img class="section-icon" src="icons/icon-scan.svg" alt="" />
-            <h2>Contactloos betalen</h2>
-            <p>Reken veilig af met pin, telefoon of wearable zonder gedoe.</p>
+            <h2>Snel en contactloos</h2>
+            <p>Contactloos afrekenen met pin of telefoon. Binnen enkele seconden klaar.</p>
           </article>
           <article class="card reveal">
-            <img class="section-icon" src="icons/icon-finder.svg" alt="" />
-            <h2>Assortiment dat past</h2>
-            <p>Per locatie afgestemd op bezoekers, moment van de dag en lokale voorkeuren.</p>
+            <img class="section-icon" src="icons/icon-can.svg" alt="" />
+            <h2>Altijd iets lekkers</h2>
+            <p>Bekende A-merken en favorieten. Afgestemd op locatie en moment van de dag.</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section quick-search">
+      <div class="container">
+        <div class="quick-search-band">
+          <div class="quick-search-copy">
+            <span class="quick-search-kicker">Quiosk zoeken</span>
+            <h2>Zoek een Quiosk bij jou in de buurt</h2>
+            <p>Vul plaatsnaam of postcode in en ga direct naar de locatiezoeker.</p>
+          </div>
+          <form class="quick-search-form" action="kiosk-finder.html" method="get">
+            <input type="text" name="q" placeholder="Bijv. Utrecht of 3511" aria-label="Zoek op plaats of postcode" />
+            <button class="btn btn-primary" type="submit">Zoek locatie</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section product-showcase">
+      <div class="container">
+        <h2>Uitgelichte producten</h2>
+        <div class="spotlight" data-spotlight>
+          <div class="spotlight-tabs" role="tablist" aria-label="Uitgelichte producten">
+            <button class="spotlight-tab is-active" type="button" role="tab" aria-selected="true" data-spotlight-tab data-target="spotlight-fuzetea">Fuzetea Peach</button>
+            <button class="spotlight-tab" type="button" role="tab" aria-selected="false" data-spotlight-tab data-target="spotlight-redbull">Red Bull Regular</button>
+          </div>
+
+          <article id="spotlight-fuzetea" class="spotlight-panel is-active" role="tabpanel" data-spotlight-panel>
+            <div class="spotlight-copy">
+              <p class="spotlight-quote">"Even opladen, even bijkomen."</p>
+              <h3>Nieuw bij Quiosk: Fuzetea Black Tea Peach 🍑</h3>
+              <div class="spotlight-chips">
+                <span class="spot-chip chip-new">Nieuw in assortiment</span>
+                <span class="spot-chip">Laag in calorieën</span>
+                <span class="spot-chip">Black Tea</span>
+              </div>
+              <div class="spotlight-usp">
+                <div class="usp-item"><span>🌿</span>Gebrouwen thee</div>
+                <div class="usp-item"><span>🍑</span>Natuurlijke perziksmaak</div>
+                <div class="usp-item"><span>✨</span>Met suiker en zoetstoffen</div>
+              </div>
+              <p>Na jaren nemen we afscheid van Fuze Tea Green en maken we plaats voor een frisse nieuwe favoriet.</p>
+            </div>
+            <div class="highlight-product-card">
+              <div class="highlight-media">
+                <span class="highlight-label">Nieuw in assortiment</span>
+                <img src="images/voor-onze-fans/uitgelicht-product/showimage-2.jpg" alt="Fuzetea Black Tea Peach" loading="lazy" decoding="async" />
+              </div>
+              <h4>Fuzetea Black Tea Peach</h4>
+            </div>
+          </article>
+
+          <article id="spotlight-redbull" class="spotlight-panel" role="tabpanel" data-spotlight-panel>
+            <div class="spotlight-copy">
+              <p class="spotlight-quote">"Meer energie, meer voordeel."</p>
+              <h3>Red Bull Regular in actie</h3>
+              <div class="spotlight-chips">
+                <span class="spot-chip chip-sale">2 halen = 10% korting</span>
+                <span class="spot-chip">Actie</span>
+              </div>
+              <div class="spotlight-usp">
+                <div class="usp-item"><span>⚡</span>Bekende energy boost</div>
+                <div class="usp-item"><span>🥤</span>Populair voor onderweg</div>
+                <div class="usp-item"><span>💳</span>Snel en contactloos</div>
+              </div>
+              <p>Tijdelijke actie op geselecteerde locaties. Koop 2 blikjes Red Bull Regular en ontvang 10% korting.</p>
+            </div>
+            <div class="highlight-product-card">
+              <div class="highlight-media">
+                <span class="highlight-label">Actie</span>
+                <img src="images/producten/Red%20Bull%20Regular.jpeg" alt="Red Bull Regular" loading="lazy" decoding="async" />
+              </div>
+              <h4>Red Bull Regular</h4>
+            </div>
+          </article>
+
+          <div class="spotlight-dots" aria-label="Spotlight navigatie">
+            <button class="spotlight-dot is-active" type="button" data-spotlight-dot data-target="spotlight-fuzetea" aria-label="Toon Fuzetea"></button>
+            <button class="spotlight-dot" type="button" data-spotlight-dot data-target="spotlight-redbull" aria-label="Toon Red Bull Regular"></button>
+          </div>
         </div>
       </div>
     </section>
@@ -71,7 +153,6 @@
     <section class="section product-showcase">
       <div class="container">
         <h2>Populaire producten</h2>
-        <p>Bekijk alle productfoto's. De volgorde wordt bij elke refresh opnieuw gemixt.</p>
         <div class="product-slider" data-product-slider>
           <button class="product-arrow product-arrow-prev" type="button" aria-label="Vorige producten" data-product-prev>&#8249;</button>
           <div class="product-viewport">
