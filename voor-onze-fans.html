@@ -120,20 +120,32 @@
     <section class="section home-core">
       <div class="container">
         <div class="grid-3">
-          <article class="card reveal">
+          <article class="card reveal mobile-accordion-card">
             <img class="section-icon" src="icons/icon-24-7.svg" alt="" />
-            <h2>24/7 beschikbaar</h2>
-            <p>Altijd open. Of het nu vroeg, laat of tussendoor is. Quiosk is er voor jou.</p>
+            <h2>
+              <button class="mobile-accordion-toggle" type="button" aria-expanded="true">
+                <span>24/7 beschikbaar</span>
+              </button>
+            </h2>
+            <p class="mobile-accordion-content">Altijd open. Of het nu vroeg, laat of tussendoor is. Quiosk is er voor jou.</p>
           </article>
-          <article class="card reveal delay">
+          <article class="card reveal delay mobile-accordion-card">
             <img class="section-icon" src="icons/icon-scan.svg" alt="" />
-            <h2>Snel en contactloos</h2>
-            <p>Contactloos afrekenen met pin of telefoon. Binnen enkele seconden klaar.</p>
+            <h2>
+              <button class="mobile-accordion-toggle" type="button" aria-expanded="true">
+                <span>Snel en contactloos</span>
+              </button>
+            </h2>
+            <p class="mobile-accordion-content">Contactloos afrekenen met pin of telefoon. Binnen enkele seconden klaar.</p>
           </article>
-          <article class="card reveal">
+          <article class="card reveal mobile-accordion-card">
             <img class="section-icon" src="icons/icon-can.svg" alt="" />
-            <h2>Altijd iets lekkers</h2>
-            <p>Bekende A-merken en favorieten. Afgestemd op locatie en moment van de dag.</p>
+            <h2>
+              <button class="mobile-accordion-toggle" type="button" aria-expanded="true">
+                <span>Altijd iets lekkers</span>
+              </button>
+            </h2>
+            <p class="mobile-accordion-content">Bekende A-merken en favorieten. Afgestemd op locatie en moment van de dag.</p>
           </article>
         </div>
       </div>
@@ -233,15 +245,15 @@
           </article>
 
           <div class="spotlight-dots" aria-label="Spotlight navigatie">
-            <button class="spotlight-dot is-active" type="button" data-spotlight-dot data-target="spotlight-fuzetea" aria-label="Toon Fuzetea"></button>
-            <button class="spotlight-dot" type="button" data-spotlight-dot data-target="spotlight-redbull" aria-label="Toon Red Bull Regular"></button>
+            <button class="spotlight-dot is-active" type="button" data-spotlight-dot data-target="spotlight-fuzetea" data-step="1" aria-label="Toon Fuzetea" aria-current="true"></button>
+            <button class="spotlight-dot" type="button" data-spotlight-dot data-target="spotlight-redbull" data-step="2" aria-label="Toon Red Bull Regular" aria-current="false"></button>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section product-showcase">
-      <div class="container">
+    <section class="section product-showcase popular-products-wide">
+      <div class="popular-products-wrap">
         <h2>Populaire producten</h2>
         <div class="product-slider" data-product-slider>
           <button class="product-arrow product-arrow-prev" type="button" aria-label="Vorige producten" data-product-prev>&#8249;</button>

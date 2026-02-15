@@ -1147,6 +1147,10 @@ const initInstaSlider = () => {
     let index = 0;
     let maxIndex = 0;
     let lastPerPage = null;
+    let revealTimers = [];
+    let revealToken = 0;
+    let hasEnteredViewport = false;
+    let isInViewport = false;
 
     const getCardsPerPage = () => {
       if (window.innerWidth <= 680) return 4;
@@ -1170,11 +1174,64 @@ const initInstaSlider = () => {
       if (index > maxIndex) index = maxIndex;
     };
 
+    const clearRevealTimers = () => {
+      revealTimers.forEach((timer) => window.clearTimeout(timer));
+      revealTimers = [];
+    };
+
+    const showCurrentPageInstant = () => {
+      const pages = Array.from(track.querySelectorAll('.insta-page'));
+      const currentPage = pages[index];
+      if (!currentPage) return;
+      clearRevealTimers();
+      const cards = Array.from(currentPage.querySelectorAll('.insta-card'));
+      cards.forEach((card) => {
+        card.classList.remove('is-pending');
+        card.classList.add('is-visible');
+      });
+    };
+
+    const revealCurrentPage = () => {
+      const pages = Array.from(track.querySelectorAll('.insta-page'));
+      const currentPage = pages[index];
+      if (!currentPage) return;
+
+      revealToken += 1;
+      const localToken = revealToken;
+      clearRevealTimers();
+
+      const cards = Array.from(currentPage.querySelectorAll('.insta-card'));
+      cards.forEach((card) => {
+        card.classList.remove('is-visible');
+        card.classList.add('is-pending');
+      });
+
+      const order = [...cards];
+      for (let i = order.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+
+      order.forEach((card, revealIndex) => {
+        const timer = window.setTimeout(() => {
+          if (localToken !== revealToken) return;
+          card.classList.remove('is-pending');
+          card.classList.add('is-visible');
+        }, 85 * revealIndex + 30);
+        revealTimers.push(timer);
+      });
+    };
+
     const update = () => {
       buildPages();
       track.style.transform = `translateX(-${index * 100}%)`;
       prev.disabled = index <= 0;
       next.disabled = index >= maxIndex;
+      if (!hasEnteredViewport || !isInViewport) {
+        showCurrentPageInstant();
+      } else {
+        revealCurrentPage();
+      }
     };
 
     prev.addEventListener('click', () => {
@@ -1200,6 +1257,25 @@ const initInstaSlider = () => {
       },
       { passive: true }
     );
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry) return;
+          isInViewport = entry.isIntersecting;
+          if (entry.isIntersecting && !hasEnteredViewport) {
+            hasEnteredViewport = true;
+            revealCurrentPage();
+          }
+        },
+        { threshold: 0.2 }
+      );
+      observer.observe(root);
+    } else {
+      hasEnteredViewport = true;
+      isInViewport = true;
+    }
 
     update();
   });
@@ -1702,8 +1778,14 @@ const initDynamicProductImages = async () => {
       })
       .join('');
 
+    const cardMarkup = Array.from(grid.querySelectorAll('.product-card')).map((card) => card.outerHTML);
+    const totalOriginal = cardMarkup.length;
     let index = 0;
-    const cards = Array.from(grid.querySelectorAll('.product-card'));
+    let perView = 4;
+    let loopEnabled = false;
+    let autoTimer = null;
+    let autoKickTimer = null;
+    let resizeTimer = null;
 
     const getPerView = () => {
       const width = window.innerWidth;
@@ -1713,35 +1795,145 @@ const initDynamicProductImages = async () => {
       return 4;
     };
 
-    const update = () => {
-      const perView = getPerView();
-      const maxIndex = Math.max(0, cards.length - perView);
-      if (maxIndex === 0) {
-        index = 0;
+    const getMaxIndex = () => Math.max(0, totalOriginal - perView);
+
+    const getStep = () => {
+      const firstCard = grid.querySelector('.product-card');
+      if (!firstCard) return 0;
+      const gap = parseFloat(getComputedStyle(grid).gap || '0');
+      return firstCard.getBoundingClientRect().width + gap;
+    };
+
+    const setTransform = (animate = true) => {
+      if (!animate) grid.style.transition = 'none';
+      const step = getStep();
+      if (!step) {
+        if (!animate) grid.style.transition = '';
+        return;
+      }
+      grid.style.transform = `translateX(-${index * step}px)`;
+      if (!animate) {
+        // Force sync reflow so transition can be restored for subsequent moves.
+        void grid.offsetWidth;
+        grid.style.transition = '';
+      }
+    };
+
+    const updateButtons = () => {
+      const hasMoves = loopEnabled || getMaxIndex() > 0;
+      prevBtn.disabled = !hasMoves;
+      nextBtn.disabled = !hasMoves;
+    };
+
+    const rebuildTrack = () => {
+      perView = getPerView();
+      loopEnabled = totalOriginal > perView;
+
+      if (loopEnabled) {
+        const head = cardMarkup.slice(0, perView);
+        const tail = cardMarkup.slice(-perView);
+        grid.innerHTML = [...tail, ...cardMarkup, ...head].join('');
+        index = perView;
       } else {
-        if (index > maxIndex) index = 0;
-        if (index < 0) index = maxIndex;
+        grid.innerHTML = cardMarkup.join('');
+        index = 0;
       }
 
-      const firstCard = cards[0];
-      if (!firstCard) return;
-      const gap = parseFloat(getComputedStyle(grid).gap || '0');
-      const step = firstCard.getBoundingClientRect().width + gap;
-      grid.style.transform = `translateX(-${index * step}px)`;
+      setTransform(false);
+      updateButtons();
+    };
+
+    const normalizeLoopPosition = () => {
+      if (!loopEnabled) return;
+      const upperBound = perView + totalOriginal;
+      if (index >= upperBound) {
+        index = perView;
+        setTransform(false);
+      } else if (index < perView) {
+        index = perView + totalOriginal - 1;
+        setTransform(false);
+      }
+    };
+
+    const move = (delta) => {
+      if (!totalOriginal) return;
+
+      if (loopEnabled) {
+        index += delta;
+      } else {
+        const maxIndex = getMaxIndex();
+        index = Math.max(0, Math.min(maxIndex, index + delta));
+      }
+
+      setTransform(true);
+      updateButtons();
+    };
+
+    const canAutoMove = () => {
+      if (!totalOriginal) return false;
+      if (loopEnabled) return true;
+      return getMaxIndex() > 0;
+    };
+
+    const stopAuto = () => {
+      if (autoKickTimer) {
+        window.clearTimeout(autoKickTimer);
+        autoKickTimer = null;
+      }
+      if (!autoTimer) return;
+      window.clearInterval(autoTimer);
+      autoTimer = null;
+    };
+
+    const startAuto = () => {
+      stopAuto();
+      if (!canAutoMove()) return;
+      autoKickTimer = window.setTimeout(() => {
+        move(1);
+      }, 120);
+      autoTimer = window.setInterval(() => {
+        move(1);
+      }, 2800);
     };
 
     prevBtn.addEventListener('click', () => {
-      index -= 1;
-      update();
+      move(-1);
+      startAuto();
     });
 
     nextBtn.addEventListener('click', () => {
-      index += 1;
-      update();
+      move(1);
+      startAuto();
     });
 
-    window.addEventListener('resize', update, { passive: true });
-    update();
+    grid.addEventListener('transitionend', (event) => {
+      if (event.propertyName !== 'transform') return;
+      normalizeLoopPosition();
+    });
+
+    slider.addEventListener('mouseenter', stopAuto);
+    slider.addEventListener('mouseleave', startAuto);
+    slider.addEventListener('focusin', stopAuto);
+    slider.addEventListener('focusout', startAuto);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAuto();
+      else startAuto();
+    });
+
+    window.addEventListener(
+      'resize',
+      () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+          rebuildTrack();
+          startAuto();
+        }, 120);
+      },
+      { passive: true }
+    );
+
+    rebuildTrack();
+    startAuto();
   } catch (_) {
     grid.innerHTML =
       '<article class="card"><p>Productfoto\'s konden niet geladen worden. Herstart de server en doe een harde refresh.</p></article>';
@@ -1767,6 +1959,7 @@ const initSpotlight = () => {
     });
     dots.forEach((dot) => {
       dot.classList.toggle('is-active', dot.dataset.target === targetId);
+      dot.setAttribute('aria-current', dot.dataset.target === targetId ? 'true' : 'false');
     });
     panels.forEach((panel) => {
       panel.classList.toggle('is-active', panel.id === targetId);
@@ -1809,6 +2002,56 @@ const initProcessLineAnimation = () => {
   flows.forEach((flow) => observer.observe(flow));
 };
 
+const initFansMobileAccordion = () => {
+  const cards = Array.from(document.querySelectorAll('.mobile-accordion-card'));
+  if (!cards.length) return;
+
+  const mobileQuery = window.matchMedia('(max-width: 680px)');
+  const root = cards[0].closest('.grid-3');
+  if (!root) return;
+
+  const applyMode = () => {
+    const isMobile = mobileQuery.matches;
+
+    if (isMobile && !root.dataset.mobileAccordionInit) {
+      cards.forEach((card, idx) => {
+        card.classList.toggle('is-open', idx === 0);
+        const button = card.querySelector('.mobile-accordion-toggle');
+        if (button) button.setAttribute('aria-expanded', String(idx === 0));
+      });
+      root.dataset.mobileAccordionInit = 'true';
+    }
+
+    if (!isMobile) {
+      cards.forEach((card) => {
+        card.classList.add('is-open');
+        const button = card.querySelector('.mobile-accordion-toggle');
+        if (button) button.setAttribute('aria-expanded', 'true');
+      });
+      root.dataset.mobileAccordionInit = '';
+    }
+  };
+
+  cards.forEach((card) => {
+    const button = card.querySelector('.mobile-accordion-toggle');
+    if (!button) return;
+
+    button.addEventListener('click', () => {
+      if (!mobileQuery.matches) return;
+      const nextState = !card.classList.contains('is-open');
+      card.classList.toggle('is-open', nextState);
+      button.setAttribute('aria-expanded', String(nextState));
+    });
+  });
+
+  applyMode();
+  if (typeof mobileQuery.addEventListener === 'function') {
+    mobileQuery.addEventListener('change', applyMode);
+  } else if (typeof mobileQuery.addListener === 'function') {
+    mobileQuery.addListener(applyMode);
+  }
+};
+
 
 initHeaderCta();
 setActiveNav();
@@ -1830,3 +2073,4 @@ initProductModal();
 initDynamicProductImages();
 initSpotlight();
 initProcessLineAnimation();
+initFansMobileAccordion();

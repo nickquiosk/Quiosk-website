@@ -1319,6 +1319,18 @@ main > .section + .section::before {
   text-align: left;
 }
 
+.mobile-accordion-toggle {
+  border: 0;
+  background: transparent;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
 .card:hover h3 {
   color: var(--brand);
 }
@@ -1959,6 +1971,17 @@ main > .section.quick-search {
   margin-bottom: 24px;
 }
 
+.popular-products-wrap {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(12px, 2vw, 28px);
+}
+
+.popular-products-wrap > h2 {
+  text-align: center;
+}
+
 .spotlight {
   border: 2px solid rgba(52, 171, 178, 0.45);
   border-radius: var(--radius);
@@ -2143,21 +2166,44 @@ main > .section.quick-search {
 .spotlight-dots {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-top: 12px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
 }
 
 .spotlight-dot {
-  width: 9px;
-  height: 9px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
   border-radius: 999px;
-  border: 0;
-  background: rgba(52, 171, 178, 0.35);
+  border: 1px solid rgba(52, 171, 178, 0.55);
+  background: #fff;
+  color: rgba(13, 38, 43, 0.9);
+  font-size: 0.9rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.spotlight-dot::before {
+  content: attr(data-step);
+}
+
+.spotlight-dot:hover {
+  transform: translateY(-1px);
+  border-color: rgba(229, 0, 125, 0.55);
+  box-shadow: 0 6px 14px rgba(229, 0, 125, 0.18);
 }
 
 .spotlight-dot.is-active {
   background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(229, 0, 125, 0.35);
 }
 
 .product-slider {
@@ -2174,7 +2220,7 @@ main > .section.quick-search {
 .product-track {
   display: flex;
   gap: var(--s-3);
-  transition: transform 0.28s ease;
+  transition: transform 0.8s ease;
   will-change: transform;
 }
 
@@ -2470,6 +2516,19 @@ main > .section.quick-search {
   border: 1px solid var(--line);
   background: #fff;
   aspect-ratio: 1 / 1;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.32s ease, transform 0.32s ease, box-shadow 0.22s ease;
+}
+
+.insta-card.is-pending {
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+}
+
+.insta-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .insta-card img {
@@ -3692,6 +3751,80 @@ main > .section.quick-search {
 
   .contact-panel {
     padding: 18px;
+  }
+
+  .mobile-accordion-card {
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 2px;
+    align-items: center;
+  }
+
+  .mobile-accordion-card .section-icon {
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .mobile-accordion-card h2 {
+    margin: 0;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .mobile-accordion-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .mobile-accordion-toggle::after {
+    content: "+";
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(229, 0, 125, 0.6);
+    border-radius: 999px;
+    color: rgb(229, 0, 125);
+    background: rgba(229, 0, 125, 0.08);
+    font-weight: 800;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: background-color 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+  }
+
+  .mobile-accordion-card.is-open .mobile-accordion-toggle::after {
+    content: "−";
+    transform: scale(1.03);
+    background: rgba(229, 0, 125, 0.16);
+    border-color: rgba(229, 0, 125, 0.78);
+  }
+
+  .mobile-accordion-content {
+    grid-column: 2;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin: 0;
+    transition: max-height 0.28s ease, opacity 0.22s ease, margin-top 0.22s ease;
+  }
+
+  .mobile-accordion-card.is-open .mobile-accordion-content {
+    max-height: 180px;
+    opacity: 1;
+    margin-top: 10px;
   }
 
   .contact-map-wrap iframe {
