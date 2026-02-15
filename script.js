@@ -135,6 +135,43 @@ const initCalculator = () => {
   });
 };
 
+const initRefundForm = () => {
+  const form = document.querySelector('[data-refund-form]');
+  if (!form) return;
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+
+    const name = String(formData.get('name') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const phone = String(formData.get('phone') || '').trim();
+    const location = String(formData.get('location') || '').trim();
+    const datetime = String(formData.get('datetime') || '').trim();
+    const amount = String(formData.get('amount') || '').trim();
+    const transactionId = String(formData.get('transaction_id') || '').trim();
+    const issue = String(formData.get('issue') || '').trim();
+
+    const subject = `Terugbetalingsaanvraag - ${location || 'Quiosk locatie'}`;
+    const body = [
+      'Nieuwe terugbetalingsaanvraag via website',
+      '',
+      `Naam: ${name}`,
+      `E-mail: ${email}`,
+      `Telefoon: ${phone || '-'}`,
+      `Locatie: ${location}`,
+      `Datum/tijd aankoop: ${datetime || '-'}`,
+      `Bedrag: ${amount || '-'}`,
+      `Transactie-ID: ${transactionId}`,
+      '',
+      'Omschrijving probleem:',
+      issue
+    ].join('\n');
+
+    window.location.href = `mailto:info@quiosk.nl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+};
+
 const kioskData = [
   {
     id: 1,
@@ -1493,6 +1530,7 @@ initMobileNav();
 initHeaderScroll();
 initBackToTop();
 initCalculator();
+initRefundForm();
 initFinder();
 initHeroSlider();
 initInstaSlider();
