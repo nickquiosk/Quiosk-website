@@ -26,6 +26,7 @@ const dataFilePath = DATA_FILE ? path.resolve(__dirname, DATA_FILE) : path.join(
 const importDropDirPath = IMPORT_DROP_DIR
   ? path.resolve(__dirname, IMPORT_DROP_DIR)
   : path.join(__dirname, 'data', 'import');
+const productImagesDirPath = path.join(__dirname, 'images', 'producten');
 const allowedOrigins = (ALLOWED_ORIGINS || '')
   .split(',')
   .map((origin) => origin.trim())
@@ -564,6 +565,22 @@ app.post('/api/import-from-drop', async (req, res) => {
       error: 'Failed to import from drop folder',
       detail: error instanceof Error ? error.message : 'Unknown error'
     });
+  }
+});
+
+app.get('/api/product-images', async (_req, res) => {
+  try {
+    const entries = await fs.readdir(productImagesDirPath, { withFileTypes: true });
+    const images = entries
+      .filter((entry) => entry.isFile())
+      .map((entry) => entry.name)
+      .filter((name) => /\.(png|jpe?g|webp|avif)$/i.test(name))
+      .sort((a, b) => a.localeCompare(b, 'nl'))
+      .map((name) => `/images/producten/${encodeURIComponent(name)}`);
+
+    res.json({ count: images.length, images });
+  } catch {
+    res.json({ count: 0, images: [] });
   }
 });
 

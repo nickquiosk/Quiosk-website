@@ -780,6 +780,170 @@ const initNewsModal = () => {
   });
 };
 
+const initProductModal = () => {
+  const modal = document.querySelector('[data-product-modal]');
+  const titleEl = document.querySelector('[data-product-title]');
+  const textEl = document.querySelector('[data-product-text]');
+  const closeBtn = document.querySelector('[data-product-close]');
+  if (!modal || !titleEl || !textEl || !closeBtn) return;
+
+  const close = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  const open = (card) => {
+    titleEl.textContent = card.dataset.productName || 'Productinformatie';
+    textEl.textContent = card.dataset.productDetail || '';
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-product-open]');
+    if (!button) return;
+    event.stopPropagation();
+    const card = button.closest('.product-card');
+    if (!card) return;
+    open(card);
+  });
+
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) close();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) close();
+  });
+};
+
+const initDynamicProductImages = async () => {
+  const slider = document.querySelector('[data-product-slider]');
+  const grid = document.querySelector('[data-product-grid]');
+  const prevBtn = document.querySelector('[data-product-prev]');
+  const nextBtn = document.querySelector('[data-product-next]');
+  if (!slider || !grid || !prevBtn || !nextBtn) return;
+
+  const fetchImagesFromProductApi = async () => {
+    const response = await fetch('/api/product-images', { headers: { Accept: 'application/json' } });
+    if (!response.ok) return null;
+    const payload = await response.json();
+    if (!payload || !Array.isArray(payload.images) || !payload.images.length) return null;
+    return payload.images;
+  };
+
+  const fetchImagesFromGitHub = async () => {
+    const isGitHubPages = /\.github\.io$/i.test(window.location.hostname);
+    if (!isGitHubPages) return null;
+
+    const apiUrl = 'https://api.github.com/repos/nickquiosk/Quiosk-website/contents/images/producten';
+    const response = await fetch(apiUrl, { headers: { Accept: 'application/vnd.github+json' } });
+    if (!response.ok) return null;
+    const payload = await response.json();
+    if (!Array.isArray(payload)) return null;
+
+    const images = payload
+      .filter((item) => item && item.type === 'file')
+      .map((item) => item.download_url || '')
+      .filter((url) => /\.(png|jpe?g|webp|avif)$/i.test(url));
+
+    return images.length ? images : null;
+  };
+
+  const getProductNameFromSource = (source, fallbackIndex) => {
+    try {
+      const url = new URL(source, window.location.origin);
+      const fileName = decodeURIComponent(url.pathname.split('/').pop() || '');
+      const withoutExt = fileName.replace(/\.[a-z0-9]+$/i, '');
+      const clean = withoutExt.replace(/[_-]+/g, ' ').trim();
+      return clean || `Product ${fallbackIndex + 1}`;
+    } catch {
+      return `Product ${fallbackIndex + 1}`;
+    }
+  };
+
+  try {
+    const imagesFromApi = await fetchImagesFromProductApi().catch(() => null);
+    const imagesFromGitHub = imagesFromApi ? null : await fetchImagesFromGitHub().catch(() => null);
+    const sourceImages = imagesFromApi || imagesFromGitHub;
+
+    if (!sourceImages || !sourceImages.length) {
+      grid.innerHTML = '<article class="card"><p>Nog geen productfoto\'s gevonden in <code>images/producten</code>.</p></article>';
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      return;
+    }
+
+    const images = [...sourceImages];
+    for (let i = images.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [images[i], images[j]] = [images[j], images[i]];
+    }
+
+    grid.innerHTML = images
+      .map((source, index) => {
+        const name = getProductNameFromSource(source, index);
+        return `
+          <article class="card product-card" data-product-name="${name}" data-product-detail="${name} is een populair product uit het actuele Quiosk-assortiment. Beschikbaarheid kan per locatie verschillen.">
+            <div class="product-media"><img src="${source}" alt="${name}" loading="lazy" decoding="async" /></div>
+            <h3>${name}</h3>
+            <button class="product-info-btn" type="button" aria-label="Meer info over ${name}" data-product-open>i</button>
+          </article>
+        `;
+      })
+      .join('');
+
+    let index = 0;
+    const cards = Array.from(grid.querySelectorAll('.product-card'));
+
+    const getPerView = () => {
+      const width = window.innerWidth;
+      if (width <= 480) return 1;
+      if (width <= 680) return 2;
+      if (width <= 920) return 3;
+      return 4;
+    };
+
+    const update = () => {
+      const perView = getPerView();
+      const maxIndex = Math.max(0, cards.length - perView);
+      if (index > maxIndex) index = maxIndex;
+
+      const firstCard = cards[0];
+      if (!firstCard) return;
+      const gap = parseFloat(getComputedStyle(grid).gap || '0');
+      const step = firstCard.getBoundingClientRect().width + gap;
+      grid.style.transform = `translateX(-${index * step}px)`;
+
+      prevBtn.disabled = index <= 0;
+      nextBtn.disabled = index >= maxIndex;
+    };
+
+    prevBtn.addEventListener('click', () => {
+      const perView = getPerView();
+      index = Math.max(0, index - perView);
+      update();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const perView = getPerView();
+      const maxIndex = Math.max(0, cards.length - perView);
+      index = Math.min(maxIndex, index + perView);
+      update();
+    });
+
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  } catch (_) {
+    grid.innerHTML =
+      '<article class="card"><p>Productfoto\'s konden niet geladen worden. Herstart de server en doe een harde refresh.</p></article>';
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+  }
+};
+
 
 initHeaderCta();
 setActiveNav();
@@ -793,3 +957,5 @@ initPartnersHeroBalance();
 initImageLightbox();
 initFaqAccordion();
 initNewsModal();
+initProductModal();
+initDynamicProductImages();
