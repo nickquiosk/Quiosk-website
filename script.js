@@ -84,6 +84,31 @@ const initHeaderScroll = () => {
   );
 };
 
+const initBackToTop = () => {
+  if (document.querySelector('[data-back-to-top]')) return;
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'back-to-top';
+  button.setAttribute('data-back-to-top', 'true');
+  button.setAttribute('aria-label', 'Terug naar boven');
+  button.setAttribute('title', 'Terug naar boven');
+  button.innerHTML = '<span aria-hidden="true">↑</span>';
+  document.body.appendChild(button);
+
+  const updateVisibility = () => {
+    const show = window.scrollY > 260;
+    button.classList.toggle('is-visible', show);
+  };
+
+  button.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  window.addEventListener('scroll', updateVisibility, { passive: true });
+  updateVisibility();
+};
+
 const initCalculator = () => {
   const form = document.querySelector('[data-calc-form]');
   const result = document.querySelector('[data-calc-result]');
@@ -334,6 +359,14 @@ const initFinder = () => {
   if (!root) return;
 
   const searchInput = root.querySelector('[data-search]');
+  const searchSubmitBtn = root.querySelector('[data-search-submit]');
+  const finderCountEl = root.querySelector('[data-finder-count]');
+  const noLocationEl = root.querySelector('[data-finder-no-location]');
+  const openTipModalBtn = root.querySelector('[data-open-tip-modal]');
+  const tipModal = root.querySelector('[data-finder-tip-modal]');
+  const closeTipModalBtn = root.querySelector('[data-close-tip-modal]');
+  const tipForm = root.querySelector('[data-finder-tip-form]');
+  const tipPlaceInput = root.querySelector('[data-tip-place]');
   const urlQuery = new URLSearchParams(window.location.search).get('q') || '';
   const mapDebug = new URLSearchParams(window.location.search).get('mapdebug') === '1';
   const initialQuery = urlQuery.trim();
@@ -350,8 +383,26 @@ const initFinder = () => {
   let markers = [];
   let markersById = new Map();
   let finderStatusMessage = '';
+  let hasUserSearched = false;
+  const geocodeCache = new Map();
+  let geocodePendingKey = '';
 
   const toRad = (value) => (value * Math.PI) / 180;
+  const normalizeLoose = (value) =>
+    String(value || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+  const formatDutchPostcode = (value) => {
+    const raw = normalizeLoose(value).toUpperCase();
+    const match = raw.match(/^(\d{4})([A-Z]{2})$/);
+    if (!match) return String(value || '').trim();
+    return `${match[1]} ${match[2]}`;
+  };
+  const formatPlaceLabel = (value) =>
+    String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/\b\p{L}/gu, (char) => char.toUpperCase());
   const distanceInKm = (a, b) => {
     if (!a || !b) return Infinity;
     const dLat = toRad(b.lat - a.lat);
@@ -367,13 +418,66 @@ const initFinder = () => {
 
   const locationMatchesQuery = (kiosk, queryText) => {
     if (!queryText) return true;
-    return [kiosk.city, kiosk.postcode, kiosk.name, kiosk.address]
+    const plainQuery = String(queryText).toLowerCase().trim();
+    const looseQuery = normalizeLoose(queryText);
+    const rawHaystack = [kiosk.city, kiosk.postcode, kiosk.name, kiosk.address]
       .join(' ')
-      .toLowerCase()
-      .includes(queryText);
+      .toLowerCase();
+    if (rawHaystack.includes(plainQuery)) return true;
+    return normalizeLoose(rawHaystack).includes(looseQuery);
+  };
+
+  const locationMatchesPlace = (kiosk, queryText) => {
+    const query = normalizeLoose(queryText);
+    if (!query) return false;
+
+    const cityRaw = String(kiosk.city || '').trim();
+    const city = normalizeLoose(cityRaw);
+    const postcode = normalizeLoose(kiosk.postcode);
+
+    if (postcode && postcode === query) return true;
+    if (city && (city === query || city.startsWith(query) || query.startsWith(city))) return true;
+
+    const name = normalizeLoose(
+      String(kiosk.name || kiosk.title || '')
+        .replace(/^quiosk\s*/i, '')
+        .trim()
+    );
+    if (name && (name === query || name.startsWith(query) || query.startsWith(name))) return true;
+
+    return false;
   };
 
   const hasGoogleMaps = () => Boolean(window.google && window.google.maps);
+
+  const geocodeQueryPoint = (queryText) => {
+    const key = String(queryText || '').trim().toLowerCase();
+    if (!key || !hasGoogleMaps()) return;
+    if (geocodeCache.has(key) || geocodePendingKey === key) return;
+
+    geocodePendingKey = key;
+    const geocoder = new window.google.maps.Geocoder();
+    const formattedQuery = formatDutchPostcode(queryText) || queryText;
+    geocoder.geocode(
+      {
+        address: `${formattedQuery}, Nederland`,
+        region: 'nl'
+      },
+      (results, status) => {
+        geocodePendingKey = '';
+        if (status === 'OK' && Array.isArray(results) && results[0]?.geometry?.location) {
+          const loc = results[0].geometry.location;
+          geocodeCache.set(key, {
+            lat: typeof loc.lat === 'function' ? loc.lat() : Number(loc.lat),
+            lng: typeof loc.lng === 'function' ? loc.lng() : Number(loc.lng)
+          });
+        } else {
+          geocodeCache.set(key, null);
+        }
+        render();
+      }
+    );
+  };
 
   const formatKeyHint = (key) => {
     if (!key) return 'geen key';
@@ -508,7 +612,7 @@ const initFinder = () => {
       marker.addListener('click', () => {
         if (!infoWindow) return;
         infoWindow.setContent(
-          `<strong>${k.name}</strong><br>${k.address}<br><div class="cta-row"><a class="btn btn-ghost" href="${getDirectionsUrl(k)}" target="_blank" rel="noopener noreferrer">Navigeer</a><a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bezoek locatie</a></div>`
+          `<div class="quiosk-map-card"><h4>${k.name}</h4><p>${k.address}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${getDirectionsUrl(k)}" target="_blank" rel="noopener noreferrer">Navigeer</a><a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bezoek locatie</a></div></div>`
         );
         infoWindow.open({ anchor: marker, map: mapInstance });
       });
@@ -533,6 +637,7 @@ const initFinder = () => {
         const id = Number(button.dataset.focusId);
         const location = filtered.find((k) => k.id === id);
         if (!location || !location.coords || !mapInstance) return;
+        map.scrollIntoView({ behavior: 'smooth', block: 'start' });
         mapInstance.setCenter(location.coords);
         mapInstance.setZoom(15);
       });
@@ -668,37 +773,80 @@ const initFinder = () => {
 
   const render = () => {
     const inputValue = searchInput ? (searchInput.value || '').trim() : '';
-    const q = (inputValue || initialQuery).toLowerCase().trim();
+    const queryText = (inputValue || initialQuery).trim();
+    const q = queryText.toLowerCase();
     const radiusKm = Number(radiusSelect?.value || 0);
+    const hasGeocodeResult = q ? geocodeCache.has(q) : false;
+    const geocodePoint = q && hasGeocodeResult ? geocodeCache.get(q) : null;
+    const geocodeIsPending = q ? geocodePendingKey === q && !hasGeocodeResult : false;
+
+    if (q) geocodeQueryPoint(queryText);
 
     const qMatches = q
       ? allLocations.filter((location) => locationMatchesQuery(location, q) && location.coords)
       : [];
-    const referencePoint =
+    const matchesCenter =
       qMatches.length > 0
         ? {
             lat: qMatches.reduce((sum, location) => sum + location.coords.lat, 0) / qMatches.length,
             lng: qMatches.reduce((sum, location) => sum + location.coords.lng, 0) / qMatches.length
           }
-        : defaultCenter;
+        : null;
+
+    const referencePoint = geocodePoint || matchesCenter;
 
     const filtered = sourceData.filter((kiosk) => {
       const textMatch = locationMatchesQuery(kiosk, q);
 
       if (radiusKm > 0) {
+        if (!referencePoint) return false;
         if (!kiosk.coords) return false;
         return distanceInKm(referencePoint, kiosk.coords) <= radiusKm;
       }
 
-      if (q) return textMatch;
+      if (q) {
+        if (geocodePoint) return true;
+        return textMatch;
+      }
       return true;
     });
+
+    if (q && geocodePoint) {
+      filtered.sort((a, b) => {
+        const da = distanceInKm(geocodePoint, a.coords);
+        const db = distanceInKm(geocodePoint, b.coords);
+        return da - db;
+      });
+    }
+
+    if (finderCountEl) {
+      finderCountEl.textContent = String(filtered.length);
+    }
+
+    if (noLocationEl) {
+      const hasQuioskInSearchedPlace = q
+        ? allLocations.some((location) => locationMatchesPlace(location, queryText))
+        : true;
+      const showNoLocationMessage =
+        hasUserSearched &&
+        Boolean(q) &&
+        !geocodeIsPending &&
+        hasGeocodeResult &&
+        !!geocodePoint &&
+        !hasQuioskInSearchedPlace;
+      noLocationEl.hidden = !showNoLocationMessage;
+      if (showNoLocationMessage) {
+        const safePlace = formatPlaceLabel(queryText || 'deze plaats');
+        noLocationEl.innerHTML = `In ${safePlace} is nog geen Quiosk. <button type="button" class="finder-tip-btn" data-open-tip-modal>Stuur ons jouw tip</button>.`;
+        noLocationEl.querySelector('[data-open-tip-modal]')?.addEventListener('click', openTipModal);
+      }
+    }
 
     list.innerHTML = filtered
       .map(
         (k) => `
           <article class="card reveal">
-            <h3>${k.name}</h3>
+            <h3><button class="finder-location-title" type="button" data-focus-id="${k.id}">${k.name}</button></h3>
             <p>${k.address}</p>
             <p><strong>${k.isOpen ? 'Nu open' : 'Nu gesloten'}</strong> · ${k.environment} · Contactloos</p>
             <div class="cta-row">
@@ -711,7 +859,12 @@ const initFinder = () => {
       .join('');
 
     if (!filtered.length) {
-      if (!sourceData.length && finderStatusMessage) {
+      if (geocodeIsPending && q) {
+        list.innerHTML = '<article class="card"><p>Zoeken op plaats of postcode...</p></article>';
+      } else if (q && radiusKm > 0 && hasGeocodeResult && !geocodePoint && !qMatches.length) {
+        list.innerHTML =
+          '<article class="card"><p>Plaats of postcode niet gevonden. Controleer de spelling of kies <strong>Alle afstanden</strong>.</p></article>';
+      } else if (!sourceData.length && finderStatusMessage) {
         list.innerHTML = `<article class="card"><p><strong>${finderStatusMessage}</strong><br>Importeer eerst locaties via de backend-import en refresh daarna deze pagina.</p></article>`;
       } else {
         list.innerHTML = '<p>Geen Quiosks gevonden met deze filters.</p>';
@@ -724,14 +877,89 @@ const initFinder = () => {
   if (searchInput && initialQuery) {
     searchInput.value = initialQuery;
   }
+  if (noLocationEl) noLocationEl.hidden = true;
 
-  [searchInput, radiusSelect].filter(Boolean).forEach((el) => el.addEventListener('input', render));
+  const runSearch = () => {
+    hasUserSearched = true;
+    render();
+  };
+
+  if (searchSubmitBtn) {
+    searchSubmitBtn.addEventListener('click', runSearch);
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', render);
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        runSearch();
+      }
+    });
+  }
+
+  if (radiusSelect) {
+    radiusSelect.addEventListener('input', render);
+  }
+
+  const closeTipModal = () => {
+    if (!tipModal) return;
+    tipModal.classList.remove('is-open');
+    tipModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  const openTipModal = () => {
+    if (!tipModal) return;
+    if (tipPlaceInput && searchInput) {
+      tipPlaceInput.value = (searchInput.value || '').trim();
+    }
+    tipModal.classList.add('is-open');
+    tipModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  if (openTipModalBtn) openTipModalBtn.addEventListener('click', openTipModal);
+  if (closeTipModalBtn) closeTipModalBtn.addEventListener('click', closeTipModal);
+  if (tipModal) {
+    tipModal.addEventListener('click', (event) => {
+      if (event.target === tipModal) closeTipModal();
+    });
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && tipModal?.classList.contains('is-open')) {
+      closeTipModal();
+    }
+  });
+
+  if (tipForm) {
+    tipForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(tipForm);
+      const name = String(formData.get('name') || '').trim();
+      const email = String(formData.get('email') || '').trim();
+      const place = String(formData.get('place') || '').trim();
+      const tip = String(formData.get('tip') || '').trim();
+      const currentSearch = (searchInput?.value || '').trim();
+
+      const subject = `Tip nieuwe Quiosk locatie - ${place || currentSearch || 'Onbekend'}`;
+      const body = [
+        `Naam: ${name}`,
+        `E-mail: ${email}`,
+        `Plaats/postcode: ${place || currentSearch || '-'}`,
+        '',
+        'Tip:',
+        tip
+      ].join('\n');
+
+      window.location.href = `mailto:info@quiosk.nl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      closeTipModal();
+      tipForm.reset();
+    });
+  }
   const applyInitialQueryFilter = (locations) => {
-    if (!initialQuery) return locations;
-    const onlyRelevant = locations.filter((location) =>
-      locationMatchesQuery(location, initialQuery.toLowerCase())
-    );
-    return onlyRelevant.length ? onlyRelevant : locations;
+    return locations;
   };
 
   const renderWithSource = (locations) => {
@@ -1227,6 +1455,7 @@ initHeaderCta();
 setActiveNav();
 initMobileNav();
 initHeaderScroll();
+initBackToTop();
 initCalculator();
 initFinder();
 initHeroSlider();
