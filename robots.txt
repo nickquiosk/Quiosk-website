@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /import-locaties
+Disallow: /data/import/
+
+Sitemap: https://www.quiosk.nl/sitemap.xml

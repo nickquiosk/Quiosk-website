@@ -545,11 +545,18 @@ const initFinder = () => {
       zoom: 7,
       zoomControl: true,
       zoomControlOptions: {
-        position: window.google.maps.ControlPosition.RIGHT_BOTTOM
+        position: window.google.maps.ControlPosition.RIGHT_TOP
+      },
+      cameraControl: true,
+      cameraControlOptions: {
+        position: window.google.maps.ControlPosition.RIGHT_TOP
       },
       mapTypeControl: false,
       streetViewControl: false,
-      fullscreenControl: false
+      fullscreenControl: true,
+      fullscreenControlOptions: {
+        position: window.google.maps.ControlPosition.RIGHT_TOP
+      }
     });
     infoWindow = new window.google.maps.InfoWindow();
     infoWindow.addListener('closeclick', () => {
@@ -683,7 +690,7 @@ const initFinder = () => {
         if (!infoWindow) return;
         setActiveMarker(marker);
         infoWindow.setContent(
-          `<div class="quiosk-map-card"><h4>${k.name}</h4><p>${k.address}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${getDirectionsUrl(k)}" target="_blank" rel="noopener noreferrer">Navigeer</a><a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bezoek locatie</a></div></div>`
+          `<div class="quiosk-map-card"><h4>${k.name}</h4><p>${k.address}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${getDirectionsUrl(k)}" target="_blank" rel="noopener noreferrer">Navigeer</a><a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bekijk locatie</a></div></div>`
         );
         infoWindow.open({ anchor: marker, map: mapInstance });
       });
@@ -923,11 +930,10 @@ const initFinder = () => {
           <article class="card reveal">
             <h3><button class="finder-location-title" type="button" data-focus-id="${k.id}">${k.name}</button></h3>
             <p>${k.address}</p>
-            <p><strong>${k.isOpen ? 'Nu open' : 'Nu gesloten'}</strong> · ${k.environment} · Contactloos</p>
-            <div class="cta-row">
+            <div class="cta-row finder-cta-row">
               <button class="btn btn-ghost" type="button" data-focus-id="${k.id}">Toon op kaart</button>
               <a class="btn btn-ghost" href="${getDirectionsUrl(k)}" target="_blank" rel="noopener noreferrer">Navigeer</a>
-              <a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bezoek locatie</a>
+              <a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bekijk locatie</a>
             </div>
           </article>`
       )
@@ -1196,6 +1202,54 @@ const initInstaSlider = () => {
     );
 
     update();
+  });
+};
+
+const initInstaLightbox = () => {
+  const roots = document.querySelectorAll('[data-insta-slider]');
+  const modal = document.querySelector('[data-insta-modal]');
+  const modalImg = document.querySelector('[data-insta-modal-image]');
+  const closeBtn = document.querySelector('[data-insta-modal-close]');
+  if (!roots.length || !modal || !modalImg || !closeBtn) return;
+
+  const close = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    modalImg.removeAttribute('src');
+    modalImg.alt = '';
+    modalImg.hidden = true;
+    document.body.style.overflow = '';
+  };
+
+  const openImage = (src, alt) => {
+    modalImg.src = src;
+    modalImg.alt = alt || 'Instagram foto';
+    modalImg.hidden = false;
+
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  roots.forEach((root) => {
+    root.addEventListener('click', (event) => {
+      const card = event.target.closest('.insta-card');
+      if (!card) return;
+      event.preventDefault();
+
+      const image = card.querySelector('img');
+      if (image?.src) {
+        openImage(image.src, image.alt);
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) close();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) close();
   });
 };
 
@@ -1766,6 +1820,7 @@ initRefundForm();
 initFinder();
 initHeroSlider();
 initInstaSlider();
+initInstaLightbox();
 initPartnersHeroBalance();
 initImageLightbox();
 initQuiosk360Viewer();
