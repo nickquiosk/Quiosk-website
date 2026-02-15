@@ -176,25 +176,45 @@ const fetchDynamicLocations = async () => {
   const configuredApiUrl =
     typeof window !== 'undefined' ? (window.QUIOSK_LOCATIONS_API_URL || '').trim() : '';
   const apiUrl = configuredApiUrl || '/api/locations';
-  const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 2500);
-
-  try {
-    const response = await fetch(apiUrl, {
-      headers: { Accept: 'application/json' },
-      signal: controller.signal
-    });
-    if (!response.ok) return null;
-    const payload = await response.json();
-    if (!payload || !Array.isArray(payload.locations)) return null;
-    const mapped = payload.locations
+  const normalizePayload = (payload) => {
+    if (!payload) return null;
+    const rawLocations = Array.isArray(payload) ? payload : payload.locations;
+    if (!Array.isArray(rawLocations)) return null;
+    const mapped = rawLocations
       .map((item, index) => normalizeLocationFromApi(item, index))
       .filter((location) => location.coords);
     return mapped.length ? mapped : null;
+  };
+
+  const fetchJson = async (url) => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 2500);
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal
+      });
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (_) {
+      return null;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  };
+
+  try {
+    const apiPayload = await fetchJson(apiUrl);
+    const fromApi = normalizePayload(apiPayload);
+    if (fromApi?.length) return fromApi;
+
+    const staticPayload = await fetchJson('/data/locations.json');
+    const fromStatic = normalizePayload(staticPayload);
+    if (fromStatic?.length) return fromStatic;
+
+    return null;
   } catch (_) {
     return null;
-  } finally {
-    window.clearTimeout(timeout);
   }
 };
 
@@ -520,56 +540,83 @@ const initHeroSlider = () => {
 };
 
 const initInstaSlider = () => {
-  const root = document.querySelector('[data-insta-slider]');
-  if (!root) return;
+  const roots = document.querySelectorAll('[data-insta-slider]');
+  if (!roots.length) return;
 
-  const track = root.querySelector('.insta-track');
-  const pages = root.querySelectorAll('.insta-page');
-  const prev = root.querySelector('.insta-arrow-prev');
-  const next = root.querySelector('.insta-arrow-next');
-  if (!track || !pages.length || !prev || !next) return;
+  roots.forEach((root) => {
+    const track = root.querySelector('.insta-track');
+    const prev = root.querySelector('.insta-arrow-prev');
+    const next = root.querySelector('.insta-arrow-next');
+    const initialPages = root.querySelectorAll('.insta-page');
+    if (!track || !initialPages.length || !prev || !next) return;
 
-  // Shuffle all feed cards on each page load so every refresh shows a new mix.
-  const pageList = Array.from(pages);
-  const cardsPerPage = pageList[0].children.length;
-  const allCards = pageList.flatMap((page) => Array.from(page.children));
+    const allCards = Array.from(track.querySelectorAll('.insta-card'));
+    if (!allCards.length) return;
 
-  for (let i = allCards.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
-  }
-
-  pageList.forEach((page, pageIndex) => {
-    page.innerHTML = '';
-    const start = pageIndex * cardsPerPage;
-    const end = start + cardsPerPage;
-    allCards.slice(start, end).forEach((card) => page.appendChild(card));
-  });
-
-  let index = 0;
-  const max = pages.length - 1;
-
-  const update = () => {
-    track.style.transform = `translateX(-${index * 100}%)`;
-    prev.disabled = index <= 0;
-    next.disabled = index >= max;
-  };
-
-  prev.addEventListener('click', () => {
-    if (index > 0) {
-      index -= 1;
-      update();
+    for (let i = allCards.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
     }
-  });
 
-  next.addEventListener('click', () => {
-    if (index < max) {
-      index += 1;
-      update();
-    }
-  });
+    let index = 0;
+    let maxIndex = 0;
+    let lastPerPage = null;
 
-  update();
+    const getCardsPerPage = () => {
+      if (window.innerWidth <= 680) return 4;
+      return 12;
+    };
+
+    const buildPages = () => {
+      const perPage = getCardsPerPage();
+      if (perPage === lastPerPage && track.children.length) return;
+      lastPerPage = perPage;
+
+      track.innerHTML = '';
+      for (let i = 0; i < allCards.length; i += perPage) {
+        const page = document.createElement('div');
+        page.className = 'insta-page';
+        allCards.slice(i, i + perPage).forEach((card) => page.appendChild(card));
+        track.appendChild(page);
+      }
+
+      maxIndex = Math.max(0, track.children.length - 1);
+      if (index > maxIndex) index = maxIndex;
+    };
+
+    const update = () => {
+      buildPages();
+      track.style.transform = `translateX(-${index * 100}%)`;
+      prev.disabled = index <= 0;
+      next.disabled = index >= maxIndex;
+    };
+
+    prev.addEventListener('click', () => {
+      if (index > 0) {
+        index -= 1;
+        update();
+      }
+    });
+
+    next.addEventListener('click', () => {
+      if (index < maxIndex) {
+        index += 1;
+        update();
+      }
+    });
+
+    let resizeTimer;
+    window.addEventListener(
+      'resize',
+      () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(update, 120);
+      },
+      { passive: true }
+    );
+
+    update();
+  });
 };
 
 const initPartnersHeroBalance = () => {
