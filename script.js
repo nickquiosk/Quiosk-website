@@ -423,7 +423,7 @@ const initFinder = () => {
   let markersById = new Map();
   let activeMarker = null;
   let finderStatusMessage = '';
-  let hasUserSearched = false;
+  let hasUserSearched = Boolean(initialQuery);
   const geocodeCache = new Map();
   let geocodePendingKey = '';
 

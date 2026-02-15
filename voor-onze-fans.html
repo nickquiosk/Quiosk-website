@@ -143,15 +143,33 @@
       <div class="container">
         <div class="quick-search-band">
           <div class="quick-search-copy">
-            <span class="quick-search-kicker">Quiosk zoeken</span>
             <h2>Zoek een Quiosk bij jou in de buurt</h2>
-            <p>Vul plaatsnaam of postcode in en ga direct naar de locatiezoeker.</p>
           </div>
-          <form class="quick-search-form" action="quiosk-zoeken.html" method="get">
-            <input type="text" name="q" placeholder="Bijv. Utrecht of 3511" aria-label="Zoek op plaats of postcode" />
-            <input type="hidden" name="radius" value="25" />
-            <button class="btn btn-primary" type="submit">Zoek locatie</button>
-          </form>
+          <div class="quick-search-shell">
+            <img class="quick-search-logo" src="Favicon.png" alt="Quiosk" />
+            <form class="quick-search-form" action="quiosk-zoeken.html" method="get">
+              <label class="quick-search-input-wrap">
+                <span class="quick-search-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2" />
+                    <path d="M16 16L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </span>
+                <input type="text" name="q" placeholder="Bijv. Utrecht of 3511" aria-label="Zoek op plaats of postcode" />
+              </label>
+              <label class="quick-search-radius-wrap">
+                <span class="sr-only">Afstand rondom</span>
+                <select name="radius" class="quick-search-radius" aria-label="Afstand rondom">
+                  <option value="10">10 km</option>
+                  <option value="25" selected>25 km</option>
+                  <option value="50">50 km</option>
+                  <option value="100">100 km</option>
+                  <option value="all">Heel Nederland</option>
+                </select>
+              </label>
+              <button class="btn btn-primary" type="submit">Zoeken</button>
+            </form>
+          </div>
         </div>
       </div>
     </section>
