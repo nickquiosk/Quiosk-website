@@ -22,6 +22,7 @@ const importDropDirPath = IMPORT_DROP_DIR
   ? path.resolve(__dirname, IMPORT_DROP_DIR)
   : path.join(__dirname, 'data', 'import');
 const productImagesDirPath = path.join(__dirname, 'images', 'producten');
+const geocodeConcurrency = Math.max(1, Number(process.env.GEOCODE_CONCURRENCY || 6));
 const allowedOrigins = (ALLOWED_ORIGINS || '')
   .split(',')
   .map((origin) => origin.trim())
@@ -101,6 +102,14 @@ const parseNumber = (value) => {
   const raw = normalized.replace(',', '.');
   const n = Number(raw);
   return Number.isFinite(n) ? n : null;
+};
+
+const buildLocationMatchKey = (location) => {
+  const address = normalizeKey(location.address);
+  const postcode = normalizeKey(location.postcode);
+  const city = normalizeKey(location.city);
+  const name = normalizeKey(location.name || location.title);
+  return [address, postcode, city, name].join('|');
 };
 
 const geocodeAddress = async (location) => {
@@ -289,27 +298,57 @@ const writeManualLocations = async (locations) => {
 
 const finalizeImportedLocations = async (importedLocations) => {
   let geocodedCount = 0;
+  let reusedCount = 0;
   let skippedNoCoords = 0;
   const geocodeErrorCounts = {};
+  const existingLocations = await readManualLocations();
+  const existingCoordsByKey = new Map();
+  existingLocations.forEach((location) => {
+    if (!location?.coords) return;
+    const key = buildLocationMatchKey(location);
+    if (!existingCoordsByKey.has(key)) {
+      existingCoordsByKey.set(key, location.coords);
+    }
+  });
+  const resolvedByIndex = new Array(importedLocations.length);
+  let cursor = 0;
 
-  const resolvedLocations = [];
-  for (const location of importedLocations) {
-    let resolved = location;
-    if (!resolved.coords) {
-      const geocoded = await geocodeAddress(resolved);
-      if (geocoded.coords) {
-        resolved = { ...resolved, coords: geocoded.coords };
-        geocodedCount += 1;
-      } else if (geocoded.error) {
-        geocodeErrorCounts[geocoded.error] = (geocodeErrorCounts[geocoded.error] || 0) + 1;
+  const worker = async () => {
+    while (true) {
+      const index = cursor;
+      cursor += 1;
+      if (index >= importedLocations.length) return;
+
+      let resolved = importedLocations[index];
+      if (!resolved.coords) {
+        const existingCoords = existingCoordsByKey.get(buildLocationMatchKey(resolved));
+        if (existingCoords) {
+          resolved = { ...resolved, coords: existingCoords };
+          reusedCount += 1;
+        } else {
+          const geocoded = await geocodeAddress(resolved);
+          if (geocoded.coords) {
+            resolved = { ...resolved, coords: geocoded.coords };
+            geocodedCount += 1;
+          } else if (geocoded.error) {
+            geocodeErrorCounts[geocoded.error] = (geocodeErrorCounts[geocoded.error] || 0) + 1;
+          }
+        }
       }
+
+      if (!resolved.coords) {
+        skippedNoCoords += 1;
+        continue;
+      }
+
+      resolvedByIndex[index] = resolved;
     }
-    if (!resolved.coords) {
-      skippedNoCoords += 1;
-      continue;
-    }
-    resolvedLocations.push(resolved);
-  }
+  };
+
+  const workerCount = Math.min(geocodeConcurrency, importedLocations.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+  const resolvedLocations = resolvedByIndex.filter(Boolean);
 
   const locationsWithIds = resolvedLocations.map((location, index) => ({
     ...location,
@@ -317,7 +356,7 @@ const finalizeImportedLocations = async (importedLocations) => {
   }));
 
   await writeManualLocations(locationsWithIds);
-  return { locationsWithIds, geocodedCount, skippedNoCoords, geocodeErrorCounts };
+  return { locationsWithIds, geocodedCount, reusedCount, skippedNoCoords, geocodeErrorCounts };
 };
 
 const requireImportToken = (req, res) => {
@@ -374,7 +413,7 @@ app.post('/api/import-locations', async (req, res) => {
       return;
     }
 
-    const { locationsWithIds, geocodedCount, skippedNoCoords, geocodeErrorCounts } =
+    const { locationsWithIds, geocodedCount, reusedCount, skippedNoCoords, geocodeErrorCounts } =
       await finalizeImportedLocations(importedLocations);
     if (!locationsWithIds.length) {
       res.status(400).json({
@@ -391,6 +430,7 @@ app.post('/api/import-locations', async (req, res) => {
       source: 'manual-database',
       imported: locationsWithIds.length,
       geocodedCount,
+      reusedCount,
       skippedNoCoords,
       geocodeErrors: geocodeErrorCounts,
       file: path.relative(__dirname, dataFilePath)
@@ -421,7 +461,7 @@ app.post('/api/import-from-drop', async (req, res) => {
       return;
     }
 
-    const { locationsWithIds, geocodedCount, skippedNoCoords, geocodeErrorCounts } =
+    const { locationsWithIds, geocodedCount, reusedCount, skippedNoCoords, geocodeErrorCounts } =
       await finalizeImportedLocations(importedLocations);
     if (!locationsWithIds.length) {
       res.status(400).json({
@@ -438,6 +478,7 @@ app.post('/api/import-from-drop', async (req, res) => {
       source: 'manual-database',
       imported: locationsWithIds.length,
       geocodedCount,
+      reusedCount,
       skippedNoCoords,
       geocodeErrors: geocodeErrorCounts,
       fromFile: path.relative(__dirname, sourcePath),
