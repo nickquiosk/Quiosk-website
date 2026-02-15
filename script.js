@@ -271,6 +271,7 @@ const initFinder = () => {
 
   const searchInput = root.querySelector('[data-search]');
   const urlQuery = new URLSearchParams(window.location.search).get('q') || '';
+  const mapDebug = new URLSearchParams(window.location.search).get('mapdebug') === '1';
   const initialQuery = urlQuery.trim();
   const filterInputs = root.querySelectorAll('[data-filter]');
   const list = root.querySelector('[data-results]');
@@ -293,8 +294,23 @@ const initFinder = () => {
 
   const hasGoogleMaps = () => Boolean(window.google && window.google.maps);
 
+  const formatKeyHint = (key) => {
+    if (!key) return 'geen key';
+    if (key.length < 12) return key;
+    return `${key.slice(0, 8)}...${key.slice(-4)}`;
+  };
+
   const showMapError = (message) => {
     map.innerHTML = `<div class="card"><p>${message}</p></div>`;
+  };
+
+  const showMapDebug = (message) => {
+    if (!mapDebug) return;
+    const box = document.createElement('div');
+    box.className = 'card';
+    box.style.marginTop = '10px';
+    box.innerHTML = `<p><strong>Map debug</strong><br>${message}</p>`;
+    map.appendChild(box);
   };
 
   const createMap = () => {
@@ -327,6 +343,7 @@ const initFinder = () => {
     if (hasGoogleMaps()) return true;
 
     const apiKey = await getMapsApiKey();
+    showMapDebug(`Key bron gecontroleerd. Gebruik key: <code>${formatKeyHint(apiKey)}</code>`);
     if (!apiKey) {
       showMapError(
         '<strong>Google Maps API-key ontbreekt.</strong><br>Voeg je key toe in <code>quiosk-zoeken.html</code> of via <code>.env</code>.'
@@ -335,15 +352,18 @@ const initFinder = () => {
     }
 
     window.gm_authFailure = () => {
+      showMapDebug('gm_authFailure: Google wijst deze key af voor Maps JavaScript API (auth/restricties/billing).');
       showMapError('Google Maps authenticatie mislukt. Controleer API-key, billing en referrer restricties.');
     };
 
     const existingLoader = document.querySelector('script[data-google-maps-loader="true"]');
     if (existingLoader) {
+      showMapDebug('Bestaande Google Maps loader gevonden, wacht op window.google.maps...');
       for (let i = 0; i < 100; i += 1) {
         if (hasGoogleMaps()) return true;
         await new Promise((resolve) => window.setTimeout(resolve, 80));
       }
+      showMapDebug('Timeout bij bestaand loader-script: window.google.maps bleef leeg.');
       showMapError('Google Maps laden duurt te lang. Herlaad de pagina of controleer de key-instellingen.');
       return false;
     }
@@ -354,12 +374,19 @@ const initFinder = () => {
       script.async = true;
       script.defer = true;
       script.dataset.googleMapsLoader = 'true';
-      script.onload = () => resolve(hasGoogleMaps());
-      script.onerror = () => resolve(false);
+      script.onload = () => {
+        showMapDebug('Google Maps script onload event ontvangen.');
+        resolve(hasGoogleMaps());
+      };
+      script.onerror = () => {
+        showMapDebug('Google Maps script onerror event ontvangen.');
+        resolve(false);
+      };
       document.head.appendChild(script);
     });
 
     if (!loaded) {
+      showMapDebug('Script geladen maar Maps object niet bruikbaar.');
       showMapError('Google Maps kon niet geladen worden. Controleer API-key en domeinrestricties.');
     }
     return loaded;
