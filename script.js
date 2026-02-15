@@ -259,11 +259,62 @@ const isFinderLocationsCacheFresh = (cached) => {
   return Date.now() - Number(cached.createdAt) < FINDER_LOCATIONS_CACHE_TTL_MS;
 };
 
+const splitAddressParts = (address) =>
+  String(address || '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+const getStreetForMapsQuery = (location) => {
+  const parts = splitAddressParts(location?.address);
+  if (parts.length) return parts[0];
+  return String(location?.address || '').trim();
+};
+
+const getCityForMapsQuery = (location) => {
+  const explicitCity = String(location?.city || '').trim();
+  if (explicitCity) return explicitCity;
+
+  const parts = splitAddressParts(location?.address);
+  if (!parts.length) return '';
+
+  for (const part of parts) {
+    const match = part.match(/\b\d{4}\s*[A-Za-z]{2}\s+(.+)$/);
+    if (match?.[1]) return match[1].trim();
+  }
+
+  if (parts.length >= 2) {
+    const tail = parts[parts.length - 1];
+    const street = parts[0];
+    if (tail && tail.toLowerCase() !== street.toLowerCase() && !/\d/.test(tail)) return tail;
+  }
+
+  return '';
+};
+
+const dedupeQueryParts = (parts) => {
+  const seen = new Set();
+  return parts.filter((part) => {
+    const key = String(part || '').trim().toLowerCase();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
+
+const getQuioskMapsQuery = (location) => {
+  const street = getStreetForMapsQuery(location);
+  const city = getCityForMapsQuery(location);
+  const queryParts = dedupeQueryParts(['Quiosk', street, city]);
+  const query = queryParts.join(' ').trim();
+  return query || String(location?.address || location?.name || 'Quiosk').trim();
+};
+
 const getDirectionsUrl = (location) =>
-  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address || location.name)}`;
+  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(getQuioskMapsQuery(location))}`;
 
 const getVisitUrl = (location) =>
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address || location.name)}`;
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(getQuioskMapsQuery(location))}`;
 
 const initFinder = () => {
   const root = document.querySelector('[data-finder]');
@@ -273,16 +324,33 @@ const initFinder = () => {
   const urlQuery = new URLSearchParams(window.location.search).get('q') || '';
   const mapDebug = new URLSearchParams(window.location.search).get('mapdebug') === '1';
   const initialQuery = urlQuery.trim();
-  const filterInputs = root.querySelectorAll('[data-filter]');
+  const radiusSelect = root.querySelector('[data-radius]');
   const list = root.querySelector('[data-results]');
   const map = root.querySelector('[data-map]');
+  const alphabetRoot = root.querySelector('[data-locations-accordion]');
   if (!list || !map) return;
   const defaultCenter = { lat: 52.1326, lng: 5.2913 };
   let sourceData = [...kioskData];
+  let allLocations = [...kioskData];
   let mapInstance = null;
   let infoWindow = null;
   let markers = [];
+  let markersById = new Map();
   let finderStatusMessage = '';
+
+  const toRad = (value) => (value * Math.PI) / 180;
+  const distanceInKm = (a, b) => {
+    if (!a || !b) return Infinity;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const lat1 = toRad(a.lat);
+    const lat2 = toRad(b.lat);
+    const h =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+    return 6371 * c;
+  };
 
   const locationMatchesQuery = (kiosk, queryText) => {
     if (!queryText) return true;
@@ -318,6 +386,10 @@ const initFinder = () => {
     mapInstance = new window.google.maps.Map(map, {
       center: defaultCenter,
       zoom: 7,
+      zoomControl: true,
+      zoomControlOptions: {
+        position: window.google.maps.ControlPosition.RIGHT_BOTTOM
+      },
       mapTypeControl: false,
       streetViewControl: false,
       fullscreenControl: false
@@ -395,6 +467,7 @@ const initFinder = () => {
   const clearMarkers = () => {
     markers.forEach((marker) => marker.setMap(null));
     markers = [];
+    markersById = new Map();
   };
 
   const renderMap = (filtered) => {
@@ -417,6 +490,7 @@ const initFinder = () => {
         map: mapInstance,
         title: k.name
       });
+      marker.__locationId = k.id;
 
       marker.addListener('click', () => {
         if (!infoWindow) return;
@@ -427,6 +501,7 @@ const initFinder = () => {
       });
 
       markers.push(marker);
+      markersById.set(k.id, marker);
       bounds.extend(k.coords);
     });
 
@@ -451,26 +526,159 @@ const initFinder = () => {
     });
   };
 
+  const getStreetFromAddress = (address) => {
+    const raw = String(address || '').trim();
+    if (!raw) return '';
+    return raw.split(',')[0].trim();
+  };
+
+  const getCityFromAddress = (address) => {
+    const raw = String(address || '').trim();
+    if (!raw) return '';
+    const parts = raw
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (!parts.length) return '';
+
+    // Try to extract city from Dutch postcode segment like "4003 AZ Tiel".
+    for (const part of parts) {
+      const match = part.match(/\b\d{4}\s*[A-Za-z]{2}\s+(.+)$/);
+      if (match?.[1]) return match[1].trim();
+    }
+
+    // Fallback: last meaningful segment before country label.
+    const filtered = parts.filter((part) => !/^(nederland|netherlands|belgie|belgium)$/i.test(part));
+    return filtered.length ? filtered[filtered.length - 1] : '';
+  };
+
+  const getCityFromName = (location) => {
+    const rawName = String(location?.name || location?.title || '').trim();
+    if (!rawName) return '';
+    const withoutPrefix = rawName.replace(/^quiosk\s*/i, '').replace(/\bb\.?v\.?$/i, '').trim();
+    if (!withoutPrefix) return '';
+    return withoutPrefix;
+  };
+
+  const getLocationCity = (location) => {
+    const explicitCity = String(location?.city || '').trim();
+    if (explicitCity) return explicitCity;
+    const cityFromName = getCityFromName(location);
+    if (cityFromName) return cityFromName;
+    return '';
+  };
+
+  const getAlphabetSourceText = (location) => {
+    const city = getLocationCity(location);
+    if (city) return city;
+    return '';
+  };
+
+  const focusLocationOnMap = (locationId) => {
+    const id = Number(locationId);
+    if (!Number.isFinite(id)) return;
+    const location = allLocations.find((item) => Number(item.id) === id);
+    if (!location) return;
+
+    const city = getLocationCity(location);
+    if (searchInput) searchInput.value = city || '';
+    render();
+
+    map.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const marker = markersById.get(id);
+    if (marker && mapInstance && window.google?.maps?.event) {
+      mapInstance.setCenter(location.coords);
+      mapInstance.setZoom(15);
+      window.google.maps.event.trigger(marker, 'click');
+      return;
+    }
+
+    if (mapInstance && location.coords) {
+      mapInstance.setCenter(location.coords);
+      mapInstance.setZoom(15);
+    }
+  };
+
+  const renderAlphabetAccordion = (locations) => {
+    if (!alphabetRoot) return;
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const grouped = new Map(alphabet.map((letter) => [letter, []]));
+
+    (Array.isArray(locations) ? locations : []).forEach((location) => {
+      if (!location?.coords) return;
+      const sourceText = getAlphabetSourceText(location);
+      if (!sourceText) return;
+      const first = sourceText.charAt(0).toUpperCase();
+      const letter = /^[A-Z]$/.test(first) ? first : '#';
+      if (!grouped.has(letter)) grouped.set(letter, []);
+      grouped.get(letter).push(location);
+    });
+
+    grouped.forEach((rows) => {
+      rows.sort((a, b) => {
+        const cityCmp = String(a.city || '').localeCompare(String(b.city || ''), 'nl-NL');
+        if (cityCmp !== 0) return cityCmp;
+        return String(a.name || '').localeCompare(String(b.name || ''), 'nl-NL');
+      });
+    });
+
+    const letters = [...alphabet, ...(grouped.has('#') ? ['#'] : [])];
+    alphabetRoot.innerHTML = letters
+      .map((letter) => {
+        const locationsForLetter = grouped.get(letter) || [];
+        const isEmpty = locationsForLetter.length === 0;
+        const content = isEmpty
+          ? '<div class="alpha-item-body"><p>Geen locaties</p></div>'
+          : `<div class="alpha-item-body"><div class="alpha-city-list">${locationsForLetter
+              .map(
+                (location) => {
+                  const city = getLocationCity(location);
+                  const cityLabel = city || (location.name || location.title || 'Onbekende plaats');
+                  return `<a class="alpha-city-link" href="#finder-map" data-alpha-location-id="${location.id}">Quiosk ${cityLabel} - ${getStreetFromAddress(location.address)}</a>`;
+                }
+              )
+              .join('')}</div></div>`;
+
+        return `<details class="alpha-item${isEmpty ? ' is-empty' : ''}"><summary><span>${letter}</span><span>${locationsForLetter.length}</span></summary>${content}</details>`;
+      })
+      .join('');
+
+    const locationLinks = alphabetRoot.querySelectorAll('[data-alpha-location-id]');
+    locationLinks.forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        focusLocationOnMap(link.dataset.alphaLocationId);
+      });
+    });
+  };
+
   const render = () => {
     const inputValue = searchInput ? (searchInput.value || '').trim() : '';
     const q = (inputValue || initialQuery).toLowerCase().trim();
-    const activeFilters = [...filterInputs].filter((el) => el.checked).map((el) => el.value);
+    const radiusKm = Number(radiusSelect?.value || 0);
+
+    const qMatches = q
+      ? allLocations.filter((location) => locationMatchesQuery(location, q) && location.coords)
+      : [];
+    const referencePoint =
+      qMatches.length > 0
+        ? {
+            lat: qMatches.reduce((sum, location) => sum + location.coords.lat, 0) / qMatches.length,
+            lng: qMatches.reduce((sum, location) => sum + location.coords.lng, 0) / qMatches.length
+          }
+        : defaultCenter;
 
     const filtered = sourceData.filter((kiosk) => {
       const textMatch = locationMatchesQuery(kiosk, q);
-      if (!textMatch) return false;
 
-      const checks = {
-        open: kiosk.isOpen,
-        drinks: kiosk.products.includes('Drinks'),
-        snacks: kiosk.products.includes('Snacks'),
-        gezond: kiosk.products.includes('Gezond'),
-        indoor: kiosk.environment === 'Indoor',
-        outdoor: kiosk.environment === 'Outdoor',
-        contactloos: kiosk.contactless
-      };
+      if (radiusKm > 0) {
+        if (!kiosk.coords) return false;
+        return distanceInKm(referencePoint, kiosk.coords) <= radiusKm;
+      }
 
-      return activeFilters.every((f) => checks[f]);
+      if (q) return textMatch;
+      return true;
     });
 
     list.innerHTML = filtered
@@ -504,7 +712,7 @@ const initFinder = () => {
     searchInput.value = initialQuery;
   }
 
-  [searchInput, ...filterInputs].filter(Boolean).forEach((el) => el.addEventListener('input', render));
+  [searchInput, radiusSelect].filter(Boolean).forEach((el) => el.addEventListener('input', render));
   const applyInitialQueryFilter = (locations) => {
     if (!initialQuery) return locations;
     const onlyRelevant = locations.filter((location) =>
@@ -514,6 +722,8 @@ const initFinder = () => {
   };
 
   const renderWithSource = (locations) => {
+    allLocations = Array.isArray(locations) ? locations : [];
+    renderAlphabetAccordion(locations);
     sourceData = applyInitialQueryFilter(locations);
     render();
   };
@@ -539,6 +749,7 @@ const initFinder = () => {
 
     if (!hasFreshCachedLocations) {
       finderStatusMessage = 'Nog geen locaties beschikbaar in de database';
+      renderAlphabetAccordion([]);
       sourceData = [];
       render();
     }
