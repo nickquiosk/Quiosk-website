@@ -78,6 +78,7 @@
           </div>
           <form class="quick-search-form" action="quiosk-zoeken.html" method="get">
             <input type="text" name="q" placeholder="Bijv. Utrecht of 3511" aria-label="Zoek op plaats of postcode" />
+            <input type="hidden" name="radius" value="25" />
             <button class="btn btn-primary" type="submit">Zoek locatie</button>
           </form>
         </div>
@@ -128,10 +129,10 @@
               </div>
               <div class="spotlight-usp">
                 <div class="usp-item"><span>⚡</span>Bekende energy boost</div>
-                <div class="usp-item"><span>🥤</span>Populair voor onderweg</div>
-                <div class="usp-item"><span>💳</span>Snel en contactloos</div>
+                <div class="usp-item"><span>🥤</span>Lekker koud voor onderweg</div>
+                <div class="usp-item"><span>💳</span>Genieten en delen</div>
               </div>
-              <p>Tijdelijke actie op geselecteerde locaties. Koop 2 blikjes Red Bull Regular en ontvang 10% korting.</p>
+              <p>Koop 2 blikjes Red Bull Regular en ontvang 10% korting.</p>
             </div>
             <div class="highlight-product-card">
               <div class="highlight-media">
@@ -163,17 +164,7 @@
       </div>
     </section>
 
-    <section class="section">
-      <div class="container banner">
-        <img class="section-icon section-icon-inverse" src="icons/icon-service.svg" alt="" />
-        <h2>Probleem met aankoop?</h2>
-        <p>Gebruik de QR-flow of stuur direct feedback, dan pakken we het snel op.</p>
-        <div class="cta-row">
-          <a href="feedback-terugbetaling.html" class="btn btn-primary">Start supportflow</a>
-          <a href="contact.html" class="btn btn-ghost">Neem contact op</a>
-        </div>
-      </div>
-    </section>
+    
 
     <section class="section insta-feed">
       <div class="insta-wrap">
@@ -232,6 +223,22 @@
         </div>
       </div>
     </section>
+    <section class="section">
+      <div class="container banner banner-single">
+        <div class="banner-content banner-content-center">
+          <div class="banner-title-row">
+            <img class="section-icon section-icon-inverse" src="icons/icon-service.svg" alt="" />
+            <h2>Probleem met aankoop?</h2>
+          </div>
+          <p>Bij Quiosk willen we dat alles soepel verloopt. Toch kan het gebeuren dat er iets misgaat. Geen zorgen, we lossen het snel voor je op.</p>
+          <div class="cta-row cta-row-center">
+            <a href="https://forms.monday.com/forms/1eea79d8bf2de6def86aa5c7a37c3224?r=use1" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Direct geld terugvragen</a>
+            <a href="feedback-terugbetaling.html" class="btn btn-ghost">Naar support pagina</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <div class="product-modal" data-product-modal aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">

@@ -404,8 +404,10 @@ const initFinder = () => {
   const closeTipModalBtn = root.querySelector('[data-close-tip-modal]');
   const tipForm = root.querySelector('[data-finder-tip-form]');
   const tipPlaceInput = root.querySelector('[data-tip-place]');
-  const urlQuery = new URLSearchParams(window.location.search).get('q') || '';
-  const mapDebug = new URLSearchParams(window.location.search).get('mapdebug') === '1';
+  const finderParams = new URLSearchParams(window.location.search);
+  const urlQuery = finderParams.get('q') || '';
+  const urlRadius = finderParams.get('radius') || '';
+  const mapDebug = finderParams.get('mapdebug') === '1';
   const initialQuery = urlQuery.trim();
   const radiusSelect = root.querySelector('[data-radius]');
   const list = root.querySelector('[data-results]');
@@ -950,6 +952,12 @@ const initFinder = () => {
   if (searchInput && initialQuery) {
     searchInput.value = initialQuery;
   }
+  if (radiusSelect && urlRadius) {
+    const allowed = new Set(['0', '5', '10', '25', '50', '100']);
+    if (allowed.has(String(urlRadius))) {
+      radiusSelect.value = String(urlRadius);
+    }
+  }
   if (noLocationEl) noLocationEl.hidden = true;
 
   const runSearch = () => {
@@ -1253,6 +1261,165 @@ const initImageLightbox = () => {
   });
 };
 
+const initQuiosk360Viewer = async () => {
+  const trigger = document.querySelector('[data-open-quiosk-360]');
+  const modal = document.querySelector('[data-quiosk-360-modal]');
+  const stage = document.querySelector('[data-quiosk-360-stage]');
+  const image = document.querySelector('[data-quiosk-360-image]');
+  const hint = document.querySelector('[data-quiosk-360-hint]');
+  const closeBtn = document.querySelector('[data-quiosk-360-close]');
+  const prevBtn = document.querySelector('[data-quiosk-360-prev]');
+  const nextBtn = document.querySelector('[data-quiosk-360-next]');
+
+  if (!trigger || !modal || !stage || !image || !hint || !closeBtn || !prevBtn || !nextBtn) return;
+
+  const staticFallback = trigger.querySelector('img')?.getAttribute('src') || 'images/hero-partner.jpg';
+  let frames = [];
+  let frameIndex = 0;
+  let isOpen = false;
+  let isDragging = false;
+  let lastClientX = 0;
+  let dragBuffer = 0;
+  const DRAG_THRESHOLD = 20;
+
+  const normalizeFramePath = (value) => {
+    const v = String(value || '').trim();
+    if (!v) return '';
+    if (/^https?:\/\//i.test(v)) return v;
+    return resolveStaticPath(v.replace(/^\/+/, ''));
+  };
+
+  try {
+    const response = await fetch(resolveStaticPath('images/quiosk-360/frames.json'), {
+      headers: { Accept: 'application/json' }
+    });
+    if (response.ok) {
+      const payload = await response.json();
+      const list = Array.isArray(payload?.frames) ? payload.frames : [];
+      frames = list.map(normalizeFramePath).filter(Boolean);
+    }
+  } catch (_) {
+    frames = [];
+  }
+
+  const frameCount = frames.length;
+
+  const setHint = (text) => {
+    hint.textContent = text;
+  };
+
+  const renderFrame = () => {
+    if (frameCount > 1) {
+      const src = frames[frameIndex];
+      if (src) image.src = src;
+      image.alt = `Quiosk 360 frame ${frameIndex + 1} van ${frameCount}`;
+      setHint('Gebruik pijltjes, sleep of swipe om rondom de Quiosk te kijken.');
+      return;
+    }
+
+    image.src = normalizeFramePath(staticFallback);
+    image.alt = 'Quiosk afbeelding';
+    setHint('Upload 360 frames in images/quiosk-360/frames.json om deze viewer interactief te maken.');
+  };
+
+  const rotateBy = (delta) => {
+    if (frameCount <= 1 || !delta) return;
+    frameIndex = (frameIndex + delta + frameCount) % frameCount;
+    renderFrame();
+  };
+
+  const open = () => {
+    isOpen = true;
+    frameIndex = 0;
+    renderFrame();
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const close = () => {
+    isOpen = false;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  const onDragStart = (event) => {
+    if (!isOpen) return;
+    if (event.target.closest('.quiosk-360-nav')) return;
+    isDragging = true;
+    dragBuffer = 0;
+    lastClientX = event.clientX;
+    stage.setPointerCapture?.(event.pointerId);
+  };
+
+  const onDragMove = (event) => {
+    if (!isOpen || !isDragging || frameCount <= 1) return;
+    const deltaX = event.clientX - lastClientX;
+    lastClientX = event.clientX;
+    dragBuffer += deltaX;
+
+    while (Math.abs(dragBuffer) >= DRAG_THRESHOLD) {
+      if (dragBuffer > 0) {
+        rotateBy(-1);
+        dragBuffer -= DRAG_THRESHOLD;
+      } else {
+        rotateBy(1);
+        dragBuffer += DRAG_THRESHOLD;
+      }
+    }
+  };
+
+  const onDragEnd = (event) => {
+    if (!isOpen) return;
+    isDragging = false;
+    dragBuffer = 0;
+    stage.releasePointerCapture?.(event.pointerId);
+  };
+
+  trigger.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  prevBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    rotateBy(-1);
+  });
+  nextBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    rotateBy(1);
+  });
+  prevBtn.addEventListener('pointerdown', (event) => {
+    event.stopPropagation();
+  });
+  nextBtn.addEventListener('pointerdown', (event) => {
+    event.stopPropagation();
+  });
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) close();
+  });
+
+  stage.addEventListener('pointerdown', onDragStart);
+  stage.addEventListener('pointermove', onDragMove);
+  stage.addEventListener('pointerup', onDragEnd);
+  stage.addEventListener('pointercancel', onDragEnd);
+
+  stage.addEventListener(
+    'wheel',
+    (event) => {
+      if (!isOpen || frameCount <= 1) return;
+      event.preventDefault();
+      rotateBy(event.deltaY > 0 ? 1 : -1);
+    },
+    { passive: false }
+  );
+
+  document.addEventListener('keydown', (event) => {
+    if (!isOpen) return;
+    if (event.key === 'Escape') close();
+    if (event.key === 'ArrowRight') rotateBy(1);
+    if (event.key === 'ArrowLeft') rotateBy(-1);
+  });
+};
+
 const initFaqAccordion = () => {
   const items = document.querySelectorAll('.faq-accordion .faq-item');
   if (!items.length) return;
@@ -1437,7 +1604,6 @@ const initDynamicProductImages = async () => {
           <article class="card product-card" data-product-name="${name}" data-product-detail="${name} is een populair product uit het actuele Quiosk-assortiment. Beschikbaarheid kan per locatie verschillen.">
             <div class="product-media"><img src="${source}" alt="${name}" loading="lazy" decoding="async" /></div>
             <h3>${name}</h3>
-            <button class="product-info-btn" type="button" aria-label="Meer info over ${name}" data-product-open>i</button>
           </article>
         `;
       })
@@ -1523,6 +1689,33 @@ const initSpotlight = () => {
   });
 };
 
+const initProcessLineAnimation = () => {
+  const flows = document.querySelectorAll('[data-process-line]');
+  if (!flows.length) return;
+
+  const revealFlow = (flow) => {
+    flow.classList.add('is-visible');
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    flows.forEach(revealFlow);
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        revealFlow(entry.target);
+        obs.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.28 }
+  );
+
+  flows.forEach((flow) => observer.observe(flow));
+};
+
 
 initHeaderCta();
 setActiveNav();
@@ -1536,8 +1729,10 @@ initHeroSlider();
 initInstaSlider();
 initPartnersHeroBalance();
 initImageLightbox();
+initQuiosk360Viewer();
 initFaqAccordion();
 initNewsModal();
 initProductModal();
 initDynamicProductImages();
 initSpotlight();
+initProcessLineAnimation();

@@ -156,7 +156,16 @@
             <p>Bent u op zoek naar een nieuwe manier om uw klanten te bedienen en uw inkomsten te verhogen? Quiosk is op zoek naar partners in Nederland die een strategische locatie hebben voor het plaatsen van een vending machine. Of het nu gaat om een tankstation, wasstraat, laadpunt, parkeerlocatie, wooncomplex of openbaar vervoer hub, wij hebben de perfecte oplossing voor u.</p>
           </div>
           <div class="about-quiosk-media">
-            <img src="images/hero-partner.jpg" alt="Quiosk vending machine op partnerlocatie" loading="lazy" decoding="async" />
+            <button
+              class="about-quiosk-media-trigger"
+              type="button"
+              data-open-quiosk-360
+              aria-label="Open 360 weergave van Quiosk"
+              title="Bekijk in 360 graden"
+            >
+              <img src="images/hero-partner.jpg" alt="Quiosk vending machine op partnerlocatie" loading="lazy" decoding="async" />
+              <span class="about-quiosk-media-badge">Bekijk 360°</span>
+            </button>
           </div>
         </div>
       </div>
@@ -165,11 +174,12 @@
     <section class="section" id="proces">
       <div class="container">
         <h2>Zo werkt een vending machine plaatsen in Nederland</h2>
-        <div class="grid-4">
-          <article class="card"><img class="section-icon" src="icons/icon-checklist.svg" alt="" /><p class="step-number">Stap 1 · Locatie selectie</p><p>We selecteren samen een strategische locatie met hoge doorloop en goede bereikbaarheid voor maximaal resultaat.</p></article>
-          <article class="card"><img class="section-icon" src="icons/icon-tools.svg" alt="" /><p class="step-number">Stap 2 · Installatie & configuratie</p><p>Wij verzorgen de plaatsing, sluiten aan op 220v, regelen internetverbinding en configureren assortiment + digitaal betalingssysteem.</p></article>
-          <article class="card"><img class="section-icon" src="icons/icon-finder.svg" alt="" /><p class="step-number">Stap 3 · Voorraadbeheer & onderhoud</p><p>Na plaatsing verzorgen wij voorraadaanvulling en onderhoud. Monitoring detecteert direct storingen en afwijkingen.</p></article>
-          <article class="card"><img class="section-icon" src="icons/icon-service.svg" alt="" /><p class="step-number">Stap 4 · Klantenservice 24/7</p><p>Onze support is dag en nacht beschikbaar, zodat uw bezoekers altijd kunnen rekenen op snelle service.</p></article>
+        <div class="grid-4 process-flow" data-process-line>
+          <article class="card" data-process-step><img class="section-icon" src="icons/icon-checklist.svg" alt="" /><p class="step-number">Stap 1</p><p class="step-subtitle">Locatie selectie</p><p>We selecteren samen een strategische locatie met hoge doorloop en goede bereikbaarheid voor maximaal resultaat.</p></article>
+          <article class="card" data-process-step><img class="section-icon" src="icons/icon-revenue.svg" alt="" /><p class="step-number">Stap 2</p><p class="step-subtitle">Wij doen de investering</p><p>Quiosk investeert in de machine, installatie, bevoorrading en exploitatie. U kunt starten zonder eigen investering.</p></article>
+          <article class="card" data-process-step><img class="section-icon" src="icons/icon-tools.svg" alt="" /><p class="step-number">Stap 3</p><p class="step-subtitle">Installatie & configuratie</p><p>Wij verzorgen de plaatsing, sluiten aan op 220v, regelen internetverbinding en configureren assortiment + digitaal betalingssysteem.</p></article>
+          <article class="card" data-process-step><img class="section-icon" src="icons/icon-finder.svg" alt="" /><p class="step-number">Stap 4</p><p class="step-subtitle">Voorraadbeheer & onderhoud</p><p>Na plaatsing verzorgen wij voorraadaanvulling en onderhoud. Monitoring detecteert direct storingen en afwijkingen.</p></article>
+          <article class="card" data-process-step><img class="section-icon" src="icons/icon-service.svg" alt="" /><p class="step-number">Stap 5</p><p class="step-subtitle">Klantenservice 24/7</p><p>Onze support is dag en nacht beschikbaar, zodat uw bezoekers altijd kunnen rekenen op snelle service.</p></article>
         </div>
         <div class="about-quiosk-cta-block">
           <a class="btn btn-primary" href="#lead">Vraag nu een gratis locatiecheck aan</a>
@@ -359,6 +369,18 @@
   <div class="image-lightbox" data-image-lightbox aria-hidden="true" role="dialog" aria-label="Vergrote afbeelding">
     <button class="image-lightbox-close" type="button" data-image-lightbox-close aria-label="Sluit">&times;</button>
     <img class="image-lightbox-img" data-image-lightbox-img src="" alt="" />
+  </div>
+
+  <div class="quiosk-360-modal" data-quiosk-360-modal aria-hidden="true" role="dialog" aria-label="Quiosk 360 weergave">
+    <div class="quiosk-360-dialog">
+      <button class="quiosk-360-close" type="button" data-quiosk-360-close aria-label="Sluit">&times;</button>
+      <div class="quiosk-360-stage" data-quiosk-360-stage>
+        <button class="quiosk-360-nav quiosk-360-nav-prev" type="button" data-quiosk-360-prev aria-label="Vorige beeld">&#10094;</button>
+        <img class="quiosk-360-image" data-quiosk-360-image src="images/hero-partner.jpg" alt="Quiosk 360 weergave" />
+        <button class="quiosk-360-nav quiosk-360-nav-next" type="button" data-quiosk-360-next aria-label="Volgende beeld">&#10095;</button>
+      </div>
+      <p class="quiosk-360-hint" data-quiosk-360-hint>Sleep of swipe om rondom de Quiosk te kijken.</p>
+    </div>
   </div>
 
   <footer class="site-footer"><div class="footer-inner"><div class="footer-brand"><img class="footer-logo" src="logo-quiosk.png" alt="Quiosk logo" /></div><nav class="footer-links" aria-label="Footer navigatie"><a href="index.html">Home</a><a href="word-partner.html">Word partner</a><a href="voor-onze-fans.html">Voor onze fans</a><a href="quiosk-zoeken.html">Quiosk zoeken</a><a href="feedback-terugbetaling.html">Support</a><a href="contact.html">Contact</a></nav><div class="footer-cta"><a href="word-partner.html" class="btn btn-primary">Word partner</a><a href="quiosk-zoeken.html" class="btn btn-secondary">Zoek een locatie</a></div><p class="footer-copy">&copy; 2026 Quiosk</p></div></footer>
