@@ -382,6 +382,7 @@ const initFinder = () => {
   let infoWindow = null;
   let markers = [];
   let markersById = new Map();
+  let activeMarker = null;
   let finderStatusMessage = '';
   let hasUserSearched = false;
   const geocodeCache = new Map();
@@ -512,6 +513,13 @@ const initFinder = () => {
       fullscreenControl: false
     });
     infoWindow = new window.google.maps.InfoWindow();
+    infoWindow.addListener('closeclick', () => {
+      if (activeMarker) {
+        activeMarker.setIcon(getMarkerIcon(false));
+        activeMarker.setZIndex(undefined);
+        activeMarker = null;
+      }
+    });
   };
 
   const getMapsApiKey = async () => {
@@ -585,6 +593,28 @@ const initFinder = () => {
     markers.forEach((marker) => marker.setMap(null));
     markers = [];
     markersById = new Map();
+    activeMarker = null;
+  };
+
+  const getMarkerIcon = (isActive = false) => {
+    const size = isActive ? 44 : 38;
+    const iconUrl = resolveStaticPath('Favicon.png?v=4');
+    return {
+      url: iconUrl,
+      scaledSize: new window.google.maps.Size(size, size),
+      anchor: new window.google.maps.Point(size / 2, size / 2)
+    };
+  };
+
+  const setActiveMarker = (marker) => {
+    if (!marker) return;
+    if (activeMarker && activeMarker !== marker) {
+      activeMarker.setIcon(getMarkerIcon(false));
+      activeMarker.setZIndex(undefined);
+    }
+    activeMarker = marker;
+    activeMarker.setIcon(getMarkerIcon(true));
+    activeMarker.setZIndex(999);
   };
 
   const renderMap = (filtered) => {
@@ -605,12 +635,14 @@ const initFinder = () => {
       const marker = new window.google.maps.Marker({
         position: k.coords,
         map: mapInstance,
-        title: k.name
+        title: k.name,
+        icon: getMarkerIcon(false)
       });
       marker.__locationId = k.id;
 
       marker.addListener('click', () => {
         if (!infoWindow) return;
+        setActiveMarker(marker);
         infoWindow.setContent(
           `<div class="quiosk-map-card"><h4>${k.name}</h4><p>${k.address}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${getDirectionsUrl(k)}" target="_blank" rel="noopener noreferrer">Navigeer</a><a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bezoek locatie</a></div></div>`
         );
@@ -640,6 +672,10 @@ const initFinder = () => {
         map.scrollIntoView({ behavior: 'smooth', block: 'start' });
         mapInstance.setCenter(location.coords);
         mapInstance.setZoom(15);
+        const marker = markersById.get(id);
+        if (marker && window.google?.maps?.event) {
+          window.google.maps.event.trigger(marker, 'click');
+        }
       });
     });
   };
