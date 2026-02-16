@@ -51,6 +51,26 @@ const setCorsHeaders = (req, res) => {
   }
 };
 
+const getRequestHost = (req) => {
+  const forwardedHost = normalizeText(req.headers['x-forwarded-host']);
+  const hostHeader = normalizeText(req.headers.host);
+  const rawHost = forwardedHost || hostHeader;
+  return rawHost.split(',')[0].trim().split(':')[0].toLowerCase();
+};
+
+const isLocalHost = (host) => {
+  const normalized = normalizeText(host).toLowerCase();
+  return normalized === 'localhost' || normalized === '127.0.0.1' || normalized === '::1';
+};
+
+const isLocalRequest = (req) => isLocalHost(getRequestHost(req));
+
+const requireLocalOnly = (req, res) => {
+  if (isLocalRequest(req)) return true;
+  res.status(404).json({ error: 'Not found' });
+  return false;
+};
+
 app.use((req, res, next) => {
   setCorsHeaders(req, res);
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -368,8 +388,7 @@ const requireImportToken = (req, res) => {
     return false;
   }
 
-  const providedToken =
-    normalizeText(req.headers['x-import-token']) || normalizeText(req.query.token);
+  const providedToken = normalizeText(req.headers['x-import-token']);
 
   if (!providedToken || providedToken !== IMPORT_TOKEN) {
     res.status(401).json({ error: 'Unauthorized import request' });
@@ -393,6 +412,7 @@ app.get('/api/locations', async (_req, res) => {
 
 app.post('/api/import-locations', async (req, res) => {
   try {
+    if (!requireLocalOnly(req, res)) return;
     if (!requireImportToken(req, res)) return;
 
     let importedLocations = [];
@@ -445,6 +465,7 @@ app.post('/api/import-locations', async (req, res) => {
 
 app.post('/api/import-from-drop', async (req, res) => {
   try {
+    if (!requireLocalOnly(req, res)) return;
     if (!requireImportToken(req, res)) return;
     await ensureImportDropDir();
 
@@ -509,6 +530,7 @@ app.get('/api/product-images', async (_req, res) => {
 });
 
 app.get('/api/import-template', (_req, res) => {
+  if (!requireLocalOnly(_req, res)) return;
   res.type('text/csv').send([
     'title,address,city,postcode,latitude,longitude,is_open,environment,contactless,products',
     'Quiosk - Voorbeeld,"Stationsplein 1",Utrecht,3511,52.0907,5.1109,true,Indoor,true,"Drinks|Snacks"'
@@ -517,7 +539,7 @@ app.get('/api/import-template', (_req, res) => {
 
 // Optional endpoint to inject Maps key into the frontend if needed later.
 app.get('/api/config', (_req, res) => {
-  res.json({ googleMapsApiKey: GOOGLE_MAPS_API_KEY || '' });
+  res.json({ googleMapsApiKey: '' });
 });
 
 app.get('/api/health', async (_req, res) => {
@@ -534,6 +556,16 @@ app.get('/api/health', async (_req, res) => {
     manualCount,
     timestamp: new Date().toISOString()
   });
+});
+
+app.get('/import-locaties.html', (req, res) => {
+  if (!requireLocalOnly(req, res)) return;
+  res.sendFile(path.join(__dirname, 'import-locaties.html'));
+});
+
+app.get('/import-locaties', (req, res) => {
+  if (!requireLocalOnly(req, res)) return;
+  res.redirect(302, '/import-locaties.html');
 });
 
 app.use(express.static(__dirname));
