@@ -2833,7 +2833,7 @@ main > .section.quick-search {
 }
 
 .finder-results-overlap {
-  margin-top: -96px;
+  margin-top: -25vh;
   position: relative;
   z-index: 6;
   padding-top: 0;
@@ -3999,7 +3999,7 @@ main > .section.quick-search {
   }
 
   .finder-results-overlap {
-    margin-top: -110px;
+    margin-top: -25vh;
   }
 
   .finder-results-summary {
