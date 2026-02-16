@@ -17,6 +17,7 @@
   --s-5: 48px;
   --s-6: 64px;
   --section-air: var(--s-6);
+  --finder-overlap: clamp(120px, 15vh, 190px);
 }
 
 * {
@@ -2704,6 +2705,7 @@ main > .section.quick-search {
 
 .section-finder-map-hero .map {
   min-height: calc(100vh - 88px);
+  min-height: calc(100dvh - 88px);
 }
 
 .finder-map-stack {
@@ -2833,7 +2835,7 @@ main > .section.quick-search {
 }
 
 .finder-results-overlap {
-  margin-top: -25vh;
+  margin-top: calc(-1 * var(--finder-overlap));
   position: relative;
   z-index: 6;
   padding-top: 0;
@@ -3773,6 +3775,10 @@ main > .section.quick-search {
 }
 
 @media (max-width: 680px) {
+  :root {
+    --finder-overlap: clamp(100px, 22vh, 170px);
+  }
+
   .container {
     width: min(100%, 94%);
   }
@@ -3928,7 +3934,7 @@ main > .section.quick-search {
   }
 
   .finder-results-overlap {
-    margin-top: -56px;
+    margin-top: calc(-1 * var(--finder-overlap));
   }
 
   .alpha-accordion {
@@ -3989,7 +3995,8 @@ main > .section.quick-search {
   }
 
   .section-finder-map-hero .map {
-    min-height: clamp(420px, 58vh, 560px);
+    min-height: calc(100vh - 72px);
+    min-height: calc(100dvh - 72px);
   }
 
   .finder-map-controls {
@@ -3999,7 +4006,7 @@ main > .section.quick-search {
   }
 
   .finder-results-overlap {
-    margin-top: -25vh;
+    margin-top: calc(-1 * var(--finder-overlap));
   }
 
   .finder-results-summary {
@@ -4024,12 +4031,11 @@ main > .section.quick-search {
 
   .finder-overlap-search .finder-search-shell {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
   .finder-overlap-search .finder-search-logo {
-    width: 40px;
-    height: 40px;
+    display: none;
   }
 
   .finder-overlap-search .finder-search-form {
