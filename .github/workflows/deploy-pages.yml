@@ -1,0 +1,52 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject cache-bust version for CSS/JS
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_SHA::8}"
+          shopt -s nullglob
+          for file in *.html; do
+            sed -E -i "s|styles\.css(\?v=[^\"]*)?|styles.css?v=${VERSION}|g" "$file"
+            sed -E -i "s|script\.js(\?v=[^\"]*)?|script.js?v=${VERSION}|g" "$file"
+          done
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
