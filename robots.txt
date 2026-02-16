@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 
 Disallow: /import-locaties
+Disallow: /import-locaties.html
 Disallow: /data/import/
 
 Sitemap: https://www.quiosk.nl/sitemap.xml

@@ -35,6 +35,12 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Remove admin-only files from public artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f import-locaties.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
