@@ -2833,7 +2833,7 @@ main > .section.quick-search {
 }
 
 .finder-results-overlap {
-  margin-top: -72px;
+  margin-top: -96px;
   position: relative;
   z-index: 6;
   padding-top: 0;
@@ -2853,6 +2853,28 @@ main > .section.quick-search {
   border-top: 4px solid var(--brand-top);
   padding: 14px 20px 16px;
   text-align: center;
+}
+
+.finder-overlap-search {
+  width: 100%;
+  margin: 2px auto 14px;
+}
+
+.finder-overlap-search .finder-search-shell {
+  align-items: center;
+  gap: 12px;
+}
+
+.finder-overlap-search .finder-search-form {
+  width: 100%;
+  max-width: none;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+}
+
+.finder-overlap-search .finder-search-logo {
+  width: 42px;
+  height: 42px;
 }
 
 .finder-results-line {
@@ -3967,7 +3989,7 @@ main > .section.quick-search {
   }
 
   .section-finder-map-hero .map {
-    min-height: calc(100vh - 72px);
+    min-height: clamp(420px, 58vh, 560px);
   }
 
   .finder-map-controls {
@@ -3977,7 +3999,7 @@ main > .section.quick-search {
   }
 
   .finder-results-overlap {
-    margin-top: -36px;
+    margin-top: -110px;
   }
 
   .finder-results-summary {
@@ -3998,6 +4020,20 @@ main > .section.quick-search {
 
   .finder-radius-label select {
     min-height: 48px;
+  }
+
+  .finder-overlap-search .finder-search-shell {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .finder-overlap-search .finder-search-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .finder-overlap-search .finder-search-form {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .alpha-accordion {
