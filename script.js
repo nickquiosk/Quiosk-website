@@ -1975,6 +1975,93 @@ const initSpotlight = () => {
   });
 };
 
+const initOverTabs = () => {
+  const root = document.querySelector('[data-over-tabs]');
+  if (!root) return;
+
+  const tabs = Array.from(root.querySelectorAll('[data-over-tab]'));
+  const panels = Array.from(root.querySelectorAll('[data-over-panel]'));
+  const toggles = Array.from(root.querySelectorAll('[data-over-toggle]'));
+  if (!tabs.length || !panels.length || !toggles.length) return;
+  const mobileQuery = window.matchMedia('(max-width: 920px)');
+
+  const setDesktopActive = (targetId) => {
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.target === targetId;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+    });
+    panels.forEach((panel) => {
+      panel.classList.toggle('is-active', panel.id === targetId);
+      panel.classList.remove('is-open');
+    });
+  };
+
+  const setMobileOpen = (targetId) => {
+    panels.forEach((panel) => {
+      const isOpen = panel.id === targetId ? !panel.classList.contains('is-open') : false;
+      panel.classList.toggle('is-open', isOpen);
+      const toggle = panel.querySelector('[data-over-toggle]');
+      if (toggle) toggle.setAttribute('aria-expanded', String(isOpen));
+    });
+  };
+
+  const applyMode = () => {
+    if (mobileQuery.matches) {
+      root.classList.add('is-accordion');
+      tabs.forEach((tab) => tab.setAttribute('aria-selected', 'false'));
+      let hasOpen = false;
+      panels.forEach((panel, idx) => {
+        const shouldOpen = idx === 0;
+        if (panel.classList.contains('is-open')) hasOpen = true;
+        if (!hasOpen && shouldOpen) {
+          panel.classList.add('is-open');
+          const toggle = panel.querySelector('[data-over-toggle]');
+          if (toggle) toggle.setAttribute('aria-expanded', 'true');
+        } else if (!panel.classList.contains('is-open')) {
+          const toggle = panel.querySelector('[data-over-toggle]');
+          if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+      return;
+    }
+
+    root.classList.remove('is-accordion');
+    const activeTab = tabs.find((tab) => tab.classList.contains('is-active')) || tabs[0];
+    if (activeTab?.dataset.target) {
+      setDesktopActive(activeTab.dataset.target);
+    }
+    panels.forEach((panel) => {
+      panel.classList.remove('is-open');
+      const toggle = panel.querySelector('[data-over-toggle]');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    });
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      if (mobileQuery.matches) return;
+      setDesktopActive(tab.dataset.target);
+    });
+  });
+
+  toggles.forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      if (!mobileQuery.matches) return;
+      const panel = toggle.closest('[data-over-panel]');
+      if (!panel?.id) return;
+      setMobileOpen(panel.id);
+    });
+  });
+
+  applyMode();
+  if (typeof mobileQuery.addEventListener === 'function') {
+    mobileQuery.addEventListener('change', applyMode);
+  } else if (typeof mobileQuery.addListener === 'function') {
+    mobileQuery.addListener(applyMode);
+  }
+};
+
 const initProcessLineAnimation = () => {
   const flows = document.querySelectorAll('[data-process-line]');
   if (!flows.length) return;
@@ -2072,5 +2159,6 @@ initNewsModal();
 initProductModal();
 initDynamicProductImages();
 initSpotlight();
+initOverTabs();
 initProcessLineAnimation();
 initFansMobileAccordion();
