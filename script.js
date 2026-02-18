@@ -2062,6 +2062,54 @@ const initOverTabs = () => {
   }
 };
 
+const initFactCounters = () => {
+  const counters = Array.from(document.querySelectorAll('[data-count-to]'));
+  if (!counters.length) return;
+
+  const run = () => {
+    counters.forEach((el) => {
+      if (el.dataset.countDone === 'true') return;
+      const target = Number(el.dataset.countTo || 0);
+      const suffix = el.dataset.suffix || '';
+      const duration = 1100;
+      const start = performance.now();
+
+      const step = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const value = Math.round(target * eased);
+        el.textContent = `${value.toLocaleString('nl-NL')}${suffix}`;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+          return;
+        }
+        el.dataset.countDone = 'true';
+      };
+
+      requestAnimationFrame(step);
+    });
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    run();
+    return;
+  }
+
+  const first = counters[0].closest('.over-stat-grid') || counters[0];
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        run();
+        obs.disconnect();
+      });
+    },
+    { threshold: 0.35 }
+  );
+
+  observer.observe(first);
+};
+
 const initProcessLineAnimation = () => {
   const flows = document.querySelectorAll('[data-process-line]');
   if (!flows.length) return;
@@ -2160,5 +2208,6 @@ initProductModal();
 initDynamicProductImages();
 initSpotlight();
 initOverTabs();
+initFactCounters();
 initProcessLineAnimation();
 initFansMobileAccordion();
