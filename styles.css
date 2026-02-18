@@ -3891,6 +3891,34 @@ main > .section.quick-search {
     min-height: clamp(520px, 66vh, 620px);
   }
 
+  .hero-arrow {
+    display: none !important;
+  }
+
+  .hero-with-slider .hero-copy {
+    gap: 10px;
+    padding-inline: 6px;
+  }
+
+  .hero-with-slider .hero-copy h1 {
+    max-width: 16ch;
+    line-height: 1.08;
+    letter-spacing: 0.035em;
+    text-wrap: balance;
+    margin-inline: auto;
+  }
+
+  .hero-with-slider .hero-copy > p {
+    max-width: 34ch;
+    margin-inline: auto;
+  }
+
+  .hero-with-slider .hero-copy .cta-row {
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+  }
+
   h1 {
     font-size: clamp(1.75rem, 8vw, 2.45rem);
   }
@@ -4146,17 +4174,4 @@ main > .section.quick-search {
     min-height: 74px;
   }
 
-  .hero-arrow {
-    width: 34px;
-    height: 34px;
-    font-size: 1.35rem;
-  }
-
-  .hero-arrow-prev {
-    left: 10px;
-  }
-
-  .hero-arrow-next {
-    right: 10px;
-  }
 }
