@@ -1378,16 +1378,6 @@ main > .section + .section::before {
   text-align: center;
 }
 
-.section-head-left {
-  max-width: none;
-  margin: 0 0 14px;
-  text-align: left;
-}
-
-.section-head-left .section-kicker-row {
-  justify-content: flex-start;
-}
-
 .section-head h2 {
   margin: 0;
 }
