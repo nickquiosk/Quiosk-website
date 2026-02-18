@@ -374,6 +374,7 @@ img {
   inset: 0;
   z-index: -2;
   background: url("images/hero-partner-background.jpg") center center / cover no-repeat;
+  pointer-events: none;
 }
 
 .contact-hero::after {
@@ -382,6 +383,7 @@ img {
   inset: 0;
   z-index: -1;
   background: linear-gradient(to bottom, rgba(52, 171, 178, 0.3), rgba(11, 50, 54, 0.72));
+  pointer-events: none;
 }
 
 .support-hero {
@@ -396,6 +398,7 @@ img {
   inset: 0;
   z-index: -2;
   background: url("images/vraag-storing.jpg") center center / cover no-repeat;
+  pointer-events: none;
 }
 
 .support-hero::after {
@@ -404,6 +407,7 @@ img {
   inset: 0;
   z-index: -1;
   background: linear-gradient(to bottom, rgba(52, 171, 178, 0.35), rgba(11, 50, 54, 0.72));
+  pointer-events: none;
 }
 
 .support-hero h1 {
@@ -563,6 +567,7 @@ img {
   inset: 0;
   z-index: -2;
   background: url("images/hero-partner-background.jpg") center center / cover no-repeat;
+  pointer-events: none;
 }
 
 .partners-hero-bg::after {
@@ -571,6 +576,7 @@ img {
   inset: 0;
   z-index: -1;
   background: rgba(52, 171, 178, 0.7);
+  pointer-events: none;
 }
 
 .partners-hero-bg .hero-copy {
@@ -621,6 +627,7 @@ img {
   position: absolute;
   inset: 0;
   background: rgba(52, 171, 178, 0.5);
+  pointer-events: none;
 }
 
 .hero-slide {
@@ -630,6 +637,7 @@ img {
   background-position: center;
   opacity: 0;
   animation: heroFade 18s infinite;
+  pointer-events: none;
 }
 
 .hero-slider.is-js .hero-slide {
