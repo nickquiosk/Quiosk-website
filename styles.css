@@ -2804,6 +2804,8 @@ main > .section.quick-search {
   margin-top: 18px;
   display: flex;
   justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .insta-modal {
