@@ -1099,7 +1099,7 @@ const initHeroSlider = () => {
 
   const heroContent = [
     {
-      title: 'Slimme vending in Nederland, altijd dichtbij en altijd open.',
+      title: 'Slimme Vending. Altijd Dichtbij. Altijd open.',
       subtitle:
         'Voor partners betekent dit extra omzet zonder investering. Voor onze fans betekent dit 24/7 snacks, drinks en essentials op locaties waar je toch al bent.',
       primaryLabel: 'Voor onze fans',

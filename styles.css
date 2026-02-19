@@ -4702,6 +4702,7 @@ main > .section.quick-search {
   }
 
   .hero-with-slider .hero-copy h1 {
+    font-size: clamp(1.45rem, 6.8vw, 2rem);
     max-width: 16ch;
     line-height: 1.08;
     letter-spacing: 0.035em;
