@@ -1093,37 +1093,23 @@ const initHeroSlider = () => {
   const next = slider.querySelector('.hero-arrow-next');
   const titleEl = document.querySelector('[data-hero-title]');
   const subtitleEl = document.querySelector('[data-hero-subtitle]');
-  const ctaPrimary = document.querySelector('[data-hero-cta-primary]');
-  const ctaSecondary = document.querySelector('[data-hero-cta-secondary]');
   if (!slides.length || !prev || !next) return;
 
   const heroContent = [
     {
       title: 'Slimme Vending. Altijd Dichtbij. Altijd open.',
       subtitle:
-        'Voor partners betekent dit extra omzet zonder investering. Voor onze fans betekent dit 24/7 snacks, drinks en essentials op locaties waar je toch al bent.',
-      primaryLabel: 'Voor onze fans',
-      primaryHref: 'voor-onze-fans.html',
-      secondaryLabel: 'Word partner',
-      secondaryHref: 'word-partner.html'
+        'Voor partners betekent dit extra omzet zonder investering. Voor onze fans betekent dit 24/7 snacks, drinks en essentials op locaties waar je toch al bent.'
     },
     {
       title: '24/7 snacks en drinks onderweg, zonder gedoe.',
       subtitle:
-        'Vind een Quiosk bij tankstations, wasstraten, laadpleinen en andere drukbezochte locaties in Nederland.',
-      primaryLabel: 'Vind een Quiosk',
-      primaryHref: 'quiosk-zoeken.html',
-      secondaryLabel: 'Support bij aankoop',
-      secondaryHref: 'feedback-terugbetaling.html'
+        'Vind een Quiosk bij tankstations, wasstraten, laadpleinen en andere drukbezochte locaties in Nederland.'
     },
     {
       title: 'Verdien mee met een Quiosk op jouw locatie.',
       subtitle:
-        'Wij investeren, plaatsen en beheren de vending machine. Jij stelt de locatie beschikbaar en deelt mee in de omzet.',
-      primaryLabel: 'Plan gratis locatiecheck',
-      primaryHref: 'word-partner.html#lead',
-      secondaryLabel: 'Bel direct',
-      secondaryHref: 'tel:0307370809'
+        'Wij investeren, plaatsen en beheren de vending machine. Jij stelt de locatie beschikbaar en deelt mee in de omzet.'
     }
   ];
 
@@ -1137,14 +1123,10 @@ const initHeroSlider = () => {
     });
     index = i;
 
-    if (titleEl && subtitleEl && ctaPrimary && ctaSecondary && heroContent[i]) {
+    if (titleEl && subtitleEl && heroContent[i]) {
       const content = heroContent[i];
       titleEl.textContent = content.title;
       subtitleEl.textContent = content.subtitle;
-      ctaPrimary.textContent = content.primaryLabel;
-      ctaPrimary.setAttribute('href', content.primaryHref);
-      ctaSecondary.textContent = content.secondaryLabel;
-      ctaSecondary.setAttribute('href', content.secondaryHref);
     }
   };
 
