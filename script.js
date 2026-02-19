@@ -9,10 +9,41 @@ const initHeaderCta = () => {
   navList.appendChild(item);
 };
 
+const initPageTransitions = () => {
+  // Overgangen uit: standaard browsernavigatie.
+  window.__quioskNavigateWithTransition = null;
+
+  // Alleen voor de blog-overzichtspagina: altijd bovenaan starten.
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  if (currentPage !== 'blog.html') return;
+
+  const scrollTop = () => {
+    requestAnimationFrame(() => window.scrollTo(0, 0));
+  };
+
+  scrollTop();
+  window.addEventListener('pageshow', scrollTop);
+};
+
 const setActiveNav = () => {
   const path = location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('[data-nav]').forEach((link) => {
-    if (link.getAttribute('href') === path) link.classList.add('active');
+    if (link.getAttribute('href') !== path) return;
+    link.classList.add('active');
+    const parentDropdown = link.closest('.nav-has-dropdown');
+    if (!parentDropdown) return;
+    const toggle = parentDropdown.querySelector('.nav-dropdown-toggle');
+    if (!toggle) return;
+    toggle.classList.add('active');
+  });
+};
+
+const setActiveOverSubnav = () => {
+  const path = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('[data-over-subnav]').forEach((link) => {
+    if (link.getAttribute('href') !== path) return;
+    link.classList.add('active');
+    link.setAttribute('aria-current', 'page');
   });
 };
 
@@ -21,12 +52,52 @@ const initMobileNav = () => {
   const toggle = document.querySelector('.nav-toggle');
   const nav = document.querySelector('.site-nav');
   if (!toggle || !nav) return;
+  const desktopBreakpoint = 920;
 
   const closeNav = () => {
     nav.classList.remove('is-open');
     toggle.classList.remove('is-open');
     toggle.setAttribute('aria-expanded', 'false');
+    nav.querySelectorAll('.nav-has-dropdown').forEach((item) => {
+      item.classList.remove('is-open');
+      const trigger = item.querySelector('.nav-dropdown-toggle');
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    });
   };
+
+  nav.querySelectorAll('.nav-dropdown-toggle').forEach((trigger) => {
+    trigger.addEventListener('click', (event) => {
+      if (window.innerWidth > desktopBreakpoint) return;
+      event.stopPropagation();
+      const item = trigger.closest('.nav-has-dropdown');
+      if (!item) return;
+      const isOpen = item.classList.toggle('is-open');
+      trigger.setAttribute('aria-expanded', String(isOpen));
+      nav.querySelectorAll('.nav-has-dropdown').forEach((other) => {
+        if (other === item) return;
+        other.classList.remove('is-open');
+        const otherTrigger = other.querySelector('.nav-dropdown-toggle');
+        if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  });
+
+  nav.querySelectorAll('.nav-has-dropdown').forEach((item) => {
+    const trigger = item.querySelector('.nav-dropdown-toggle');
+    if (!trigger) return;
+
+    item.addEventListener('mouseenter', () => {
+      if (window.innerWidth <= desktopBreakpoint) return;
+      item.classList.add('is-open');
+      trigger.setAttribute('aria-expanded', 'true');
+    });
+
+    item.addEventListener('mouseleave', () => {
+      if (window.innerWidth <= desktopBreakpoint) return;
+      item.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+    });
+  });
 
   toggle.addEventListener('click', () => {
     const isOpen = nav.classList.toggle('is-open');
@@ -47,7 +118,7 @@ const initMobileNav = () => {
   });
 
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 920) closeNav();
+    if (window.innerWidth > desktopBreakpoint) closeNav();
   });
 };
 
@@ -2213,9 +2284,119 @@ const initFansMobileAccordion = () => {
   }
 };
 
+const initBlogTimeline = () => {
+  const root = document.querySelector('[data-blog-timeline]');
+  if (!root) return;
 
+  const yearButtons = Array.from(root.querySelectorAll('[data-year-chip]'));
+  const filterButtons = Array.from(root.querySelectorAll('[data-blog-filter]'));
+  const yearSections = Array.from(root.querySelectorAll('[data-blog-year]'));
+  const timelineItems = Array.from(root.querySelectorAll('.blog-timeline-item'));
+
+  if (!yearSections.length || !timelineItems.length) return;
+
+  const setActiveYear = (year) => {
+    yearButtons.forEach((button) => {
+      button.classList.toggle('is-active', button.dataset.yearChip === year);
+    });
+  };
+
+  yearButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const year = button.dataset.yearChip;
+      const target = root.querySelector(`#blog-year-${year}`);
+      if (!target) return;
+      setActiveYear(year);
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  const applyCategoryFilter = (category) => {
+    timelineItems.forEach((item) => {
+      const itemCategory = item.dataset.blogCategory || 'all';
+      const isVisible = category === 'all' || itemCategory === category;
+      item.style.display = isVisible ? '' : 'none';
+    });
+
+    yearSections.forEach((section) => {
+      const anyVisibleItem = Array.from(section.querySelectorAll('.blog-timeline-item')).some(
+        (item) => item.style.display !== 'none'
+      );
+      section.style.display = anyVisibleItem ? '' : 'none';
+    });
+  };
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.blogFilter || 'all';
+      filterButtons.forEach((other) => other.classList.remove('is-active'));
+      button.classList.add('is-active');
+      applyCategoryFilter(filter);
+    });
+  });
+
+  const yearObserver = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+      if (!visible) return;
+      const year = visible.target.dataset.blogYear;
+      if (year) setActiveYear(year);
+    },
+    { threshold: 0.3, rootMargin: '-20% 0px -60% 0px' }
+  );
+  yearSections.forEach((section) => yearObserver.observe(section));
+
+  const itemObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.22 }
+  );
+  timelineItems.forEach((item) => itemObserver.observe(item));
+
+  timelineItems.forEach((item) => {
+    const href = item.dataset.href;
+    if (!href) return;
+
+    if (!item.hasAttribute('tabindex')) item.setAttribute('tabindex', '0');
+    item.setAttribute('role', 'link');
+
+    const title = item.querySelector('h4 a')?.textContent?.trim();
+    if (title) item.setAttribute('aria-label', `${title} openen`);
+
+    item.addEventListener('click', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest('a, button')) return;
+      if (typeof window.__quioskNavigateWithTransition === 'function') {
+        window.__quioskNavigateWithTransition(href);
+        return;
+      }
+      window.location.href = href;
+    });
+
+    item.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      if (typeof window.__quioskNavigateWithTransition === 'function') {
+        window.__quioskNavigateWithTransition(href);
+        return;
+      }
+      window.location.href = href;
+    });
+  });
+};
+
+
+initPageTransitions();
 initHeaderCta();
 setActiveNav();
+setActiveOverSubnav();
 initMobileNav();
 initHeaderScroll();
 initBackToTop();
@@ -2237,3 +2418,4 @@ initOverTabs();
 initFactCounters();
 initProcessLineAnimation();
 initFansMobileAccordion();
+initBlogTimeline();
