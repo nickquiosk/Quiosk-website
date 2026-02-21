@@ -1467,6 +1467,35 @@ const initPartnersHeroBalance = () => {
   window.addEventListener('load', syncHeights, { passive: true });
 };
 
+const initPartnersAboutMobileBalance = () => {
+  const layout = document.querySelector('.partners-about-overlap .about-quiosk-layout');
+  if (!layout) return;
+
+  const copyCol = layout.querySelector('.about-quiosk-copy');
+  const mediaCol = layout.querySelector('.about-quiosk-media');
+  if (!copyCol || !mediaCol) return;
+
+  const syncHeights = () => {
+    if (window.innerWidth > 760) {
+      mediaCol.style.height = '';
+      return;
+    }
+
+    const copyHeight = copyCol.offsetHeight;
+    mediaCol.style.height = copyHeight > 0 ? `${copyHeight}px` : '';
+  };
+
+  syncHeights();
+  window.addEventListener('resize', syncHeights, { passive: true });
+  window.addEventListener('load', syncHeights, { passive: true });
+  window.addEventListener('orientationchange', syncHeights, { passive: true });
+
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(syncHeights);
+    observer.observe(copyCol);
+  }
+};
+
 const initImageLightbox = () => {
   const lightbox = document.querySelector('[data-image-lightbox]');
   const lightboxImg = document.querySelector('[data-image-lightbox-img]');
@@ -2566,6 +2595,7 @@ initDynamicBrandAssets();
 initInstaSlider();
 initInstaLightbox();
 initPartnersHeroBalance();
+initPartnersAboutMobileBalance();
 initImageLightbox();
 initQuiosk360Viewer();
 initFaqAccordion();
