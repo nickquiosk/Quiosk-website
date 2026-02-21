@@ -1,3 +1,121 @@
+const COOKIE_CONSENT_KEY = 'quiosk_cookie_consent_v1';
+const GA_MEASUREMENT_ID = 'G-G8PF2DEK48';
+
+const readCookieConsent = () => {
+  try {
+    const value = localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (value === 'accepted' || value === 'necessary') return value;
+  } catch (_error) {
+    return null;
+  }
+  return null;
+};
+
+const writeCookieConsent = (value) => {
+  try {
+    localStorage.setItem(COOKIE_CONSENT_KEY, value);
+  } catch (_error) {
+    // Negeer opslagfouten (bijv. private mode); banner blijft dan zichtbaar.
+  }
+};
+
+const loadGoogleAnalytics = () => {
+  if (window.__quioskGaLoaded) return;
+  window.__quioskGaLoaded = true;
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function gtag() {
+    window.dataLayer.push(arguments);
+  };
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+  document.head.appendChild(script);
+
+  window.gtag('js', new Date());
+  window.gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true });
+};
+
+const initCookieConsent = () => {
+  const existingBanner = document.querySelector('[data-cookie-banner]');
+  if (existingBanner) return;
+
+  const consent = readCookieConsent();
+  if (consent === 'accepted') loadGoogleAnalytics();
+
+  const banner = document.createElement('aside');
+  banner.className = 'cookie-banner';
+  banner.setAttribute('data-cookie-banner', 'true');
+  banner.setAttribute('role', 'dialog');
+  banner.setAttribute('aria-live', 'polite');
+  banner.setAttribute('aria-label', 'Cookie melding');
+  banner.hidden = Boolean(consent);
+  banner.innerHTML = `
+    <div class="cookie-banner-inner">
+      <div class="cookie-banner-copy">
+        <h3>Help ons Quiosk verbeteren</h3>
+        <p>
+          Met analytische cookies verbeteren we snelheid, content en gebruiksgemak.
+          <a href="privacy-cookies.html">Lees ons privacy- en cookiebeleid</a>.
+        </p>
+      </div>
+      <div class="cookie-banner-actions">
+        <button type="button" class="btn btn-primary" data-cookie-accept>Alles accepteren</button>
+        <button type="button" class="btn btn-secondary" data-cookie-necessary>Alleen noodzakelijk</button>
+      </div>
+    </div>
+  `;
+
+  const closeBanner = () => {
+    banner.hidden = true;
+  };
+
+  const openBanner = () => {
+    banner.hidden = false;
+    const acceptBtn = banner.querySelector('[data-cookie-accept]');
+    if (acceptBtn instanceof HTMLElement) requestAnimationFrame(() => acceptBtn.focus());
+  };
+
+  const ensureFooterCookieLink = () => {
+    document.querySelectorAll('.footer-copy').forEach((footerCopy) => {
+      if (footerCopy.querySelector('[data-open-cookie-settings]')) return;
+      const separator = document.createElement('span');
+      separator.className = 'footer-copy-separator';
+      separator.textContent = ' | ';
+      const cookieBtn = document.createElement('button');
+      cookieBtn.type = 'button';
+      cookieBtn.className = 'footer-copy-cookie-link';
+      cookieBtn.setAttribute('data-open-cookie-settings', 'true');
+      cookieBtn.textContent = 'Cookie instellingen';
+      footerCopy.appendChild(separator);
+      footerCopy.appendChild(cookieBtn);
+    });
+  };
+
+  banner.querySelector('[data-cookie-necessary]')?.addEventListener('click', () => {
+    writeCookieConsent('necessary');
+    closeBanner();
+  });
+
+  banner.querySelector('[data-cookie-accept]')?.addEventListener('click', () => {
+    writeCookieConsent('accepted');
+    loadGoogleAnalytics();
+    closeBanner();
+  });
+
+  ensureFooterCookieLink();
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (!target.closest('[data-open-cookie-settings]')) return;
+    openBanner();
+  });
+
+  document.body.appendChild(banner);
+};
+
 const initHeaderCta = () => {
   const navList = document.querySelector('.site-nav ul');
   if (!navList || navList.querySelector('.nav-cta-item')) return;
@@ -2579,7 +2697,7 @@ const initBlogTimeline = () => {
   });
 };
 
-
+initCookieConsent();
 initPageTransitions();
 initHeaderCta();
 setActiveNav();
