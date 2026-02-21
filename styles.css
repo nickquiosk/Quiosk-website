@@ -882,7 +882,7 @@ img {
 }
 
 .partners-about-overlap {
-  margin-top: -90px;
+  margin-top: -110px;
   position: relative;
   z-index: 6;
   background: transparent !important;
@@ -895,6 +895,14 @@ img {
   border-radius: 16px;
   background: #fff;
   padding: 22px;
+}
+
+.about-quiosk-copy h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  line-height: 1.2;
+  text-align: left;
+  text-wrap: balance;
 }
 
 .about-quiosk-copy p {
@@ -2661,6 +2669,22 @@ textarea {
 }
 
 @media (max-width: 760px) {
+  .partners-about-overlap .about-quiosk-copy h2 {
+    font-size: clamp(1.28rem, 5.8vw, 1.7rem);
+    line-height: 1.22;
+    max-width: 20ch;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .partners-about-overlap .about-quiosk-copy p {
+    text-align: center;
+  }
+
+  .partners-about-overlap .about-quiosk-copy .cta-row {
+    justify-content: center;
+  }
+
   .over-subnav {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5343,10 +5367,6 @@ main > .section.quick-search {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .partners-about-overlap {
-    margin-top: -54px;
-  }
-
   .about-quiosk-media-trigger img {
     width: 100%;
     max-height: none;
@@ -5364,17 +5384,13 @@ main > .section.quick-search {
   }
 
   .quiosk-360-image {
-    height: min(56vh, 480px);
+    height: min(48vh, 380px);
   }
 
   .quiosk-360-nav {
     width: 40px;
     height: 40px;
     font-size: 1.25rem;
-  }
-
-  .partners-about-overlap {
-    margin-top: -36px;
   }
 
   :root {
@@ -5830,6 +5846,10 @@ main > .section.quick-search {
     margin-top: -64px;
   }
 
+  .partners-about-overlap {
+    margin-top: -64px;
+  }
+
   .map {
     min-height: 660px;
   }
@@ -5964,6 +5984,14 @@ main > .section.quick-search {
 
   .home-core {
     margin-top: -48px;
+  }
+
+  .partners-about-overlap {
+    margin-top: -48px;
+  }
+
+  .quiosk-360-image {
+    height: min(42vh, 320px);
   }
 
   .contact-core {
