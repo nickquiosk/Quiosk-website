@@ -54,26 +54,36 @@ const initMobileNav = () => {
   if (!toggle || !nav) return;
   const desktopBreakpoint = 920;
   const body = document.body;
+  const isHamburgerView = () =>
+    window.innerWidth <= desktopBreakpoint || window.getComputedStyle(toggle).display !== 'none';
+
+  const collapseDropdowns = () => {
+    nav.querySelectorAll('.nav-has-dropdown').forEach((item) => {
+      item.classList.remove('is-open');
+      const trigger = item.querySelector('.nav-dropdown-toggle');
+      if (trigger) {
+        trigger.setAttribute('aria-expanded', 'false');
+        if (document.activeElement === trigger) trigger.blur();
+      }
+    });
+  };
 
   const setNavOpenState = (isOpen) => {
     nav.classList.toggle('is-open', isOpen);
     toggle.classList.toggle('is-open', isOpen);
     toggle.setAttribute('aria-expanded', String(isOpen));
     if (body) body.classList.toggle('nav-open', isOpen);
+    if (isOpen) collapseDropdowns();
   };
 
   const closeNav = () => {
     setNavOpenState(false);
-    nav.querySelectorAll('.nav-has-dropdown').forEach((item) => {
-      item.classList.remove('is-open');
-      const trigger = item.querySelector('.nav-dropdown-toggle');
-      if (trigger) trigger.setAttribute('aria-expanded', 'false');
-    });
+    collapseDropdowns();
   };
 
   nav.querySelectorAll('.nav-dropdown-toggle').forEach((trigger) => {
     trigger.addEventListener('click', (event) => {
-      if (window.innerWidth > desktopBreakpoint) return;
+      if (!isHamburgerView()) return;
       event.stopPropagation();
       const item = trigger.closest('.nav-has-dropdown');
       if (!item) return;
@@ -88,26 +98,10 @@ const initMobileNav = () => {
     });
   });
 
-  nav.querySelectorAll('.nav-has-dropdown').forEach((item) => {
-    const trigger = item.querySelector('.nav-dropdown-toggle');
-    if (!trigger) return;
-
-    item.addEventListener('mouseenter', () => {
-      if (window.innerWidth <= desktopBreakpoint) return;
-      item.classList.add('is-open');
-      trigger.setAttribute('aria-expanded', 'true');
-    });
-
-    item.addEventListener('mouseleave', () => {
-      if (window.innerWidth <= desktopBreakpoint) return;
-      item.classList.remove('is-open');
-      trigger.setAttribute('aria-expanded', 'false');
-    });
-  });
-
   toggle.addEventListener('click', () => {
     const isOpen = !nav.classList.contains('is-open');
     setNavOpenState(isOpen);
+    if (!isOpen) collapseDropdowns();
   });
 
   nav.querySelectorAll('a').forEach((link) => {
@@ -125,6 +119,8 @@ const initMobileNav = () => {
   window.addEventListener('resize', () => {
     if (window.innerWidth > desktopBreakpoint) closeNav();
   });
+
+  collapseDropdowns();
 };
 
 const initHeaderScroll = () => {
