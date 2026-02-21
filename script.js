@@ -1227,12 +1227,29 @@ const initInstaSlider = () => {
   const roots = document.querySelectorAll('[data-insta-slider]');
   if (!roots.length) return;
 
-  roots.forEach((root) => {
+  roots.forEach(async (root) => {
     const track = root.querySelector('.insta-track');
     const prev = root.querySelector('.insta-arrow-prev');
     const next = root.querySelector('.insta-arrow-next');
+    if (!track || !prev || !next) return;
+
+    const dynamicInstaFiles = await fetchMediaFiles('images/instagram-feed', 'images').catch(() => []);
+    if (dynamicInstaFiles.length) {
+      const cards = [...dynamicInstaFiles];
+      for (let i = cards.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      track.innerHTML = `<div class="insta-page">${cards
+        .map((file, index) => {
+          const label = escapeHtml(prettifyFileStem(file.stem, `Instagram post ${index + 1}`));
+          return `<a class="insta-card" href="https://www.instagram.com/quiosknl/" target="_blank" rel="noopener noreferrer"><img src="${file.url}" alt="${label}" loading="lazy" decoding="async" /></a>`;
+        })
+        .join('')}</div>`;
+    }
+
     const initialPages = root.querySelectorAll('.insta-page');
-    if (!track || !initialPages.length || !prev || !next) return;
+    if (!initialPages.length) return;
 
     const allCards = Array.from(track.querySelectorAll('.insta-card'));
     if (!allCards.length) return;
@@ -1801,6 +1818,78 @@ const initProductModal = () => {
   });
 };
 
+const prettifyFileStem = (input, fallback = '') => {
+  const raw = String(input || '').trim();
+  if (!raw) return fallback;
+  return raw
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+};
+
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const fetchMediaFilesFromApi = async (folder, mode = 'images') => {
+  const params = new URLSearchParams({ folder, mode });
+  const response = await fetch(`/api/media-files?${params.toString()}`, {
+    headers: { Accept: 'application/json' }
+  });
+  if (!response.ok) return [];
+  const payload = await response.json();
+  if (!payload || !Array.isArray(payload.files)) return [];
+  return payload.files;
+};
+
+const fetchMediaFilesFromGitHub = async (folder, mode = 'images') => {
+  const isGitHubPages = /\.github\.io$/i.test(window.location.hostname);
+  if (!isGitHubPages) return [];
+
+  const folderPath = String(folder || '')
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  const apiUrl = `https://api.github.com/repos/nickquiosk/Quiosk-website/contents/${folderPath}`;
+  const response = await fetch(apiUrl, { headers: { Accept: 'application/vnd.github+json' } });
+  if (!response.ok) return [];
+  const payload = await response.json();
+  if (!Array.isArray(payload)) return [];
+
+  const allowedPattern =
+    mode === 'all'
+      ? /\.(png|jpe?g|webp|avif|gif|svg|eps|pdf|zip)$/i
+      : /\.(png|jpe?g|webp|avif|gif|svg)$/i;
+
+  return payload
+    .filter((item) => item && item.type === 'file')
+    .filter((item) => allowedPattern.test(item.name || ''))
+    .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'nl', { numeric: true, sensitivity: 'base' }))
+    .map((item) => {
+      const name = item.name || '';
+      const stem = name.replace(/\.[^.]+$/, '');
+      const ext = (name.split('.').pop() || '').toLowerCase();
+      return {
+        name,
+        stem,
+        ext,
+        url: item.download_url || ''
+      };
+    })
+    .filter((item) => item.url);
+};
+
+const fetchMediaFiles = async (folder, mode = 'images') => {
+  const fromApi = await fetchMediaFilesFromApi(folder, mode).catch(() => []);
+  if (fromApi.length) return fromApi;
+  return fetchMediaFilesFromGitHub(folder, mode).catch(() => []);
+};
+
 const initDynamicProductImages = async () => {
   const slider = document.querySelector('[data-product-slider]');
   const grid = document.querySelector('[data-product-grid]');
@@ -1809,29 +1898,9 @@ const initDynamicProductImages = async () => {
   if (!slider || !grid || !prevBtn || !nextBtn) return;
 
   const fetchImagesFromProductApi = async () => {
-    const response = await fetch('/api/product-images', { headers: { Accept: 'application/json' } });
-    if (!response.ok) return null;
-    const payload = await response.json();
-    if (!payload || !Array.isArray(payload.images) || !payload.images.length) return null;
-    return payload.images;
-  };
-
-  const fetchImagesFromGitHub = async () => {
-    const isGitHubPages = /\.github\.io$/i.test(window.location.hostname);
-    if (!isGitHubPages) return null;
-
-    const apiUrl = 'https://api.github.com/repos/nickquiosk/Quiosk-website/contents/images/producten';
-    const response = await fetch(apiUrl, { headers: { Accept: 'application/vnd.github+json' } });
-    if (!response.ok) return null;
-    const payload = await response.json();
-    if (!Array.isArray(payload)) return null;
-
-    const images = payload
-      .filter((item) => item && item.type === 'file')
-      .map((item) => item.download_url || '')
-      .filter((url) => /\.(png|jpe?g|webp|avif)$/i.test(url));
-
-    return images.length ? images : null;
+    const files = await fetchMediaFiles('images/producten', 'images').catch(() => []);
+    if (!files.length) return null;
+    return files.map((file) => file.url);
   };
 
   const getProductNameFromSource = (source, fallbackIndex) => {
@@ -1839,7 +1908,7 @@ const initDynamicProductImages = async () => {
       const url = new URL(source, window.location.origin);
       const fileName = decodeURIComponent(url.pathname.split('/').pop() || '');
       const withoutExt = fileName.replace(/\.[a-z0-9]+$/i, '');
-      const clean = withoutExt.replace(/[_-]+/g, ' ').trim();
+      const clean = prettifyFileStem(withoutExt);
       return clean || `Product ${fallbackIndex + 1}`;
     } catch {
       return `Product ${fallbackIndex + 1}`;
@@ -1848,8 +1917,7 @@ const initDynamicProductImages = async () => {
 
   try {
     const imagesFromApi = await fetchImagesFromProductApi().catch(() => null);
-    const imagesFromGitHub = imagesFromApi ? null : await fetchImagesFromGitHub().catch(() => null);
-    const sourceImages = imagesFromApi || imagesFromGitHub;
+    const sourceImages = imagesFromApi;
 
     if (!sourceImages || !sourceImages.length) {
       grid.innerHTML = '<article class="card"><p>Nog geen productfoto\'s gevonden in <code>images/producten</code>.</p></article>';
@@ -2037,6 +2105,95 @@ const initDynamicProductImages = async () => {
       '<article class="card"><p>Productfoto\'s konden niet geladen worden. Herstart de server en doe een harde refresh.</p></article>';
     prevBtn.disabled = true;
     nextBtn.disabled = true;
+  }
+};
+
+const initDynamicBrandAssets = async () => {
+  const logoGrid = document.querySelector('.brand-download-grid');
+  const photoGrid = document.querySelector('.media-photo-grid');
+  const isMediaPage =
+    window.location.pathname.endsWith('/beeldmateriaal.html') ||
+    window.location.pathname.endsWith('beeldmateriaal.html');
+  if (!isMediaPage || !logoGrid || !photoGrid) return;
+
+  const renderPhotoCards = (files) =>
+    files
+      .map((file, index) => {
+        const title = escapeHtml(prettifyFileStem(file.stem, `Foto ${index + 1}`));
+        return `
+          <article class="card media-photo-card">
+            <a class="media-photo" href="${file.url}" target="_blank" rel="noopener noreferrer">
+              <img src="${file.url}" alt="${title}" loading="lazy" decoding="async" />
+            </a>
+            <div class="media-photo-actions">
+              <a class="btn btn-ghost" href="${file.url}" target="_blank" rel="noopener noreferrer">Bekijk</a>
+              <a class="btn btn-primary" href="${file.url}" download>Download</a>
+            </div>
+          </article>
+        `;
+      })
+      .join('');
+
+  try {
+    const [logoFilesRaw, photoFilesRaw] = await Promise.all([
+      fetchMediaFiles('downloads/beeldmateriaal/logo', 'all').catch(() => []),
+      fetchMediaFiles('images/beeldmateriaal', 'images').catch(() => [])
+    ]);
+
+    const photoFiles = photoFilesRaw.length
+      ? photoFilesRaw
+      : await fetchMediaFiles('images/over-quiosk', 'images').catch(() => []);
+    if (photoFiles.length) {
+      photoGrid.innerHTML = renderPhotoCards(photoFiles);
+    }
+
+    if (!logoFilesRaw.length) return;
+
+    const logosByStem = new Map();
+    logoFilesRaw.forEach((file) => {
+      const key = file.stem.toLowerCase();
+      const current = logosByStem.get(key) || { stem: file.stem, preview: null, eps: null };
+      if (!current.preview && ['png', 'jpg', 'jpeg', 'webp', 'svg'].includes(file.ext)) current.preview = file;
+      if (!current.eps && file.ext === 'eps') current.eps = file;
+      logosByStem.set(key, current);
+    });
+
+    const cards = Array.from(logosByStem.values())
+      .filter((item) => item.preview || item.eps)
+      .map((item, index) => {
+        const title = escapeHtml(prettifyFileStem(item.stem, `Logo ${index + 1}`));
+        const previewUrl = item.preview?.url || 'logo-quiosk.png';
+        const previewExt = item.preview?.ext ? item.preview.ext.toUpperCase() : 'PNG';
+        const previewDownload = item.preview
+          ? `<a class="btn btn-primary" href="${item.preview.url}" download>Download ${previewExt}</a>`
+          : '';
+        const epsDownload = item.eps
+          ? `<a class="btn btn-primary" href="${item.eps.url}" download>Download EPS</a>`
+          : '';
+        return `
+          <article class="card brand-download-card">
+            <div class="brand-preview">
+              <img src="${previewUrl}" alt="${title} preview" loading="lazy" decoding="async" />
+            </div>
+            <div class="press-meta">
+              <span class="news-date">Logo</span>
+              <span class="press-source">Brand asset</span>
+            </div>
+            <h3>${title}</h3>
+            <p>Bestand direct beschikbaar voor media en partners.</p>
+            <div class="media-photo-actions">
+              <a class="btn btn-ghost" href="${previewUrl}" target="_blank" rel="noopener noreferrer">Preview</a>
+              ${previewDownload}
+              ${epsDownload}
+            </div>
+          </article>
+        `;
+      })
+      .join('');
+
+    if (cards) logoGrid.innerHTML = cards;
+  } catch (_) {
+    // Keep static fallback markup.
   }
 };
 
@@ -2405,6 +2562,7 @@ initCalculator();
 initRefundForm();
 initFinder();
 initHeroSlider();
+initDynamicBrandAssets();
 initInstaSlider();
 initInstaLightbox();
 initPartnersHeroBalance();

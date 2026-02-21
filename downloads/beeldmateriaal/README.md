@@ -1,8 +1,5 @@
-Plaats hier downloadbestanden voor `beeldmateriaal.html`.
+Plaats hier downloadbestanden voor Beeldmateriaal.
 
-Aanbevolen bestandsnamen:
-- quiosk-logo-pakket.zip
-- quiosk-huisstijlhandboek.pdf
-- quiosk-brand-assets.zip
-
-Je kunt andere bestandsnamen gebruiken, zolang je de links op `beeldmateriaal.html` aanpast.
+Belangrijk:
+- Bestandsnamen mogen vrij gekozen worden.
+- Voor logo's gebruik je bij voorkeur: `downloads/beeldmateriaal/logo/`.

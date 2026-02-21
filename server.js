@@ -21,7 +21,11 @@ const dataFilePath = DATA_FILE ? path.resolve(__dirname, DATA_FILE) : path.join(
 const importDropDirPath = IMPORT_DROP_DIR
   ? path.resolve(__dirname, IMPORT_DROP_DIR)
   : path.join(__dirname, 'data', 'import');
-const productImagesDirPath = path.join(__dirname, 'images', 'producten');
+const mediaRootPaths = [
+  path.join(__dirname, 'images'),
+  path.join(__dirname, 'logos'),
+  path.join(__dirname, 'downloads')
+];
 const geocodeConcurrency = Math.max(1, Number(process.env.GEOCODE_CONCURRENCY || 6));
 const allowedOrigins = (ALLOWED_ORIGINS || '')
   .split(',')
@@ -122,6 +126,50 @@ const parseNumber = (value) => {
   const raw = normalized.replace(',', '.');
   const n = Number(raw);
   return Number.isFinite(n) ? n : null;
+};
+
+const imageFilePattern = /\.(png|jpe?g|webp|avif|gif|svg)$/i;
+const mediaFilePattern = /\.(png|jpe?g|webp|avif|gif|svg|eps|pdf|zip)$/i;
+
+const toPublicUrl = (absolutePath) => {
+  const relative = path.relative(__dirname, absolutePath).split(path.sep).map(encodeURIComponent).join('/');
+  return `/${relative}`;
+};
+
+const isWithinAllowedMediaRoots = (absolutePath) =>
+  mediaRootPaths.some((rootPath) => absolutePath.startsWith(`${rootPath}${path.sep}`) || absolutePath === rootPath);
+
+const listMediaFiles = async (folder, mode = 'images') => {
+  const folderInput = normalizeText(folder);
+  if (!folderInput) return [];
+
+  const resolved = path.resolve(__dirname, folderInput);
+  if (!isWithinAllowedMediaRoots(resolved)) return [];
+
+  let entries = [];
+  try {
+    entries = await fs.readdir(resolved, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+
+  const pattern = mode === 'all' ? mediaFilePattern : imageFilePattern;
+  return entries
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name)
+    .filter((name) => pattern.test(name))
+    .sort((a, b) => a.localeCompare(b, 'nl', { numeric: true, sensitivity: 'base' }))
+    .map((name) => {
+      const ext = path.extname(name).replace('.', '').toLowerCase();
+      const stem = name.replace(/\.[^.]+$/, '');
+      const absolute = path.join(resolved, name);
+      return {
+        name,
+        stem,
+        ext,
+        url: toPublicUrl(absolute)
+      };
+    });
 };
 
 const buildLocationMatchKey = (location) => {
@@ -515,18 +563,19 @@ app.post('/api/import-from-drop', async (req, res) => {
 
 app.get('/api/product-images', async (_req, res) => {
   try {
-    const entries = await fs.readdir(productImagesDirPath, { withFileTypes: true });
-    const images = entries
-      .filter((entry) => entry.isFile())
-      .map((entry) => entry.name)
-      .filter((name) => /\.(png|jpe?g|webp|avif)$/i.test(name))
-      .sort((a, b) => a.localeCompare(b, 'nl'))
-      .map((name) => `/images/producten/${encodeURIComponent(name)}`);
-
+    const files = await listMediaFiles('images/producten', 'images');
+    const images = files.map((file) => file.url);
     res.json({ count: images.length, images });
   } catch {
     res.json({ count: 0, images: [] });
   }
+});
+
+app.get('/api/media-files', async (req, res) => {
+  const folder = normalizeText(req.query.folder);
+  const mode = normalizeText(req.query.mode).toLowerCase() === 'all' ? 'all' : 'images';
+  const files = await listMediaFiles(folder, mode);
+  res.json({ folder, count: files.length, files });
 });
 
 app.get('/api/import-template', (_req, res) => {

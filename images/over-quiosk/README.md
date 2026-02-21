@@ -1,11 +1,10 @@
-Plaats hier de foto's voor de Over Quiosk pagina.
+Plaats hier foto's voor de Over Quiosk content.
 
-Huidige bestandsnamen (aanbevolen om te behouden):
-- over-quiosk-1.jpg
-- over-quiosk-2.jpg
-- over-quiosk-3.jpg
-- over-quiosk-4.jpg
-- over-quiosk-5.jpg
-- over-quiosk-6.jpeg
+Belangrijk:
+- Bestandsnamen mogen vrij gekozen worden.
+- SEO-vriendelijke namen worden automatisch gebruikt.
+- De website laadt deze map automatisch als fallback voor Beeldmateriaal-foto's.
 
-Als je deze namen behoudt, hoef je geen code aan te passen.
+Tips:
+- Gebruik consistente beeldverhouding voor een strakke grid
+- Bestandstype: .jpg, .jpeg, .png, .webp, .avif, .gif, .svg
