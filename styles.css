@@ -43,6 +43,10 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+body.nav-open {
+  overflow: hidden;
+}
+
 html.page-transitions body.page-exit main > :not(.page-hero):not(.over-subnav-section) {
   opacity: 0;
   transform: none;
@@ -5012,6 +5016,9 @@ main > .section.quick-search {
     top: 84px;
     right: 12px;
     width: min(330px, calc(100% - 24px));
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     margin-top: 0;
     padding: 10px;
     border: 1px solid var(--line);
