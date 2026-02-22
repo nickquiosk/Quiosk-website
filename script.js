@@ -1729,7 +1729,7 @@ const initQuiosk360Viewer = async () => {
 
   if (!trigger || !modal || !stage || !image || !hint || !closeBtn || !prevBtn || !nextBtn) return;
 
-  const staticFallback = trigger.querySelector('img')?.getAttribute('src') || 'images/hero-partner.jpg';
+  const staticFallback = trigger.querySelector('img')?.getAttribute('src') || 'images/word-partner/hero.jpg';
   let frames = [];
   let frameIndex = 0;
   let isOpen = false;

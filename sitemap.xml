@@ -37,32 +37,38 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.quiosk.nl/blog-nieuwe-locatie-wormerveer.html</loc>
+    <loc>https://www.quiosk.nl/blogs/nieuwe-locatie-wormerveer/</loc>
     <lastmod>2026-02-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.quiosk.nl/blog-partnerschap-laadlocaties.html</loc>
+    <loc>https://www.quiosk.nl/blogs/partnerschap-laadlocaties/</loc>
     <lastmod>2026-02-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.quiosk.nl/blog-assortiment-optimalisatie-data.html</loc>
+    <loc>https://www.quiosk.nl/blogs/assortiment-optimalisatie-data/</loc>
     <lastmod>2026-02-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.quiosk.nl/blog-landelijke-groei-2025.html</loc>
+    <loc>https://www.quiosk.nl/blogs/landelijke-groei-2025/</loc>
     <lastmod>2026-02-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.quiosk.nl/blog-start-netwerk-2024.html</loc>
+    <loc>https://www.quiosk.nl/blogs/start-netwerk-2024/</loc>
     <lastmod>2026-02-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.quiosk.nl/blogs/mijlpaal-250-locaties-nederland/</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

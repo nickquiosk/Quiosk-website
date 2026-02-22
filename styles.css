@@ -503,7 +503,7 @@ img {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: url("images/hero-partner-background.jpg") center center / cover no-repeat;
+  background: url("images/word-partner/hero-background.jpg") center center / cover no-repeat;
   pointer-events: none;
 }
 
@@ -527,7 +527,7 @@ img {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: url("images/vraag-storing.jpg") center center / cover no-repeat;
+  background: url("images/contact/vraag-storing.jpg") center center / cover no-repeat;
   pointer-events: none;
 }
 
@@ -696,7 +696,7 @@ img {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: url("images/hero-partner-background.jpg") center center / cover no-repeat;
+  background: url("images/word-partner/hero-background.jpg") center center / cover no-repeat;
   pointer-events: none;
 }
 
@@ -826,16 +826,16 @@ img {
 }
 
 .slide-1 {
-  background-image: url("images/quiok-1.jpg");
+  background-image: url("images/home/quiok-1.jpg");
 }
 
 .slide-2 {
-  background-image: url("images/quiok-2.jpg");
+  background-image: url("images/home/quiok-2.jpg");
   animation-delay: 6s;
 }
 
 .slide-3 {
-  background-image: url("images/quiok-3.jpg");
+  background-image: url("images/home/quiok-3.jpg");
   animation-delay: 12s;
 }
 
