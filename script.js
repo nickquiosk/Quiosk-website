@@ -290,6 +290,53 @@ const initHeaderScroll = () => {
   );
 };
 
+const bindHorizontalSwipe = (
+  element,
+  { onSwipeLeft, onSwipeRight, minDistance = 44, maxVerticalRatio = 0.85 } = {}
+) => {
+  if (!element) return;
+
+  let startX = 0;
+  let startY = 0;
+  let isTracking = false;
+
+  element.addEventListener(
+    'touchstart',
+    (event) => {
+      const touch = event.changedTouches?.[0];
+      if (!touch) return;
+      startX = touch.clientX;
+      startY = touch.clientY;
+      isTracking = true;
+    },
+    { passive: true }
+  );
+
+  element.addEventListener(
+    'touchend',
+    (event) => {
+      if (!isTracking) return;
+      isTracking = false;
+      const touch = event.changedTouches?.[0];
+      if (!touch) return;
+
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+      if (absX < minDistance) return;
+      if (absY > absX * maxVerticalRatio) return;
+
+      if (deltaX < 0) {
+        onSwipeLeft?.();
+      } else {
+        onSwipeRight?.();
+      }
+    },
+    { passive: true }
+  );
+};
+
 const initBackToTop = () => {
   if (document.querySelector('[data-back-to-top]')) return;
 
@@ -1353,6 +1400,17 @@ const initHeroSlider = () => {
     start();
   });
 
+  bindHorizontalSwipe(slider, {
+    onSwipeLeft: () => {
+      show((index + 1) % slides.length);
+      start();
+    },
+    onSwipeRight: () => {
+      show((index - 1 + slides.length) % slides.length);
+      start();
+    }
+  });
+
   show(0);
   start();
 };
@@ -1364,6 +1422,7 @@ const initInstaSlider = () => {
   roots.forEach(async (root) => {
     const isMobileViewport = () => window.matchMedia('(max-width: 760px)').matches;
     const track = root.querySelector('.insta-track');
+    const viewport = root.querySelector('.insta-viewport');
     const prev = root.querySelector('.insta-arrow-prev');
     const next = root.querySelector('.insta-arrow-next');
     if (!track || !prev || !next) return;
@@ -1499,6 +1558,21 @@ const initInstaSlider = () => {
       if (index < maxIndex) {
         index += 1;
         update();
+      }
+    });
+
+    bindHorizontalSwipe(viewport || root, {
+      onSwipeLeft: () => {
+        if (index < maxIndex) {
+          index += 1;
+          update();
+        }
+      },
+      onSwipeRight: () => {
+        if (index > 0) {
+          index -= 1;
+          update();
+        }
       }
     });
 
@@ -2139,6 +2213,7 @@ const fetchMediaFiles = async (folder, mode = 'images') => {
 const initDynamicProductImages = async () => {
   const slider = document.querySelector('[data-product-slider]');
   const grid = document.querySelector('[data-product-grid]');
+  const viewport = document.querySelector('.product-viewport');
   const prevBtn = document.querySelector('[data-product-prev]');
   const nextBtn = document.querySelector('[data-product-next]');
   if (!slider || !grid || !prevBtn || !nextBtn) return;
@@ -2320,6 +2395,17 @@ const initDynamicProductImages = async () => {
       startAuto();
     });
 
+    bindHorizontalSwipe(viewport || slider, {
+      onSwipeLeft: () => {
+        move(1);
+        startAuto();
+      },
+      onSwipeRight: () => {
+        move(-1);
+        startAuto();
+      }
+    });
+
     grid.addEventListener('transitionend', (event) => {
       if (event.propertyName !== 'transform') return;
       normalizeLoopPosition();
@@ -2476,6 +2562,26 @@ const initSpotlight = () => {
 
   dots.forEach((dot) => {
     dot.addEventListener('click', () => setActive(dot.dataset.target));
+  });
+
+  const getActiveIndex = () => {
+    const activeId =
+      panels.find((panel) => panel.classList.contains('is-active'))?.id || tabs[0]?.dataset.target;
+    const idx = tabs.findIndex((tab) => tab.dataset.target === activeId);
+    return idx >= 0 ? idx : 0;
+  };
+
+  const setByIndex = (nextIndex) => {
+    const total = tabs.length;
+    if (!total) return;
+    const normalized = (nextIndex + total) % total;
+    const targetId = tabs[normalized]?.dataset.target;
+    if (targetId) setActive(targetId);
+  };
+
+  bindHorizontalSwipe(root, {
+    onSwipeLeft: () => setByIndex(getActiveIndex() + 1),
+    onSwipeRight: () => setByIndex(getActiveIndex() - 1)
   });
 };
 

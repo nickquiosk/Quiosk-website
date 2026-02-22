@@ -762,6 +762,7 @@ img {
   position: absolute;
   inset: 0;
   z-index: 0;
+  touch-action: pan-y;
 }
 
 .hero-slider::after {
@@ -3099,6 +3100,7 @@ main > .section.quick-search {
   background: #fff;
   padding: 14px;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+  touch-action: pan-y;
 }
 
 .spotlight-tabs {
@@ -3326,6 +3328,7 @@ main > .section.quick-search {
 
 .product-viewport {
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .product-track {
@@ -3606,6 +3609,7 @@ main > .section.quick-search {
 
 .insta-viewport {
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .insta-track {
