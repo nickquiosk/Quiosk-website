@@ -498,7 +498,7 @@ const kioskData = [
     address: 'Stationsplein 3, Utrecht',
     products: ['Drinks', 'Snacks'],
     isOpen: true,
-    environment: 'Indoor',
+    environment: 'Outdoor',
     contactless: true,
     coords: { lat: 52.0907, lng: 5.1109 }
   },
@@ -510,7 +510,7 @@ const kioskData = [
     address: 'Kadelaan 22, Groningen',
     products: ['Drinks', 'Gezond'],
     isOpen: false,
-    environment: 'Indoor',
+    environment: 'Outdoor',
     contactless: true,
     coords: { lat: 53.2194, lng: 6.5665 }
   }
@@ -533,7 +533,7 @@ const normalizeLocationFromApi = (item, index) => {
     address,
     products: Array.isArray(item.products) && item.products.length ? item.products : ['Drinks', 'Snacks'],
     isOpen: item.isOpen !== false,
-    environment: item.environment === 'Outdoor' ? 'Outdoor' : 'Indoor',
+    environment: item.environment === 'Indoor' ? 'Indoor' : 'Outdoor',
     contactless: item.contactless !== false,
     coords: hasCoords ? { lat, lng } : null
   };
@@ -1199,23 +1199,42 @@ const initFinder = () => {
       return true;
     });
 
-    filtered.sort((a, b) => {
-      const cityA =
-        getLocationCity(a) ||
-        getCityFromAddress(a.address) ||
-        getStreetFromAddress(a.address) ||
-        String(a.name || '');
-      const cityB =
-        getLocationCity(b) ||
-        getCityFromAddress(b.address) ||
-        getStreetFromAddress(b.address) ||
-        String(b.name || '');
-      const cityCompare = cityA.localeCompare(cityB, 'nl-NL', { sensitivity: 'base' });
-      if (cityCompare !== 0) return cityCompare;
-      const streetA = getStreetFromAddress(a.address) || '';
-      const streetB = getStreetFromAddress(b.address) || '';
-      return streetA.localeCompare(streetB, 'nl-NL', { sensitivity: 'base' });
-    });
+    if (referencePoint && q) {
+      filtered.sort((a, b) => {
+        const distA = a.coords ? distanceInKm(referencePoint, a.coords) : Number.POSITIVE_INFINITY;
+        const distB = b.coords ? distanceInKm(referencePoint, b.coords) : Number.POSITIVE_INFINITY;
+        if (distA !== distB) return distA - distB;
+        const cityA =
+          getLocationCity(a) ||
+          getCityFromAddress(a.address) ||
+          getStreetFromAddress(a.address) ||
+          String(a.name || '');
+        const cityB =
+          getLocationCity(b) ||
+          getCityFromAddress(b.address) ||
+          getStreetFromAddress(b.address) ||
+          String(b.name || '');
+        return cityA.localeCompare(cityB, 'nl-NL', { sensitivity: 'base' });
+      });
+    } else {
+      filtered.sort((a, b) => {
+        const cityA =
+          getLocationCity(a) ||
+          getCityFromAddress(a.address) ||
+          getStreetFromAddress(a.address) ||
+          String(a.name || '');
+        const cityB =
+          getLocationCity(b) ||
+          getCityFromAddress(b.address) ||
+          getStreetFromAddress(b.address) ||
+          String(b.name || '');
+        const cityCompare = cityA.localeCompare(cityB, 'nl-NL', { sensitivity: 'base' });
+        if (cityCompare !== 0) return cityCompare;
+        const streetA = getStreetFromAddress(a.address) || '';
+        const streetB = getStreetFromAddress(b.address) || '';
+        return streetA.localeCompare(streetB, 'nl-NL', { sensitivity: 'base' });
+      });
+    }
 
     if (finderCountEl) {
       finderCountEl.textContent = String(filtered.length);
@@ -1246,14 +1265,19 @@ const initFinder = () => {
         const title = city;
         const street = getStreetFromAddress(k.address);
         const addressLine = street ? `${street}${city ? `, ${city}` : ''}` : city;
+        const km =
+          referencePoint && k.coords && q
+            ? `${distanceInKm(referencePoint, k.coords).toFixed(1).replace('.', ',')} km`
+            : '';
         const detailUrl = getLocationDetailUrl(k);
         return `
-          <a class="card reveal finder-location-card" href="${detailUrl}" aria-label="Bekijk locatiepagina van Quiosk ${city}">
+          <a class="card reveal finder-location-card location-page-nearby-item" href="${detailUrl}" aria-label="Bekijk locatiepagina van Quiosk ${city}">
             <div class="finder-location-media">
               <img class="finder-location-icon" src="Favicon.png" alt="" aria-hidden="true" />
               <div class="finder-location-text">
                 <h3 class="finder-location-name">${title}</h3>
                 ${addressLine ? `<p class="finder-location-address">${addressLine}</p>` : ''}
+                ${km ? `<p class="finder-location-distance">${km}</p>` : ''}
               </div>
             </div>
           </a>`;
@@ -2984,7 +3008,8 @@ const initLocationDetailEnhancements = () => {
 
   const GOOGLE_MAPS_KEY = 'AIzaSyB9SVkW2jpokXe8rUaWZW-UgRjLeb8gM7E';
   const mapFallback = mapCanvas.querySelector('iframe');
-  const mapFallbackSrc = mapFallback?.getAttribute('src') || '';
+  const mapFallbackSrc =
+    mapFallback?.getAttribute('src') || mapFallback?.getAttribute('data-src') || '';
   let mapCenter = null;
 
   const ldScripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
@@ -3038,22 +3063,77 @@ const initLocationDetailEnhancements = () => {
     }
   }
 
-  if (!overlay.querySelector('.location-page-updated')) {
-    const updated = document.createElement('p');
-    updated.className = 'location-page-updated';
-    const date = new Date().toLocaleDateString('nl-NL', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-    updated.textContent = `Assortiment laatst bijgewerkt op ${date}.`;
-    const subtitle = overlay.querySelector('.location-page-subtitle');
-    if (subtitle) {
-      subtitle.insertAdjacentElement('beforebegin', updated);
-    } else if (actions) {
-      actions.insertAdjacentElement('afterend', updated);
+  const locationTitle = overlay.querySelector('h1');
+  const subtitleEl = overlay.querySelector('.location-page-subtitle');
+  const heroCopyExists = overlay.querySelector('.location-hero-copy');
+  if (locationTitle && !heroCopyExists) {
+    const heroCopy = document.createElement('div');
+    heroCopy.className = 'location-hero-copy';
+
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'location-page-eyebrow';
+    eyebrow.textContent = 'Quiosk in de buurt';
+    heroCopy.appendChild(eyebrow);
+
+    heroCopy.appendChild(locationTitle);
+    if (subtitleEl) heroCopy.appendChild(subtitleEl);
+    overlay.prepend(heroCopy);
+  } else if (heroCopyExists && !heroCopyExists.querySelector('.location-page-eyebrow')) {
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'location-page-eyebrow';
+    eyebrow.textContent = 'Quiosk in de buurt';
+    heroCopyExists.prepend(eyebrow);
+  }
+
+  const addressParagraph = overlay.querySelector('.location-page-address');
+  const addressAnchor = addressParagraph?.querySelector('a');
+  if (addressAnchor && !addressAnchor.querySelector('.location-page-address-icon')) {
+    const iconWrap = document.createElement('span');
+    iconWrap.className = 'location-page-address-icon';
+    iconWrap.setAttribute('aria-hidden', 'true');
+    iconWrap.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C12 22 19 15.4 19 10.5C19 6.35786 15.866 3 12 3C8.13401 3 5 6.35786 5 10.5C5 15.4 12 22 12 22Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10.5" r="2.6" stroke="currentColor" stroke-width="1.8"/></svg>';
+    addressAnchor.prepend(iconWrap);
+  }
+
+  if (!overlay.querySelector('.location-page-facts')) {
+    const facts = document.createElement('div');
+    facts.className = 'location-page-facts';
+    facts.setAttribute('aria-label', 'Locatiefacts');
+    facts.innerHTML = `
+      <span class="location-page-fact">24/7 open</span>
+      <span class="location-page-fact">Pinnen of creditcard</span>
+      <span class="location-page-fact">Outdoor</span>
+      <span class="location-page-fact">Direct bereikbaar</span>
+    `;
+    const insertAfter = overlay.querySelector('.location-hero-copy') || overlay.querySelector('h1');
+    if (insertAfter) {
+      insertAfter.insertAdjacentElement('afterend', facts);
     } else {
-      overlay.appendChild(updated);
+      overlay.prepend(facts);
+    }
+  }
+
+  const productsGrid = overlay.querySelector('.location-page-products');
+  if (productsGrid) {
+    productsGrid.classList.add('location-page-products--interactive');
+
+    if (!overlay.querySelector('.location-products-head')) {
+      const head = document.createElement('div');
+      head.className = 'location-products-head';
+      head.innerHTML = `
+        <h3>Standaard assortiment</h3>
+        <p>Een mix van populaire drankjes, snacks en essentials.</p>
+      `;
+      productsGrid.insertAdjacentElement('beforebegin', head);
+    }
+
+    if (!overlay.querySelector('.location-products-swipe-hint')) {
+      const hint = document.createElement('div');
+      hint.className = 'location-products-swipe-hint';
+      hint.setAttribute('aria-hidden', 'true');
+      hint.innerHTML = '<span>&larr;</span><span>Swipe voor meer producten</span><span>&rarr;</span>';
+      productsGrid.insertAdjacentElement('afterend', hint);
     }
   }
 
@@ -3062,14 +3142,20 @@ const initLocationDetailEnhancements = () => {
     document.getElementById('productInfoDialog');
   if (existingDialog) existingDialog.remove();
 
-  const mapSkeleton = document.createElement('div');
-  mapSkeleton.className = 'location-concept-map-skeleton';
-  mapSkeleton.textContent = 'Kaart wordt geladen...';
-  mapCanvas.prepend(mapSkeleton);
+  let mapSkeleton = mapCanvas.querySelector('.location-concept-map-skeleton');
+  if (!mapSkeleton) {
+    mapSkeleton = document.createElement('div');
+    mapSkeleton.className = 'location-concept-map-skeleton';
+    mapSkeleton.textContent = 'Kaart wordt geladen...';
+    mapCanvas.prepend(mapSkeleton);
+  }
 
-  const mapApiCanvas = document.createElement('div');
-  mapApiCanvas.className = 'location-map-canvas-api';
-  mapCanvas.prepend(mapApiCanvas);
+  let mapApiCanvas = mapCanvas.querySelector('.location-map-canvas-api');
+  if (!mapApiCanvas) {
+    mapApiCanvas = document.createElement('div');
+    mapApiCanvas.className = 'location-map-canvas-api';
+    mapCanvas.prepend(mapApiCanvas);
+  }
 
   if (mapFallback) {
     mapFallback.classList.add('location-map-canvas-fallback');
@@ -3147,6 +3233,12 @@ const initLocationDetailEnhancements = () => {
           },
           { once: true }
         );
+        if (mapFallback.getAttribute('src')) {
+          // Hide skeleton even if load event was cached before listener was attached.
+          setTimeout(() => mapSkeleton.classList.add('is-hidden'), 400);
+        } else {
+          mapSkeleton.textContent = 'Kaart kon niet geladen worden.';
+        }
       } else {
         mapSkeleton.textContent = 'Kaart kon niet geladen worden.';
       }
@@ -3251,7 +3343,7 @@ const initLocationDetailEnhancements = () => {
                 <div class="finder-location-text">
                   <h3 class="finder-location-name">${city}</h3>
                   <p class="finder-location-address">${address}</p>
-                  <p class="location-page-nearby-distance">${km}</p>
+                  <p class="finder-location-distance">${km}</p>
                 </div>
               </div>
             </a>`;

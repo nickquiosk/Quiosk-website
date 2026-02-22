@@ -4140,7 +4140,7 @@ main > .section.quick-search {
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 98px;
+  min-height: 104px;
   padding: 16px 54px 16px 16px;
   cursor: pointer;
   border-color: rgba(52, 171, 178, 0.36);
@@ -4183,7 +4183,7 @@ main > .section.quick-search {
 .finder-location-media {
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
-  align-items: center;
+  align-items: start;
   column-gap: 12px;
   min-width: 0;
 }
@@ -4200,15 +4200,15 @@ main > .section.quick-search {
 
 .finder-location-text {
   display: grid;
-  gap: 0;
+  gap: 3px;
   min-width: 0;
 }
 
 .finder-location-name {
   margin: 0;
-  font-size: 1.08rem;
+  font-size: 1.04rem;
   font-weight: 900;
-  line-height: 1.12;
+  line-height: 1.2;
   color: #102f32;
 }
 
@@ -4218,9 +4218,17 @@ main > .section.quick-search {
 
 .finder-location-address {
   margin: 0;
-  font-size: 0.93rem;
-  line-height: 1.15;
+  font-size: 0.91rem;
+  line-height: 1.3;
   color: #3e6265;
+}
+
+.finder-location-distance {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.25;
+  font-weight: 800;
+  color: var(--brand-accent);
 }
 
 .quiosk-map-card {
@@ -4639,6 +4647,7 @@ main > .section.quick-search {
 }
 
 .location-page-overlay {
+  position: relative;
   pointer-events: auto;
   width: min(50vw, 760px);
   height: auto;
@@ -4686,9 +4695,27 @@ main > .section.quick-search {
 }
 
 .location-page-address a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   color: inherit;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.location-page-address-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.location-page-address-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .location-page-address a:hover {
@@ -4742,6 +4769,40 @@ main > .section.quick-search {
   gap: 16px;
 }
 
+.location-concept-v2 .location-page-overlay::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgb(229, 0, 125), rgba(52, 171, 178, 0.95));
+}
+
+.location-concept-v2 .location-hero-copy {
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.location-concept-v2 .location-page-eyebrow {
+  margin: 0;
+  display: inline-flex;
+  width: fit-content;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(52, 171, 178, 0.35);
+  background: rgba(52, 171, 178, 0.1);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1a6e74;
+}
+
 .location-concept-v2 .location-page-overlay h1 {
   max-width: 100%;
   line-height: 1.12;
@@ -4758,30 +4819,82 @@ main > .section.quick-search {
   margin-top: -2px;
 }
 
+.location-concept-v2 .location-page-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.location-concept-v2 .location-page-fact {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(52, 171, 178, 0.36);
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #114245;
+}
+
 .location-concept-v2 .location-page-actions {
   align-items: center;
   gap: 12px;
 }
 
+.location-concept-v2 .location-page-actions .btn-primary {
+  box-shadow: 0 10px 20px rgba(229, 0, 125, 0.18);
+}
+
+.location-concept-v2 .location-page-actions .btn-ghost {
+  border-color: rgba(52, 171, 178, 0.45);
+  color: #12545a;
+}
+
 .location-concept-v2 .location-seo-placeholder-inline {
   margin-top: 2px;
   padding-top: 14px;
+  border-top: 1px solid rgba(52, 171, 178, 0.24);
+  display: grid;
+  gap: 8px;
 }
 
 .location-concept-v2 .location-seo-placeholder-inline h3 {
-  margin-top: 8px;
-  margin-bottom: 2px;
+  margin-top: 10px;
+  margin-bottom: 0;
+  font-size: clamp(1.02rem, 1.25vw, 1.22rem);
+  color: #103d41;
 }
 
 .location-concept-v2 .location-seo-placeholder-inline p,
 .location-concept-v2 .location-seo-placeholder-inline li {
   max-width: 100%;
-  line-height: 1.62;
+  line-height: 1.7;
+  color: #1d494d;
 }
 
 .location-concept-v2 .location-seo-placeholder-inline ul {
-  margin-top: 2px;
-  margin-bottom: 2px;
+  margin-top: 0;
+  margin-bottom: 0;
+  gap: 5px;
+}
+
+.location-concept-v2 .location-products-head {
+  display: grid;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.location-concept-v2 .location-products-head h3 {
+  margin: 0;
+  font-size: clamp(1.02rem, 1.3vw, 1.25rem);
+}
+
+.location-concept-v2 .location-products-head p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #426468;
 }
 
 .location-concept-v2 .location-page-products--interactive {
@@ -4791,6 +4904,18 @@ main > .section.quick-search {
 .location-concept-v2 .location-page-product span {
   display: block;
   margin-top: 2px;
+}
+
+.location-products-swipe-hint {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: #2f6469;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .location-page-media {
@@ -4872,6 +4997,8 @@ main > .section.quick-search {
 .location-page-nearby {
   display: grid;
   gap: 12px;
+  border: 1px solid rgba(52, 171, 178, 0.35);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
 }
 
 .location-page-nearby h2 {
@@ -4881,6 +5008,10 @@ main > .section.quick-search {
 .location-page-nearby-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.finder-results-grid {
   gap: 10px;
 }
 
@@ -4896,12 +5027,27 @@ main > .section.quick-search {
   transition: border-color .2s ease, transform .2s ease;
 }
 
-.location-page-nearby-grid .finder-location-card.location-page-nearby-item {
+.finder-location-card.location-page-nearby-item {
   display: flex;
   gap: 0;
   padding: 16px 54px 16px 16px;
   border: 1px solid rgba(52, 171, 178, 0.36);
   background: #fff;
+}
+
+.finder-location-card.location-page-nearby-item .finder-location-name {
+  font-size: 1.04rem;
+  line-height: 1.2;
+}
+
+.finder-location-card.location-page-nearby-item .finder-location-address {
+  font-size: 0.91rem;
+  line-height: 1.3;
+}
+
+.finder-location-card.location-page-nearby-item .finder-location-distance {
+  font-size: 0.84rem;
+  line-height: 1.25;
 }
 
 .location-page-nearby-item:hover {
@@ -4919,14 +5065,6 @@ main > .section.quick-search {
   font-weight: 800;
   color: var(--brand-accent);
   font-size: 0.85rem;
-}
-
-.location-page-nearby-distance {
-  margin: 0;
-  font-size: 0.84rem;
-  font-weight: 800;
-  line-height: 1.15;
-  color: var(--brand-accent);
 }
 
 .location-page-nearby-loading {
@@ -5078,14 +5216,21 @@ main > .section.quick-search {
     border-radius: 0;
     box-shadow: none;
     border-top: 0;
-    padding: 18px 14px 18px;
-    gap: 12px;
+    padding: 20px 16px 20px;
+    gap: 14px;
+  }
+
+  .location-concept-v2 .location-page-overlay::before {
+    left: 0;
+    right: 0;
+    top: 0;
+    border-radius: 0;
   }
 
   .location-concept-v2 .location-page-overlay h1 {
     max-width: 100%;
     font-size: clamp(1.35rem, 6.3vw, 1.9rem);
-    line-height: 1.14;
+    line-height: 1.22;
   }
 
   .location-concept-v2 .location-page-address,
@@ -5098,13 +5243,33 @@ main > .section.quick-search {
 
   .location-concept-v2 .location-page-address {
     font-size: 0.98rem;
-    line-height: 1.35;
+    line-height: 1.5;
   }
 
   .location-concept-v2 .location-page-updated,
   .location-concept-v2 .location-page-subtitle {
     font-size: 0.94rem;
-    line-height: 1.45;
+    line-height: 1.58;
+  }
+
+  .location-concept-v2 .location-page-eyebrow {
+    font-size: 0.72rem;
+    min-height: 26px;
+    padding: 0 9px;
+  }
+
+  .location-concept-v2 .location-page-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .location-concept-v2 .location-page-fact {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.76rem;
+    min-height: 28px;
+    padding: 0 9px;
   }
 
   .location-concept-v2 .location-page-actions {
@@ -5126,13 +5291,23 @@ main > .section.quick-search {
 
   .location-concept-v2 .location-seo-placeholder-inline h3 {
     font-size: 1.03rem;
-    line-height: 1.28;
+    line-height: 1.36;
+    margin-top: 12px;
+    margin-bottom: 2px;
   }
 
   .location-concept-v2 .location-seo-placeholder-inline p,
   .location-concept-v2 .location-seo-placeholder-inline li {
     font-size: 0.95rem;
-    line-height: 1.56;
+    line-height: 1.7;
+  }
+
+  .location-concept-v2 .location-products-head h3 {
+    font-size: 1rem;
+  }
+
+  .location-concept-v2 .location-products-head p {
+    font-size: 0.86rem;
   }
 
   .location-page-media {
@@ -5152,17 +5327,17 @@ main > .section.quick-search {
     font-size: clamp(1.2rem, 5.2vw, 1.55rem);
   }
 
-  .location-page-nearby-grid .finder-location-card.location-page-nearby-item {
+  .finder-location-card.location-page-nearby-item {
     min-height: 92px;
     padding: 14px 48px 14px 12px;
   }
 
-  .location-page-nearby-grid .finder-location-name {
+  .finder-location-card.location-page-nearby-item .finder-location-name {
     font-size: 1rem;
   }
 
-  .location-page-nearby-grid .finder-location-address,
-  .location-page-nearby-distance {
+  .finder-location-card.location-page-nearby-item .finder-location-address,
+  .finder-location-card.location-page-nearby-item .finder-location-distance {
     font-size: 0.88rem;
   }
 
@@ -5204,17 +5379,35 @@ main > .section.quick-search {
   }
 
   .location-page-products--interactive {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - (3 * 8px)) / 4);
+    grid-template-columns: none;
     gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
   }
 
   .location-page-products--interactive .location-page-product {
+    scroll-snap-align: start;
+    min-width: 0;
     padding: 7px;
   }
 
   .location-page-products--interactive .location-page-product span {
     font-size: 0.76rem;
     line-height: 1.22;
+  }
+
+  .location-page-products--interactive::-webkit-scrollbar {
+    display: none;
+  }
+
+  .location-products-swipe-hint {
+    display: inline-flex;
   }
 
   .location-page-map-canvas iframe {
