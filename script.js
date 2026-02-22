@@ -1994,9 +1994,41 @@ const fetchMediaFilesFromApi = async (folder, mode = 'images') => {
   return payload.files;
 };
 
+const fetchMediaFilesFromManifest = async (folder, mode = 'images') => {
+  const manifestUrl = resolveStaticPath(`${folder.replace(/^\/+/, '')}/manifest.json`);
+  const response = await fetch(manifestUrl, { headers: { Accept: 'application/json' } });
+  if (!response.ok) return [];
+
+  const payload = await response.json();
+  const source = Array.isArray(payload?.files) ? payload.files : [];
+  if (!source.length) return [];
+
+  const allowedPattern =
+    mode === 'all'
+      ? /\.(png|jpe?g|webp|avif|gif|svg|eps|pdf|zip)$/i
+      : /\.(png|jpe?g|webp|avif|gif|svg)$/i;
+
+  return source
+    .map((item) => {
+      const name = typeof item === 'string' ? item : item?.name;
+      if (!name || !allowedPattern.test(name)) return null;
+      const stem = name.replace(/\.[^.]+$/, '');
+      const ext = (name.split('.').pop() || '').toLowerCase();
+      return {
+        name,
+        stem,
+        ext,
+        url: resolveStaticPath(`${folder.replace(/^\/+/, '')}/${name}`)
+      };
+    })
+    .filter(Boolean);
+};
+
 const fetchMediaFilesFromGitHub = async (folder, mode = 'images') => {
-  const isGitHubPages = /\.github\.io$/i.test(window.location.hostname);
-  if (!isGitHubPages) return [];
+  const host = window.location.hostname || '';
+  const canUseGitHubFallback =
+    /\.github\.io$/i.test(host) || /(^|\.)quiosk\.nl$/i.test(host);
+  if (!canUseGitHubFallback) return [];
 
   const folderPath = String(folder || '')
     .split('/')
@@ -2032,6 +2064,9 @@ const fetchMediaFilesFromGitHub = async (folder, mode = 'images') => {
 };
 
 const fetchMediaFiles = async (folder, mode = 'images') => {
+  const fromManifest = await fetchMediaFilesFromManifest(folder, mode).catch(() => []);
+  if (fromManifest.length) return fromManifest;
+
   const fromApi = await fetchMediaFilesFromApi(folder, mode).catch(() => []);
   if (fromApi.length) return fromApi;
   return fetchMediaFilesFromGitHub(folder, mode).catch(() => []);
