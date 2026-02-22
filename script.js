@@ -261,33 +261,85 @@ const initHeaderScroll = () => {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  let lastY = window.scrollY;
-  const delta = 8;
-  const showAtTop = 72;
+  const syncHeaderState = () => {
+    const y = window.scrollY;
+    header.classList.toggle('header-compact', y > 20);
+    header.classList.remove('header-hidden');
+  };
 
   window.addEventListener(
     'scroll',
-    () => {
-      const y = window.scrollY;
-      const navOpen = document.querySelector('.site-nav.is-open');
-      header.classList.toggle('header-compact', y > 20);
-
-      if (navOpen || y <= showAtTop) {
-        header.classList.remove('header-hidden');
-        lastY = y;
-        return;
-      }
-
-      if (y > lastY + delta) {
-        header.classList.add('header-hidden');
-      } else if (y < lastY - delta) {
-        header.classList.remove('header-hidden');
-      }
-
-      lastY = y;
-    },
+    syncHeaderState,
     { passive: true }
   );
+
+  syncHeaderState();
+};
+
+const initOverSubnavSticky = () => {
+  const section = document.querySelector('.over-subnav-section');
+  const header = document.querySelector('.site-header');
+  if (!section) return;
+
+  const desktopQuery = window.matchMedia('(min-width: 921px)');
+  const placeholder = document.createElement('div');
+  placeholder.style.display = 'none';
+  placeholder.setAttribute('aria-hidden', 'true');
+  section.insertAdjacentElement('afterend', placeholder);
+
+  let triggerY = 0;
+
+  const getHeaderOffset = () => {
+    if (header) return Math.ceil(header.getBoundingClientRect().height);
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--header-offset');
+    const parsed = Number.parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : 84;
+  };
+
+  const recalcTrigger = () => {
+    section.classList.remove('is-fixed');
+    placeholder.style.display = 'none';
+    placeholder.style.height = '0px';
+    const rect = section.getBoundingClientRect();
+    triggerY = rect.top + window.scrollY - getHeaderOffset();
+  };
+
+  const syncSticky = () => {
+    if (!desktopQuery.matches) {
+      section.classList.remove('is-fixed');
+      section.style.removeProperty('top');
+      placeholder.style.display = 'none';
+      placeholder.style.height = '0px';
+      return;
+    }
+
+    const shouldFix = window.scrollY >= triggerY;
+    section.classList.toggle('is-fixed', shouldFix);
+    if (shouldFix) {
+      section.style.top = `${getHeaderOffset()}px`;
+      placeholder.style.display = 'block';
+      placeholder.style.height = `${Math.ceil(section.getBoundingClientRect().height)}px`;
+    } else {
+      section.style.removeProperty('top');
+      placeholder.style.display = 'none';
+      placeholder.style.height = '0px';
+    }
+  };
+
+  const updateAll = () => {
+    recalcTrigger();
+    syncSticky();
+  };
+
+  updateAll();
+  window.addEventListener('scroll', syncSticky, { passive: true });
+  window.addEventListener('resize', updateAll, { passive: true });
+  desktopQuery.addEventListener('change', updateAll);
+
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(updateAll);
+    observer.observe(section);
+  }
 };
 
 const bindHorizontalSwipe = (
@@ -644,6 +696,25 @@ const getDirectionsUrl = (location) =>
 const getVisitUrl = (location) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(getQuioskMapsQuery(location))}`;
 
+const slugifyLocationPart = (value) =>
+  String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const getLocationSlug = (location) => {
+  const city = getCityForMapsQuery(location) || location?.name || 'locatie';
+  const street = getStreetForMapsQuery(location) || location?.address || '';
+  const id = Number(location?.id || 0);
+  return [slugifyLocationPart(city), slugifyLocationPart(street), id]
+    .filter(Boolean)
+    .join('-');
+};
+
+const getLocationDetailUrl = (location) => `locaties/${getLocationSlug(location)}.html`;
+
 const initFinder = () => {
   const root = document.querySelector('[data-finder]');
   if (!root) return;
@@ -961,24 +1032,6 @@ const initFinder = () => {
     }
   };
 
-  const bindMapFocusButtons = (filtered) => {
-    const focusButtons = list.querySelectorAll('[data-focus-id]');
-    focusButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const id = Number(button.dataset.focusId);
-        const location = filtered.find((k) => k.id === id);
-        if (!location || !location.coords || !mapInstance) return;
-        map.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        mapInstance.setCenter(location.coords);
-        mapInstance.setZoom(15);
-        const marker = markersById.get(id);
-        if (marker && window.google?.maps?.event) {
-          window.google.maps.event.trigger(marker, 'click');
-        }
-      });
-    });
-  };
-
   const getStreetFromAddress = (address) => {
     const raw = String(address || '').trim();
     if (!raw) return '';
@@ -1133,7 +1186,7 @@ const initFinder = () => {
     const filtered = sourceData.filter((kiosk) => {
       const textMatch = locationMatchesQuery(kiosk, q);
 
-      if (radiusKm > 0) {
+      if (radiusKm > 0 && q) {
         if (!referencePoint) return false;
         if (!kiosk.coords) return false;
         return distanceInKm(referencePoint, kiosk.coords) <= radiusKm;
@@ -1146,13 +1199,23 @@ const initFinder = () => {
       return true;
     });
 
-    if (q && geocodePoint) {
-      filtered.sort((a, b) => {
-        const da = distanceInKm(geocodePoint, a.coords);
-        const db = distanceInKm(geocodePoint, b.coords);
-        return da - db;
-      });
-    }
+    filtered.sort((a, b) => {
+      const cityA =
+        getLocationCity(a) ||
+        getCityFromAddress(a.address) ||
+        getStreetFromAddress(a.address) ||
+        String(a.name || '');
+      const cityB =
+        getLocationCity(b) ||
+        getCityFromAddress(b.address) ||
+        getStreetFromAddress(b.address) ||
+        String(b.name || '');
+      const cityCompare = cityA.localeCompare(cityB, 'nl-NL', { sensitivity: 'base' });
+      if (cityCompare !== 0) return cityCompare;
+      const streetA = getStreetFromAddress(a.address) || '';
+      const streetB = getStreetFromAddress(b.address) || '';
+      return streetA.localeCompare(streetB, 'nl-NL', { sensitivity: 'base' });
+    });
 
     if (finderCountEl) {
       finderCountEl.textContent = String(filtered.length);
@@ -1178,18 +1241,23 @@ const initFinder = () => {
     }
 
     list.innerHTML = filtered
-      .map(
-        (k) => `
-          <article class="card reveal">
-            <h3><button class="finder-location-title" type="button" data-focus-id="${k.id}">${k.name}</button></h3>
-            <p>${k.address}</p>
-            <div class="cta-row finder-cta-row">
-              <button class="btn btn-ghost" type="button" data-focus-id="${k.id}">Toon op kaart</button>
-              <a class="btn btn-ghost" href="${getDirectionsUrl(k)}" target="_blank" rel="noopener noreferrer">Navigeer</a>
-              <a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bekijk locatie</a>
+      .map((k) => {
+        const city = getLocationCity(k) || getCityFromAddress(k.address) || getStreetFromAddress(k.address) || 'Locatie';
+        const title = city;
+        const street = getStreetFromAddress(k.address);
+        const addressLine = street ? `${street}${city ? `, ${city}` : ''}` : city;
+        const detailUrl = getLocationDetailUrl(k);
+        return `
+          <a class="card reveal finder-location-card" href="${detailUrl}" aria-label="Bekijk locatiepagina van Quiosk ${city}">
+            <div class="finder-location-media">
+              <img class="finder-location-icon" src="Favicon.png" alt="" aria-hidden="true" />
+              <div class="finder-location-text">
+                <h3 class="finder-location-name">${title}</h3>
+                ${addressLine ? `<p class="finder-location-address">${addressLine}</p>` : ''}
+              </div>
             </div>
-          </article>`
-      )
+          </a>`;
+      })
       .join('');
 
     if (!filtered.length) {
@@ -1204,7 +1272,6 @@ const initFinder = () => {
         list.innerHTML = '<p>Geen Quiosks gevonden met deze filters.</p>';
       }
     }
-    bindMapFocusButtons(filtered);
     renderMap(filtered);
   };
 
@@ -1216,6 +1283,8 @@ const initFinder = () => {
     if (allowed.has(String(urlRadius))) {
       radiusSelect.value = String(urlRadius);
     }
+  } else if (radiusSelect) {
+    radiusSelect.value = '25';
   }
   if (noLocationEl) noLocationEl.hidden = true;
 
@@ -1229,7 +1298,6 @@ const initFinder = () => {
   }
 
   if (searchInput) {
-    searchInput.addEventListener('input', render);
     searchInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         event.preventDefault();
@@ -2905,6 +2973,310 @@ const initBlogTimeline = () => {
   });
 };
 
+const initLocationDetailEnhancements = () => {
+  const hero = document.querySelector('.location-page-map-hero');
+  const overlay = document.querySelector('.location-page-overlay');
+  const mapCanvas = document.querySelector('.location-page-map-canvas');
+  if (!hero || !overlay || !mapCanvas) return;
+
+  document.body.classList.add('location-concept-v2');
+  const rootPrefix = window.location.pathname.includes('/locaties/') ? '../' : '';
+
+  const GOOGLE_MAPS_KEY = 'AIzaSyB9SVkW2jpokXe8rUaWZW-UgRjLeb8gM7E';
+  const mapFallback = mapCanvas.querySelector('iframe');
+  const mapFallbackSrc = mapFallback?.getAttribute('src') || '';
+  let mapCenter = null;
+
+  const ldScripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
+  ldScripts.forEach((script) => {
+    if (mapCenter) return;
+    try {
+      const payload = JSON.parse(script.textContent || '{}');
+      const items = Array.isArray(payload) ? payload : [payload];
+      items.forEach((item) => {
+        if (mapCenter || !item?.geo) return;
+        const lat = Number(item.geo.latitude);
+        const lng = Number(item.geo.longitude);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) mapCenter = { lat, lng };
+      });
+    } catch (_err) {
+      // ignore malformed JSON-LD
+    }
+  });
+
+  if (!mapCenter) mapCenter = { lat: 52.1326, lng: 5.2913 };
+
+  const addressLink = overlay.querySelector('.location-page-address a');
+  const navUrl =
+    addressLink?.getAttribute('href') ||
+    `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+      overlay.querySelector('.location-page-address')?.textContent?.trim() || 'Nederland'
+    )}`;
+
+  const actions = overlay.querySelector('.location-page-actions');
+  if (actions) {
+    const links = Array.from(actions.querySelectorAll('a'));
+    const navBtn = links.find((link) => /navigeer/i.test(link.textContent || ''));
+    if (navBtn) navBtn.className = 'btn btn-primary';
+
+    const backBtn = links.find((link) =>
+      /terug naar quiosk zoeken/i.test(link.textContent || '')
+    );
+    if (backBtn) backBtn.className = 'btn btn-ghost';
+
+    const supportBtnExists = links.some((link) => /feedback-terugbetaling\.html/i.test(link.getAttribute('href') || ''));
+    if (!supportBtnExists) {
+      const supportBtn = document.createElement('a');
+      supportBtn.className = 'btn btn-secondary';
+      supportBtn.href = `${rootPrefix}feedback-terugbetaling.html`;
+      supportBtn.textContent = 'Probleem met aankoop?';
+      if (backBtn) {
+        backBtn.insertAdjacentElement('beforebegin', supportBtn);
+      } else {
+        actions.appendChild(supportBtn);
+      }
+    }
+  }
+
+  if (!overlay.querySelector('.location-page-updated')) {
+    const updated = document.createElement('p');
+    updated.className = 'location-page-updated';
+    const date = new Date().toLocaleDateString('nl-NL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    updated.textContent = `Assortiment laatst bijgewerkt op ${date}.`;
+    const subtitle = overlay.querySelector('.location-page-subtitle');
+    if (subtitle) {
+      subtitle.insertAdjacentElement('beforebegin', updated);
+    } else if (actions) {
+      actions.insertAdjacentElement('afterend', updated);
+    } else {
+      overlay.appendChild(updated);
+    }
+  }
+
+  const existingDialog =
+    document.getElementById('locationProductInfoDialog') ||
+    document.getElementById('productInfoDialog');
+  if (existingDialog) existingDialog.remove();
+
+  const mapSkeleton = document.createElement('div');
+  mapSkeleton.className = 'location-concept-map-skeleton';
+  mapSkeleton.textContent = 'Kaart wordt geladen...';
+  mapCanvas.prepend(mapSkeleton);
+
+  const mapApiCanvas = document.createElement('div');
+  mapApiCanvas.className = 'location-map-canvas-api';
+  mapCanvas.prepend(mapApiCanvas);
+
+  if (mapFallback) {
+    mapFallback.classList.add('location-map-canvas-fallback');
+    mapFallback.style.display = 'none';
+  }
+
+  const loadGoogleMapsApi = () =>
+    new Promise((resolve, reject) => {
+      if (window.google?.maps) {
+        resolve();
+        return;
+      }
+      const existing = document.querySelector('script[data-location-map-loader="true"]');
+      if (existing) {
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener('error', () => reject(new Error('Google Maps script error')), {
+          once: true
+        });
+        return;
+      }
+      const script = document.createElement('script');
+      script.async = true;
+      script.defer = true;
+      script.setAttribute('data-location-map-loader', 'true');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
+        GOOGLE_MAPS_KEY
+      )}&loading=async`;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('Google Maps script error'));
+      document.head.appendChild(script);
+    });
+
+  let mapBooted = false;
+  const initMap = async () => {
+    if (mapBooted) return;
+    mapBooted = true;
+    try {
+      await loadGoogleMapsApi();
+      const map = new window.google.maps.Map(mapApiCanvas, {
+        center: mapCenter,
+        zoom: 15,
+        zoomControl: true,
+        zoomControlOptions: { position: window.google.maps.ControlPosition.RIGHT_TOP },
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
+      });
+
+      new window.google.maps.Marker({
+        position: mapCenter,
+        map
+      });
+
+      const navBtn = document.createElement('button');
+      navBtn.type = 'button';
+      navBtn.className = 'location-map-nav-control';
+      navBtn.textContent = 'Navigeer';
+      navBtn.addEventListener('click', () => {
+        window.open(navUrl, '_blank', 'noopener,noreferrer');
+      });
+      map.controls[window.google.maps.ControlPosition.RIGHT_TOP].push(navBtn);
+
+      mapSkeleton.classList.add('is-hidden');
+      if (mapFallback) mapFallback.style.display = 'none';
+    } catch (_err) {
+      if (mapFallback) {
+        mapFallback.style.display = 'block';
+        if (!mapFallback.getAttribute('src') && mapFallbackSrc) {
+          mapFallback.setAttribute('src', mapFallbackSrc);
+        }
+        mapFallback.addEventListener(
+          'load',
+          () => {
+            mapSkeleton.classList.add('is-hidden');
+          },
+          { once: true }
+        );
+      } else {
+        mapSkeleton.textContent = 'Kaart kon niet geladen worden.';
+      }
+    }
+  };
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          initMap();
+          io.disconnect();
+        });
+      },
+      { rootMargin: '220px 0px' }
+    );
+    io.observe(mapCanvas);
+  } else {
+    initMap();
+  }
+
+  let nearbySection = document.querySelector('.location-page-nearby');
+  if (!nearbySection) {
+    const main = document.querySelector('main');
+    if (main) {
+      const section = document.createElement('section');
+      section.className = 'section';
+      section.innerHTML = `
+        <div class="container">
+          <article class="card location-page-nearby">
+            <h2>Dichtstbijzijnde Quiosk’s binnen 25 km</h2>
+            <div class="location-page-nearby-grid" id="nearbyLocationsGrid">
+              <p class="location-page-nearby-loading">Locaties worden geladen...</p>
+            </div>
+          </article>
+        </div>
+      `;
+      main.appendChild(section);
+      nearbySection = section.querySelector('.location-page-nearby');
+    }
+  }
+
+  const nearbyGrid = nearbySection?.querySelector('#nearbyLocationsGrid');
+  if (nearbyGrid) {
+    const toRad = (d) => (d * Math.PI) / 180;
+    const distanceKm = (a, b) => {
+      const R = 6371;
+      const dLat = toRad(b.lat - a.lat);
+      const dLng = toRad(b.lng - a.lng);
+      const p =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      return R * (2 * Math.atan2(Math.sqrt(p), Math.sqrt(1 - p)));
+    };
+
+    const slugify = (v) =>
+      String(v || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    const makeSlug = (loc) =>
+      [slugify(loc.city || loc.name || 'locatie'), slugify(loc.address || ''), Number(loc.id || 0)]
+        .filter(Boolean)
+        .join('-');
+
+    fetch(`${rootPrefix}data/locations.json`)
+      .then((r) => r.json())
+      .then((rows) => {
+        const nearest = (Array.isArray(rows) ? rows : [])
+          .map((row) => {
+            const lat = Number(row?.coords?.lat ?? row?.lat);
+            const lng = Number(row?.coords?.lng ?? row?.lng);
+            return {
+              ...row,
+              _coords: Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null
+            };
+          })
+          .filter((row) => row._coords)
+          .map((row) => ({
+            ...row,
+            _distance: distanceKm(mapCenter, row._coords)
+          }))
+          .filter((row) => row._distance > 0.05 && row._distance <= 25)
+          .sort((a, b) => a._distance - b._distance)
+          .slice(0, 6);
+
+        if (!nearest.length) throw new Error('No nearby');
+        nearbyGrid.innerHTML = nearest
+          .map((row) => {
+            const city = row.city || 'Locatie';
+            const address = row.address || '';
+            const km = `${row._distance.toFixed(1).replace('.', ',')} km`;
+            return `<a class="card reveal finder-location-card location-page-nearby-item" href="${rootPrefix}locaties/${makeSlug(
+              row
+            )}.html" aria-label="Bekijk locatiepagina van Quiosk ${city}">
+              <div class="finder-location-media">
+                <img class="finder-location-icon" src="${rootPrefix}Favicon.png" alt="" aria-hidden="true" />
+                <div class="finder-location-text">
+                  <h3 class="finder-location-name">${city}</h3>
+                  <p class="finder-location-address">${address}</p>
+                  <p class="location-page-nearby-distance">${km}</p>
+                </div>
+              </div>
+            </a>`;
+          })
+          .join('');
+      })
+      .catch(() => {
+        nearbyGrid.innerHTML =
+          '<p class="location-page-nearby-loading">Geen locaties binnen 25 km gevonden.</p>';
+      });
+  }
+
+  if (!document.querySelector('.location-page-sticky-nav')) {
+    const sticky = document.createElement('a');
+    sticky.className = 'location-page-sticky-nav btn btn-primary';
+    sticky.href = navUrl;
+    sticky.target = '_blank';
+    sticky.rel = 'noopener noreferrer';
+    const locationName =
+      overlay.querySelector('h1')?.textContent?.trim()?.split('|')[0]?.trim() || 'Quiosk locatie';
+    sticky.textContent = `Navigeer naar ${locationName}`;
+    document.body.appendChild(sticky);
+  }
+};
+
 initCookieConsent();
 initPageTransitions();
 initHeaderCta();
@@ -2912,6 +3284,7 @@ setActiveNav();
 setActiveOverSubnav();
 initMobileNav();
 initHeaderScroll();
+initOverSubnavSticky();
 initBackToTop();
 initCalculator();
 initRefundForm();
@@ -2935,3 +3308,4 @@ initFactCounters();
 initProcessLineAnimation();
 initFansMobileAccordion();
 initBlogTimeline();
+initLocationDetailEnhancements();
