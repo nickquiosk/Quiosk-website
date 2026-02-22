@@ -1,5 +1,6 @@
 const COOKIE_CONSENT_KEY = 'quiosk_cookie_consent_v1';
 const GA_MEASUREMENT_ID = 'G-G8PF2DEK48';
+const CONTENTSQUARE_SRC = 'https://t.contentsquare.net/uxa/8948e1acf2462.js';
 
 const readCookieConsent = () => {
   try {
@@ -37,12 +38,27 @@ const loadGoogleAnalytics = () => {
   window.gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true });
 };
 
+const loadContentsquare = () => {
+  if (window.__quioskContentsquareLoaded) return;
+  window.__quioskContentsquareLoaded = true;
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = CONTENTSQUARE_SRC;
+  document.head.appendChild(script);
+};
+
+const loadMarketingAndAnalytics = () => {
+  loadGoogleAnalytics();
+  loadContentsquare();
+};
+
 const initCookieConsent = () => {
   const existingBanner = document.querySelector('[data-cookie-banner]');
   if (existingBanner) return;
 
   const consent = readCookieConsent();
-  if (consent === 'accepted') loadGoogleAnalytics();
+  if (consent === 'accepted') loadMarketingAndAnalytics();
 
   const banner = document.createElement('aside');
   banner.className = 'cookie-banner';
@@ -100,7 +116,7 @@ const initCookieConsent = () => {
 
   banner.querySelector('[data-cookie-accept]')?.addEventListener('click', () => {
     writeCookieConsent('accepted');
-    loadGoogleAnalytics();
+    loadMarketingAndAnalytics();
     closeBanner();
   });
 
@@ -1346,6 +1362,7 @@ const initInstaSlider = () => {
   if (!roots.length) return;
 
   roots.forEach(async (root) => {
+    const isMobileViewport = () => window.matchMedia('(max-width: 760px)').matches;
     const track = root.querySelector('.insta-track');
     const prev = root.querySelector('.insta-arrow-prev');
     const next = root.querySelector('.insta-arrow-next');
@@ -1425,6 +1442,10 @@ const initInstaSlider = () => {
     };
 
     const revealCurrentPage = () => {
+      if (isMobileViewport()) {
+        showCurrentPageInstant();
+        return;
+      }
       const pages = Array.from(track.querySelectorAll('.insta-page'));
       const currentPage = pages[index];
       if (!currentPage) return;
@@ -1460,7 +1481,7 @@ const initInstaSlider = () => {
       track.style.transform = `translateX(-${index * 100}%)`;
       prev.disabled = index <= 0;
       next.disabled = index >= maxIndex;
-      if (!hasEnteredViewport || !isInViewport) {
+      if (isMobileViewport() || !hasEnteredViewport || !isInViewport) {
         showCurrentPageInstant();
       } else {
         revealCurrentPage();
@@ -1650,6 +1671,49 @@ const initImageLightbox = () => {
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && lightbox.classList.contains('is-open')) close();
+  });
+};
+
+const initMediaAssetLightbox = () => {
+  const modal = document.querySelector('[data-media-lightbox]');
+  const modalImg = document.querySelector('[data-media-lightbox-img]');
+  const closeBtn = document.querySelector('[data-media-lightbox-close]');
+  if (!modal || !modalImg || !closeBtn) return;
+
+  const close = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    modalImg.removeAttribute('src');
+    modalImg.removeAttribute('alt');
+    document.body.style.overflow = '';
+  };
+
+  const open = (src, alt) => {
+    if (!src) return;
+    modalImg.src = src;
+    modalImg.alt = alt || 'Preview afbeelding';
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  document.addEventListener('click', (event) => {
+    const trigger = event.target instanceof HTMLElement ? event.target.closest('[data-media-preview]') : null;
+    if (!trigger) return;
+    event.preventDefault();
+
+    const href = trigger.getAttribute('href') || trigger.dataset.previewSrc || '';
+    const linkedImg = trigger.querySelector('img');
+    const alt = linkedImg?.alt || trigger.getAttribute('aria-label') || '';
+    open(href, alt);
+  });
+
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) close();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) close();
   });
 };
 
@@ -2078,6 +2142,7 @@ const initDynamicProductImages = async () => {
   const prevBtn = document.querySelector('[data-product-prev]');
   const nextBtn = document.querySelector('[data-product-next]');
   if (!slider || !grid || !prevBtn || !nextBtn) return;
+  const isMobileViewport = () => window.matchMedia('(max-width: 760px)').matches;
 
   const fetchImagesFromProductApi = async () => {
     const files = await fetchMediaFiles('images/producten', 'images').catch(() => []);
@@ -2235,6 +2300,7 @@ const initDynamicProductImages = async () => {
 
     const startAuto = () => {
       stopAuto();
+      if (isMobileViewport()) return;
       if (!canAutoMove()) return;
       autoKickTimer = window.setTimeout(() => {
         move(1);
@@ -2274,7 +2340,8 @@ const initDynamicProductImages = async () => {
         window.clearTimeout(resizeTimer);
         resizeTimer = window.setTimeout(() => {
           rebuildTrack();
-          startAuto();
+          if (isMobileViewport()) stopAuto();
+          else startAuto();
         }, 120);
       },
       { passive: true }
@@ -2304,11 +2371,11 @@ const initDynamicBrandAssets = async () => {
         const title = escapeHtml(prettifyFileStem(file.stem, `Foto ${index + 1}`));
         return `
           <article class="card media-photo-card">
-            <a class="media-photo" href="${file.url}" target="_blank" rel="noopener noreferrer">
+            <a class="media-photo" href="${file.url}" data-media-preview>
               <img src="${file.url}" alt="${title}" loading="lazy" decoding="async" />
             </a>
             <div class="media-photo-actions">
-              <a class="btn btn-ghost" href="${file.url}" target="_blank" rel="noopener noreferrer">Bekijk</a>
+              <a class="btn btn-ghost" href="${file.url}" data-media-preview>Bekijk</a>
               <a class="btn btn-primary" href="${file.url}" download>Download</a>
             </div>
           </article>
@@ -2364,7 +2431,7 @@ const initDynamicBrandAssets = async () => {
             <h3>${title}</h3>
             <p>Bestand direct beschikbaar voor media en partners.</p>
             <div class="media-photo-actions">
-              <a class="btn btn-ghost" href="${previewUrl}" target="_blank" rel="noopener noreferrer">Preview</a>
+              <a class="btn btn-ghost" href="${previewUrl}" data-media-preview>Preview</a>
               ${previewDownload}
               ${epsDownload}
             </div>
@@ -2750,6 +2817,7 @@ initInstaLightbox();
 initPartnersHeroBalance();
 initPartnersAboutMobileBalance();
 initImageLightbox();
+initMediaAssetLightbox();
 initQuiosk360Viewer();
 initFaqAccordion();
 initNewsModal();
