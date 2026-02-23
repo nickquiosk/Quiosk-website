@@ -183,7 +183,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 <link rel="icon" type="image/png" href="Favicon.png?v=4" /></head>
-<body>
+<body class="page-word-partner">
   <header class="site-header">
     <div class="container nav-wrap">
       <a href="index.html" class="brand"><img src="logo-quiosk.png" alt="Quiosk logo" /></a>
@@ -212,9 +212,9 @@
         <div class="about-quiosk-layout">
           <div class="about-quiosk-copy">
             <h2>Wat betekent een Quiosk op jouw locatie?</h2>
-            <p>Quiosk is een Nederlandse vending exploitant gespecialiseerd in onbemande retail. Wij plaatsen moderne, cashless vending machines op locaties met structurele bezoekersstromen zoals tankstations, wasstraten, laadpleinen, P&amp;R terreinen en wooncomplexen.</p>
-            <p>In tegenstelling tot traditionele automaatverhuur investeren wij zelf in de machine, installatie en techniek. Jij stelt een geschikte locatie beschikbaar en ontvangt een maandelijkse omzetvergoeding.</p>
-            <p>Wij verzorgen installatie, assortiment, realtime monitoring, bevoorrading, onderhoud en klantenservice. Jij hebt er geen omkijken naar.</p>
+            <p>Quiosk is dé Nederlandse expert in outdoor onbemande retail. Wij plaatsen en exploiteren moderne 24/7 self service vending machines op locaties met structurele bezoekersstromen, zoals tankstations, wasstraten, laadpleinen, P+R-terreinen en wooncomplexen. Onze Quiosk’en spelen in op directe koopbehoefte: gemak, snelheid en altijd beschikbaar.</p>
+            <p>Wij investeren volledig in de Quiosk, installatie, techniek en exploitatie. Als partner stel je enkel een geschikte locatie beschikbaar. In ruil daarvoor ontvang je een maandelijkse omzetvergoeding zonder investering en zonder operationele inspanning.</p>
+            <p>Van assortiment en realtime monitoring tot bevoorrading, onderhoud en klantenservice verzorgt Quiosk het complete beheer. Zo maken we van ongebruikte ruimte een structurele, zorgeloze inkomstenbron met maximale service voor jouw bezoekers.</p>
             <div class="cta-row">
               <a href="#lead" class="btn btn-primary">Ontvang een gratis locatie-inschatting</a>
             </div>
@@ -432,6 +432,18 @@
 
   <div class="quiosk-360-modal" data-quiosk-360-modal aria-hidden="true" role="dialog" aria-label="Quiosk 360 weergave">
     <div class="quiosk-360-dialog">
+      <div class="quiosk-360-topbar">
+        <strong class="quiosk-360-title">Quiosk 360 weergave</strong>
+        <div class="quiosk-360-toolbar">
+          <div class="quiosk-360-zoom" aria-label="Zoom bediening">
+            <button class="quiosk-360-zoom-btn" type="button" data-quiosk-360-zoom-out aria-label="Uitzoomen">−</button>
+            <span class="quiosk-360-zoom-value" data-quiosk-360-zoom-value aria-live="polite">100%</span>
+            <button class="quiosk-360-zoom-btn" type="button" data-quiosk-360-zoom-in aria-label="Inzoomen">+</button>
+            <button class="quiosk-360-zoom-reset" type="button" data-quiosk-360-zoom-reset aria-label="Reset zoom">Reset</button>
+          </div>
+          <p class="quiosk-360-counter" data-quiosk-360-counter aria-live="polite"></p>
+        </div>
+      </div>
       <button class="quiosk-360-close" type="button" data-quiosk-360-close aria-label="Sluit">&times;</button>
       <div class="quiosk-360-stage" data-quiosk-360-stage>
         <button class="quiosk-360-nav quiosk-360-nav-prev" type="button" data-quiosk-360-prev aria-label="Vorige beeld">&#10094;</button>

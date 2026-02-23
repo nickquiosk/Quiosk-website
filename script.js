@@ -886,6 +886,9 @@ const initFinder = () => {
       }
     });
     infoWindow = new window.google.maps.InfoWindow();
+    window.closeFinderInfoWindow = () => {
+      if (infoWindow) infoWindow.close();
+    };
     infoWindow.addListener('closeclick', () => {
       if (activeMarker) {
         activeMarker.setIcon(getMarkerIcon(false));
@@ -1016,8 +1019,11 @@ const initFinder = () => {
       marker.addListener('click', () => {
         if (!infoWindow) return;
         setActiveMarker(marker);
+        const detailUrl = getLocationDetailUrl(k);
         infoWindow.setContent(
-          `<div class="quiosk-map-card"><h4>${k.name}</h4><p>${k.address}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${getDirectionsUrl(k)}" target="_blank" rel="noopener noreferrer">Navigeer</a><a class="btn btn-ghost" href="${getVisitUrl(k)}" target="_blank" rel="noopener noreferrer">Bekijk locatie</a></div></div>`
+          `<div class="quiosk-map-card"><div class="quiosk-map-card-head"><img class="quiosk-map-card-icon" src="${resolveStaticPath(
+            'Favicon.png?v=4'
+          )}" alt="" aria-hidden="true" /><h4>${k.name}</h4><button class="quiosk-map-card-close" type="button" onclick="window.closeFinderInfoWindow && window.closeFinderInfoWindow()" aria-label="Sluit kaartje">×</button></div><p>${k.address}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${detailUrl}">Bekijk locatie</a></div></div>`
         );
         infoWindow.open({ anchor: marker, map: mapInstance });
       });
@@ -1942,11 +1948,30 @@ const initQuiosk360Viewer = async () => {
   const stage = document.querySelector('[data-quiosk-360-stage]');
   const image = document.querySelector('[data-quiosk-360-image]');
   const hint = document.querySelector('[data-quiosk-360-hint]');
+  const counter = document.querySelector('[data-quiosk-360-counter]');
+  const zoomInBtn = document.querySelector('[data-quiosk-360-zoom-in]');
+  const zoomOutBtn = document.querySelector('[data-quiosk-360-zoom-out]');
+  const zoomResetBtn = document.querySelector('[data-quiosk-360-zoom-reset]');
+  const zoomValueEl = document.querySelector('[data-quiosk-360-zoom-value]');
   const closeBtn = document.querySelector('[data-quiosk-360-close]');
   const prevBtn = document.querySelector('[data-quiosk-360-prev]');
   const nextBtn = document.querySelector('[data-quiosk-360-next]');
 
-  if (!trigger || !modal || !stage || !image || !hint || !closeBtn || !prevBtn || !nextBtn) return;
+  if (
+    !trigger ||
+    !modal ||
+    !stage ||
+    !image ||
+    !hint ||
+    !closeBtn ||
+    !prevBtn ||
+    !nextBtn ||
+    !counter ||
+    !zoomInBtn ||
+    !zoomOutBtn ||
+    !zoomResetBtn ||
+    !zoomValueEl
+  ) return;
 
   const staticFallback = trigger.querySelector('img')?.getAttribute('src') || 'images/word-partner/hero.jpg';
   let frames = [];
@@ -1957,6 +1982,10 @@ const initQuiosk360Viewer = async () => {
   let dragBuffer = 0;
   const DRAG_THRESHOLD = 20;
   let touchActive = false;
+  let zoomLevel = 1;
+  const MIN_ZOOM = 1;
+  const MAX_ZOOM = 3;
+  const ZOOM_STEP = 0.2;
 
   const normalizeFramePath = (value) => {
     const v = String(value || '').trim();
@@ -1984,18 +2013,52 @@ const initQuiosk360Viewer = async () => {
     hint.textContent = text;
   };
 
+  const updateZoomUi = () => {
+    zoomValueEl.textContent = `${Math.round(zoomLevel * 100)}%`;
+    zoomOutBtn.disabled = zoomLevel <= MIN_ZOOM;
+    zoomInBtn.disabled = zoomLevel >= MAX_ZOOM;
+  };
+
+  const applyZoom = () => {
+    image.style.transform = `scale(${zoomLevel})`;
+    updateZoomUi();
+  };
+
+  const setZoom = (nextZoom) => {
+    const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number(nextZoom) || MIN_ZOOM));
+    zoomLevel = Math.round(clamped * 100) / 100;
+    applyZoom();
+  };
+
+  const changeZoom = (delta) => {
+    setZoom(zoomLevel + delta);
+  };
+
+  const resetZoom = () => {
+    setZoom(MIN_ZOOM);
+  };
+
+  const updateControls = () => {
+    const isInteractive = frameCount > 1;
+    prevBtn.disabled = !isInteractive;
+    nextBtn.disabled = !isInteractive;
+    counter.textContent = isInteractive ? `${frameIndex + 1} / ${frameCount}` : 'Statisch beeld';
+  };
+
   const renderFrame = () => {
     if (frameCount > 1) {
       const src = frames[frameIndex];
       if (src) image.src = src;
       image.alt = `Quiosk 360 frame ${frameIndex + 1} van ${frameCount}`;
       setHint('Gebruik pijltjes, sleep of swipe om rondom de Quiosk te kijken.');
+      updateControls();
       return;
     }
 
     image.src = normalizeFramePath(staticFallback);
     image.alt = 'Quiosk afbeelding';
     setHint('Upload 360 frames in images/quiosk-360/frames.json om deze viewer interactief te maken.');
+    updateControls();
   };
 
   const rotateBy = (delta) => {
@@ -2007,6 +2070,7 @@ const initQuiosk360Viewer = async () => {
   const open = () => {
     isOpen = true;
     frameIndex = 0;
+    resetZoom();
     renderFrame();
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
@@ -2103,6 +2167,9 @@ const initQuiosk360Viewer = async () => {
   nextBtn.addEventListener('pointerdown', (event) => {
     event.stopPropagation();
   });
+  zoomInBtn.addEventListener('click', () => changeZoom(ZOOM_STEP));
+  zoomOutBtn.addEventListener('click', () => changeZoom(-ZOOM_STEP));
+  zoomResetBtn.addEventListener('click', resetZoom);
   modal.addEventListener('click', (event) => {
     if (event.target === modal) close();
   });
@@ -2119,9 +2186,9 @@ const initQuiosk360Viewer = async () => {
   stage.addEventListener(
     'wheel',
     (event) => {
-      if (!isOpen || frameCount <= 1) return;
-      event.preventDefault();
-      rotateBy(event.deltaY > 0 ? 1 : -1);
+    if (!isOpen || frameCount <= 1) return;
+    event.preventDefault();
+    rotateBy(event.deltaY > 0 ? 1 : -1);
     },
     { passive: false }
   );
@@ -2131,6 +2198,9 @@ const initQuiosk360Viewer = async () => {
     if (event.key === 'Escape') close();
     if (event.key === 'ArrowRight') rotateBy(1);
     if (event.key === 'ArrowLeft') rotateBy(-1);
+    if (event.key === '+' || event.key === '=') changeZoom(ZOOM_STEP);
+    if (event.key === '-') changeZoom(-ZOOM_STEP);
+    if (event.key === '0') resetZoom();
   });
 };
 
