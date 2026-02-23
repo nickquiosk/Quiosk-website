@@ -3008,7 +3008,7 @@ main > .section.quick-search {
 
 .quick-search-form {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
   gap: 10px;
   align-items: center;
   max-width: none;
@@ -3057,6 +3057,23 @@ main > .section.quick-search {
   min-height: 52px;
   padding-inline: 22px;
   border-radius: 999px;
+}
+
+.quick-search-nearby-btn {
+  width: 52px;
+  min-width: 52px;
+  padding: 0;
+  justify-content: center;
+}
+
+.quick-search-nearby-btn svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.quick-search-nearby-btn[aria-busy="true"] {
+  opacity: 0.7;
 }
 
 .quick-search-radius-wrap {
@@ -3989,7 +4006,7 @@ main > .section.quick-search {
 .finder-overlap-search .finder-search-form {
   width: 100%;
   max-width: none;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
   gap: 10px;
 }
 
@@ -4667,6 +4684,36 @@ main > .section.quick-search {
   overflow: visible;
 }
 
+.location-page-close {
+  position: absolute;
+  top: 24px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(52, 171, 178, 0.45);
+  background: #fff;
+  color: #124b50;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  z-index: 6;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.location-page-close:hover,
+.location-page-close:focus-visible {
+  background: rgb(229, 0, 125);
+  border-color: rgb(229, 0, 125);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 .location-page-overlay h1 {
   margin: 0;
   font-size: clamp(1.7rem, 2.2vw, 2.4rem);
@@ -4767,6 +4814,12 @@ main > .section.quick-search {
 
 .location-concept-v2 .location-page-overlay {
   gap: 16px;
+}
+
+.location-concept-v2 .site-header,
+.location-concept-v2 .site-header.header-compact {
+  border-bottom: 0;
+  box-shadow: none;
 }
 
 .location-concept-v2 .location-page-overlay::before {
@@ -5218,6 +5271,14 @@ main > .section.quick-search {
     border-top: 0;
     padding: 20px 16px 20px;
     gap: 14px;
+  }
+
+  .location-page-close {
+    top: 22px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.5rem;
   }
 
   .location-concept-v2 .location-page-overlay::before {

@@ -721,6 +721,7 @@ const initFinder = () => {
 
   const searchInput = root.querySelector('[data-search]');
   const searchSubmitBtn = root.querySelector('[data-search-submit]');
+  const useLocationBtn = root.querySelector('[data-use-location]');
   const finderCountEl = root.querySelector('[data-finder-count]');
   const noLocationEl = root.querySelector('[data-finder-no-location]');
   const openTipModalBtn = root.querySelector('[data-open-tip-modal]');
@@ -750,6 +751,8 @@ const initFinder = () => {
   let hasUserSearched = Boolean(initialQuery);
   const geocodeCache = new Map();
   let geocodePendingKey = '';
+  let currentLocationPoint = null;
+  let useCurrentLocation = false;
 
   const toRad = (value) => (value * Math.PI) / 180;
   const normalizeLoose = (value) =>
@@ -1164,11 +1167,12 @@ const initFinder = () => {
     const queryText = (inputValue || initialQuery).trim();
     const q = queryText.toLowerCase();
     const radiusKm = Number(radiusSelect?.value || 0);
+    const usingCurrentLocation = Boolean(useCurrentLocation && currentLocationPoint);
     const hasGeocodeResult = q ? geocodeCache.has(q) : false;
     const geocodePoint = q && hasGeocodeResult ? geocodeCache.get(q) : null;
     const geocodeIsPending = q ? geocodePendingKey === q && !hasGeocodeResult : false;
 
-    if (q) geocodeQueryPoint(queryText);
+    if (q && !usingCurrentLocation) geocodeQueryPoint(queryText);
 
     const qMatches = q
       ? allLocations.filter((location) => locationMatchesQuery(location, q) && location.coords)
@@ -1181,12 +1185,12 @@ const initFinder = () => {
           }
         : null;
 
-    const referencePoint = geocodePoint || matchesCenter;
+    const referencePoint = usingCurrentLocation ? currentLocationPoint : geocodePoint || matchesCenter;
 
     const filtered = sourceData.filter((kiosk) => {
       const textMatch = locationMatchesQuery(kiosk, q);
 
-      if (radiusKm > 0 && q) {
+      if (radiusKm > 0 && (q || usingCurrentLocation)) {
         if (!referencePoint) return false;
         if (!kiosk.coords) return false;
         return distanceInKm(referencePoint, kiosk.coords) <= radiusKm;
@@ -1199,7 +1203,7 @@ const initFinder = () => {
       return true;
     });
 
-    if (referencePoint && q) {
+    if (referencePoint && (q || usingCurrentLocation)) {
       filtered.sort((a, b) => {
         const distA = a.coords ? distanceInKm(referencePoint, a.coords) : Number.POSITIVE_INFINITY;
         const distB = b.coords ? distanceInKm(referencePoint, b.coords) : Number.POSITIVE_INFINITY;
@@ -1247,6 +1251,7 @@ const initFinder = () => {
       const showNoLocationMessage =
         hasUserSearched &&
         Boolean(q) &&
+        !usingCurrentLocation &&
         !geocodeIsPending &&
         hasGeocodeResult &&
         !!geocodePoint &&
@@ -1266,7 +1271,7 @@ const initFinder = () => {
         const street = getStreetFromAddress(k.address);
         const addressLine = street ? `${street}${city ? `, ${city}` : ''}` : city;
         const km =
-          referencePoint && k.coords && q
+          referencePoint && k.coords && (q || usingCurrentLocation)
             ? `${distanceInKm(referencePoint, k.coords).toFixed(1).replace('.', ',')} km`
             : '';
         const detailUrl = getLocationDetailUrl(k);
@@ -1285,6 +1290,9 @@ const initFinder = () => {
       .join('');
 
     if (!filtered.length) {
+      if (usingCurrentLocation) {
+        list.innerHTML = '<article class="card"><p>Geen Quiosks gevonden binnen deze afstand vanaf je huidige locatie.</p></article>';
+      } else
       if (geocodeIsPending && q) {
         list.innerHTML = '<article class="card"><p>Zoeken op plaats of postcode...</p></article>';
       } else if (q && radiusKm > 0 && hasGeocodeResult && !geocodePoint && !qMatches.length) {
@@ -1313,6 +1321,10 @@ const initFinder = () => {
   if (noLocationEl) noLocationEl.hidden = true;
 
   const runSearch = () => {
+    if ((searchInput?.value || '').trim()) {
+      useCurrentLocation = false;
+      currentLocationPoint = null;
+    }
     hasUserSearched = true;
     render();
   };
@@ -1332,6 +1344,47 @@ const initFinder = () => {
 
   if (radiusSelect) {
     radiusSelect.addEventListener('input', render);
+  }
+
+  if (useLocationBtn) {
+    if (!navigator.geolocation) {
+      useLocationBtn.disabled = true;
+      useLocationBtn.title = 'Locatietoegang wordt niet ondersteund in deze browser';
+    } else {
+      useLocationBtn.addEventListener('click', () => {
+        const originalTitle = useLocationBtn.title || 'Zoek op huidige locatie';
+        useLocationBtn.disabled = true;
+        useLocationBtn.setAttribute('aria-busy', 'true');
+        useLocationBtn.title = 'Locatie laden...';
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            currentLocationPoint = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            useCurrentLocation = true;
+            if (searchInput) searchInput.value = '';
+            hasUserSearched = true;
+            render();
+            useLocationBtn.disabled = false;
+            useLocationBtn.setAttribute('aria-busy', 'false');
+            useLocationBtn.title = originalTitle;
+          },
+          () => {
+            useLocationBtn.disabled = false;
+            useLocationBtn.setAttribute('aria-busy', 'false');
+            useLocationBtn.title = originalTitle;
+            alert('Locatie ophalen is niet gelukt. Controleer je browserrechten en probeer opnieuw.');
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 300000
+          }
+        );
+      });
+    }
   }
 
   const closeTipModal = () => {
@@ -3005,6 +3058,16 @@ const initLocationDetailEnhancements = () => {
 
   document.body.classList.add('location-concept-v2');
   const rootPrefix = window.location.pathname.includes('/locaties/') ? '../' : '';
+
+  if (!overlay.querySelector('.location-page-close')) {
+    const closeLink = document.createElement('a');
+    closeLink.className = 'location-page-close';
+    closeLink.href = `${rootPrefix}quiosk-zoeken.html`;
+    closeLink.setAttribute('aria-label', 'Sluit detailpagina en ga terug naar Quiosk zoeken');
+    closeLink.title = 'Terug naar Quiosk zoeken';
+    closeLink.textContent = '×';
+    overlay.prepend(closeLink);
+  }
 
   const GOOGLE_MAPS_KEY = 'AIzaSyB9SVkW2jpokXe8rUaWZW-UgRjLeb8gM7E';
   const mapFallback = mapCanvas.querySelector('iframe');
