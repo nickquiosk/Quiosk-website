@@ -509,7 +509,7 @@ img {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: url("images/word-partner/hero-background.jpg") center center / cover no-repeat;
+  background: url("images/contact/Quiosk-contact.jpg") center center / cover no-repeat;
   pointer-events: none;
 }
 
@@ -832,17 +832,31 @@ img {
   right: 16px;
 }
 
-.slide-1 {
+.home-slide-1 {
   background-image: url("images/home/quiok-1.jpg");
 }
 
-.slide-2 {
-  background-image: url("images/home/quiok-2.jpg");
+.home-slide-2 {
+  background-image: url("images/home/Quiosk_Nistelrode_01.jpg");
   animation-delay: 6s;
 }
 
-.slide-3 {
+.home-slide-3 {
   background-image: url("images/home/quiok-3.jpg");
+  animation-delay: 12s;
+}
+
+.fans-slide-1 {
+  background-image: url("images/voor-onze-fans/hero/Quiosk42.jpg");
+}
+
+.fans-slide-2 {
+  background-image: url("images/voor-onze-fans/hero/quiok-2.jpg");
+  animation-delay: 6s;
+}
+
+.fans-slide-3 {
+  background-image: url("images/voor-onze-fans/hero/Quiosk42.jpg");
   animation-delay: 12s;
 }
 
@@ -5818,7 +5832,7 @@ main[data-finder] > .section + .section::before {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: url("images/over-quiosk/over-quiosk-1.jpg") center center / cover no-repeat;
+  background: url("images/over-quiosk/over-quiosk-hero.jpg") center center / cover no-repeat;
   pointer-events: none;
 }
 

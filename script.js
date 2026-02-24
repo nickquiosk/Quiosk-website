@@ -1898,9 +1898,7 @@ const initImageLightbox = () => {
   const lightbox = document.querySelector('[data-image-lightbox]');
   const lightboxImg = document.querySelector('[data-image-lightbox-img]');
   const closeBtn = document.querySelector('[data-image-lightbox-close]');
-  const triggers = document.querySelectorAll('.partner-photo-viewable');
-
-  if (!lightbox || !lightboxImg || !closeBtn || !triggers.length) return;
+  if (!lightbox || !lightboxImg || !closeBtn) return;
 
   const close = () => {
     lightbox.classList.remove('is-open');
@@ -1918,8 +1916,12 @@ const initImageLightbox = () => {
     document.body.style.overflow = 'hidden';
   };
 
-  triggers.forEach((img) => {
-    img.addEventListener('click', () => open(img.src, img.alt));
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const img = target.closest('.partner-photo-viewable');
+    if (!(img instanceof HTMLImageElement)) return;
+    open(img.src, img.alt);
   });
 
   closeBtn.addEventListener('click', close);
@@ -2783,6 +2785,25 @@ const initDynamicBrandAssets = async () => {
   }
 };
 
+const initDynamicOverQuioskGallery = async () => {
+  const strip = document.querySelector('[data-over-quiosk-gallery]');
+  if (!strip) return;
+
+  try {
+    const files = await fetchMediaFiles('images/over-quiosk', 'images').catch(() => []);
+    if (!files.length) return;
+
+    const cards = files.slice(0, 6).map((file, index) => {
+      const label = escapeHtml(prettifyFileStem(file.stem, `Over Quiosk beeld ${index + 1}`));
+      return `<img class="partner-photo-viewable" src="${file.url}" alt="${label}" loading="lazy" decoding="async" />`;
+    });
+
+    if (cards.length) strip.innerHTML = cards.join('');
+  } catch (_error) {
+    // Keep static fallback images.
+  }
+};
+
 const initSpotlight = () => {
   const root = document.querySelector('[data-spotlight]');
   if (!root) return;
@@ -3555,6 +3576,7 @@ initRefundForm();
 initFinder();
 initHeroSlider();
 initDynamicBrandAssets();
+initDynamicOverQuioskGallery();
 initInstaSlider();
 initInstaLightbox();
 initPartnersHeroBalance();
