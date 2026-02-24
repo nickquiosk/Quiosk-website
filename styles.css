@@ -900,6 +900,10 @@ img {
   box-shadow: none;
 }
 
+.page-word-partner .site-header {
+  border-bottom: 0;
+}
+
 .page-word-partner main > .partners-about-overlap::before {
   display: none;
 }
@@ -999,7 +1003,7 @@ img {
   min-height: 40px;
   padding: 0 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 0;
   background: rgb(229, 0, 125);
   color: #fff;
   font-size: 0.86rem;
@@ -3990,7 +3994,7 @@ main > .section.quick-search {
   min-height: clamp(720px, 82vh, 960px);
   border-radius: 0;
   border: 0;
-  background: #f3f3f3;
+  background: #fff;
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -3999,10 +4003,12 @@ main > .section.quick-search {
 .section-finder-map {
   padding-top: 0;
   padding-bottom: 0;
+  background: transparent !important;
 }
 
 .section-finder-map-hero {
   padding-top: 0;
+  background: transparent !important;
 }
 
 .section-finder-map-hero .map {
@@ -4137,10 +4143,11 @@ main > .section.quick-search {
 }
 
 .finder-results-overlap {
-  margin-top: calc(-1 * var(--finder-overlap));
+  margin-top: calc(-1 * var(--finder-overlap-dynamic, var(--finder-overlap)) - 1px);
   position: relative;
   z-index: 6;
   padding-top: 0;
+  padding-bottom: 0;
   background: transparent !important;
 }
 
@@ -4212,16 +4219,56 @@ main > .section.quick-search {
 }
 
 .finder-no-location {
-  margin: 10px 0 0;
-  font-size: 0.98rem;
-  color: #254e51;
+  margin: 14px auto 0;
+  width: min(760px, 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(229, 0, 125, 0.3);
+  background: linear-gradient(180deg, rgba(255, 243, 250, 0.95), rgba(255, 250, 253, 0.98));
+  box-shadow: 0 12px 28px rgba(229, 0, 125, 0.14);
+  padding: 14px 16px;
+  font-size: 1rem;
+  color: #1e4b4f;
   text-align: center;
-  width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (min-width: 921px) {
+  .finder-results-summary .finder-no-location,
+  .finder-no-location-secondary {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.finder-no-location.is-visible {
+  animation: finderNoLocationIn 0.32s ease;
+}
+
+.finder-no-location-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.finder-no-location-text {
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.finder-no-location-text strong {
+  color: #0d2f31;
+}
+
+.finder-no-location-meta {
+  font-size: 0.86rem;
+  color: #587678;
+}
+
+.finder-no-location-secondary {
+  margin-top: 18px;
 }
 
 .finder-no-location[hidden] {
@@ -4251,8 +4298,40 @@ main > .section.quick-search {
   padding: 0;
 }
 
+.finder-tip-btn-prominent {
+  border: 1px solid rgba(229, 0, 125, 0.4);
+  background: var(--brand);
+  color: #fff;
+  text-decoration: none;
+  text-underline-offset: 0;
+  border-radius: 999px;
+  padding: 8px 16px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 22px rgba(229, 0, 125, 0.24);
+}
+
 .finder-tip-btn:hover {
   color: var(--brand-strong);
+}
+
+.finder-tip-btn-prominent:hover {
+  color: #fff;
+  background: var(--brand-top);
+  border-color: rgba(52, 171, 178, 0.45);
+}
+
+@keyframes finderNoLocationIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .finder-tip-modal {
@@ -4523,7 +4602,15 @@ main > .section.quick-search {
 }
 
 .section.finder-results-overlap + .section .container {
-  padding-top: var(--s-2);
+  padding-top: 0;
+}
+
+main[data-finder] > .section + .section {
+  box-shadow: none !important;
+}
+
+main[data-finder] > .section + .section::before {
+  content: none !important;
 }
 
 .finder-alpha-card {
@@ -7499,7 +7586,7 @@ main > .section.quick-search {
   }
 
   .finder-results-overlap {
-    margin-top: calc(-1 * var(--finder-overlap));
+    margin-top: calc(-1 * var(--finder-overlap-dynamic, var(--finder-overlap)));
   }
 
   .alpha-accordion {
@@ -7575,7 +7662,7 @@ main > .section.quick-search {
   }
 
   .finder-results-overlap {
-    margin-top: calc(-1 * var(--finder-overlap));
+    margin-top: calc(-1 * var(--finder-overlap-dynamic, var(--finder-overlap)));
   }
 
   .finder-results-summary {

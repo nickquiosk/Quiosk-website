@@ -724,6 +724,7 @@ const initFinder = () => {
   const useLocationBtn = root.querySelector('[data-use-location]');
   const finderCountEl = root.querySelector('[data-finder-count]');
   const noLocationEl = root.querySelector('[data-finder-no-location]');
+  const finderSummaryCard = root.querySelector('.finder-results-summary');
   const openTipModalBtn = root.querySelector('[data-open-tip-modal]');
   const tipModal = root.querySelector('[data-finder-tip-modal]');
   const closeTipModalBtn = root.querySelector('[data-close-tip-modal]');
@@ -1168,6 +1169,31 @@ const initFinder = () => {
     });
   };
 
+  const renderNoLocationMessage = (element, placeLabel, isVisible) => {
+    if (!element) return;
+    if (!isVisible) {
+      element.hidden = true;
+      element.classList.remove('is-visible');
+      return;
+    }
+    element.innerHTML = `
+      <span class="finder-no-location-icon" aria-hidden="true">📍</span>
+      <span class="finder-no-location-text"><strong>In ${placeLabel}</strong> is nog geen Quiosk.</span>
+      <button type="button" class="finder-tip-btn finder-tip-btn-prominent" data-open-tip-modal>Tip een locatie</button>
+      <span class="finder-no-location-meta">We reageren meestal binnen 1-2 werkdagen.</span>
+    `;
+    element.hidden = false;
+    element.classList.add('is-visible');
+    element.querySelector('[data-open-tip-modal]')?.addEventListener('click', openTipModal);
+  };
+
+  const updateFinderOverlapHeight = () => {
+    if (!finderSummaryCard) return;
+    const measured = Math.ceil(finderSummaryCard.getBoundingClientRect().height + 8);
+    const overlapPx = Math.max(120, Math.min(420, measured));
+    root.style.setProperty('--finder-overlap-dynamic', `${overlapPx}px`);
+  };
+
   const render = () => {
     const inputValue = searchInput ? (searchInput.value || '').trim() : '';
     const queryText = (inputValue || initialQuery).trim();
@@ -1250,25 +1276,19 @@ const initFinder = () => {
       finderCountEl.textContent = String(filtered.length);
     }
 
-    if (noLocationEl) {
-      const hasQuioskInSearchedPlace = q
-        ? allLocations.some((location) => locationMatchesPlace(location, queryText))
-        : true;
-      const showNoLocationMessage =
-        hasUserSearched &&
-        Boolean(q) &&
-        !usingCurrentLocation &&
-        !geocodeIsPending &&
-        hasGeocodeResult &&
-        !!geocodePoint &&
-        !hasQuioskInSearchedPlace;
-      noLocationEl.hidden = !showNoLocationMessage;
-      if (showNoLocationMessage) {
-        const safePlace = formatPlaceLabel(queryText || 'deze plaats');
-        noLocationEl.innerHTML = `In ${safePlace} is nog geen Quiosk. <button type="button" class="finder-tip-btn" data-open-tip-modal>Stuur ons jouw tip</button>.`;
-        noLocationEl.querySelector('[data-open-tip-modal]')?.addEventListener('click', openTipModal);
-      }
-    }
+    const hasQuioskInSearchedPlace = q
+      ? allLocations.some((location) => locationMatchesPlace(location, queryText))
+      : true;
+    const showNoLocationMessage =
+      hasUserSearched &&
+      Boolean(q) &&
+      !usingCurrentLocation &&
+      !geocodeIsPending &&
+      hasGeocodeResult &&
+      !!geocodePoint &&
+      !hasQuioskInSearchedPlace;
+    const safePlace = formatPlaceLabel(queryText || 'deze plaats');
+    renderNoLocationMessage(noLocationEl, safePlace, showNoLocationMessage);
 
     list.innerHTML = filtered
       .map((k) => {
@@ -1311,6 +1331,7 @@ const initFinder = () => {
       }
     }
     renderMap(filtered);
+    updateFinderOverlapHeight();
   };
 
   if (searchInput && initialQuery) {
@@ -1325,6 +1346,7 @@ const initFinder = () => {
     radiusSelect.value = '25';
   }
   if (noLocationEl) noLocationEl.hidden = true;
+  updateFinderOverlapHeight();
 
   const runSearch = () => {
     if ((searchInput?.value || '').trim()) {
@@ -1334,6 +1356,8 @@ const initFinder = () => {
     hasUserSearched = true;
     render();
   };
+
+  window.addEventListener('resize', updateFinderOverlapHeight);
 
   if (searchSubmitBtn) {
     searchSubmitBtn.addEventListener('click', runSearch);
