@@ -1,13 +1,4 @@
-Plaats hier je CSV exportbestand voor bulk import.
+Importmodule verwijderd.
 
-Aanrader:
-- Bestandsnaam: latest.csv
-
-Daarna importeer je via:
-- http://localhost:8000/import-locaties.html
-- knop: "Importeer uit map"
-
-Of via API:
-POST /api/import-from-drop
-Header: x-import-token: <IMPORT_TOKEN>
-Body JSON: {"filename":"latest.csv"}
+Deze map wordt niet meer gebruikt door de website.
+Gebruik `data/locations.json` als bron voor locaties.
