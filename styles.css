@@ -991,6 +991,34 @@ img {
   transform: scale(1.02);
 }
 
+.about-quiosk-media-cta {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  transform: none;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgb(229, 0, 125);
+  color: #fff;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 24px rgba(229, 0, 125, 0.34);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  pointer-events: none;
+}
+
+.about-quiosk-media-trigger:hover .about-quiosk-media-cta {
+  background: var(--brand-top);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(52, 171, 178, 0.36);
+}
+
 .about-quiosk-media-badge {
   display: none;
 }
