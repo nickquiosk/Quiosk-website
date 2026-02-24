@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
+app.disable('x-powered-by');
 
 const PORT = Number(process.env.PORT || 8000);
 const {
@@ -55,19 +56,21 @@ const setCorsHeaders = (req, res) => {
   }
 };
 
-const getRequestHost = (req) => {
-  const forwardedHost = normalizeText(req.headers['x-forwarded-host']);
-  const hostHeader = normalizeText(req.headers.host);
-  const rawHost = forwardedHost || hostHeader;
-  return rawHost.split(',')[0].trim().split(':')[0].toLowerCase();
+const normalizeIp = (ip) => normalizeText(ip).split(',')[0].trim().toLowerCase();
+const isLoopbackIp = (ip) => {
+  const normalized = normalizeIp(ip);
+  return (
+    normalized === '127.0.0.1' ||
+    normalized === '::1' ||
+    normalized === '::ffff:127.0.0.1'
+  );
 };
 
-const isLocalHost = (host) => {
-  const normalized = normalizeText(host).toLowerCase();
-  return normalized === 'localhost' || normalized === '127.0.0.1' || normalized === '::1';
+const isLocalRequest = (req) => {
+  const socketIp = normalizeIp(req?.socket?.remoteAddress);
+  const reqIp = normalizeIp(req?.ip);
+  return isLoopbackIp(socketIp) || isLoopbackIp(reqIp);
 };
-
-const isLocalRequest = (req) => isLocalHost(getRequestHost(req));
 
 const requireLocalOnly = (req, res) => {
   if (isLocalRequest(req)) return true;
@@ -79,6 +82,31 @@ app.use((req, res, next) => {
   setCorsHeaders(req, res);
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Import-Token');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(self), microphone=(), camera=()');
+  res.setHeader(
+    'Content-Security-Policy',
+    [
+      "default-src 'self' https: data: blob:",
+      "script-src 'self' https: 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' https: 'unsafe-inline'",
+      "img-src 'self' https: data: blob:",
+      "font-src 'self' https: data:",
+      "connect-src 'self' https:",
+      "frame-src 'self' https:",
+      "object-src 'none'",
+      "frame-ancestors 'self'",
+      "base-uri 'self'"
+    ].join('; ')
+  );
+  if (!isLocalRequest(req)) {
+    const proto = normalizeText(req.headers['x-forwarded-proto']).toLowerCase();
+    if (req.secure || proto.includes('https')) {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+  }
   if (req.method === 'OPTIONS') {
     res.status(204).end();
     return;
@@ -446,6 +474,30 @@ const requireImportToken = (req, res) => {
   return true;
 };
 
+const createRateLimiter = ({ windowMs, max }) => {
+  const store = new Map();
+  return (req, res, next) => {
+    const key = normalizeIp(req?.socket?.remoteAddress) || 'unknown';
+    const now = Date.now();
+    const item = store.get(key);
+    if (!item || now > item.expiresAt) {
+      store.set(key, { count: 1, expiresAt: now + windowMs });
+      next();
+      return;
+    }
+    if (item.count >= max) {
+      const retryAfterSeconds = Math.max(1, Math.ceil((item.expiresAt - now) / 1000));
+      res.setHeader('Retry-After', String(retryAfterSeconds));
+      res.status(429).json({ error: 'Too many requests' });
+      return;
+    }
+    item.count += 1;
+    next();
+  };
+};
+
+const importRateLimiter = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 30 });
+
 app.get('/api/locations', async (_req, res) => {
   try {
     const manualLocations = await readManualLocations();
@@ -458,7 +510,7 @@ app.get('/api/locations', async (_req, res) => {
   }
 });
 
-app.post('/api/import-locations', async (req, res) => {
+app.post('/api/import-locations', importRateLimiter, async (req, res) => {
   try {
     if (!requireLocalOnly(req, res)) return;
     if (!requireImportToken(req, res)) return;
@@ -511,7 +563,7 @@ app.post('/api/import-locations', async (req, res) => {
   }
 });
 
-app.post('/api/import-from-drop', async (req, res) => {
+app.post('/api/import-from-drop', importRateLimiter, async (req, res) => {
   try {
     if (!requireLocalOnly(req, res)) return;
     if (!requireImportToken(req, res)) return;

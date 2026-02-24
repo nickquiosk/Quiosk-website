@@ -1021,10 +1021,12 @@ const initFinder = () => {
         if (!infoWindow) return;
         setActiveMarker(marker);
         const detailUrl = getLocationDetailUrl(k);
+        const safeName = escapeHtml(k.name || '');
+        const safeAddress = escapeHtml(k.address || '');
+        const safeDetailUrl = escapeAttribute(detailUrl);
+        const safeIconUrl = escapeAttribute(resolveStaticPath('Favicon.png?v=4'));
         infoWindow.setContent(
-          `<div class="quiosk-map-card"><div class="quiosk-map-card-head"><img class="quiosk-map-card-icon" src="${resolveStaticPath(
-            'Favicon.png?v=4'
-          )}" alt="" aria-hidden="true" /><h4>${k.name}</h4><button class="quiosk-map-card-close" type="button" onclick="window.closeFinderInfoWindow && window.closeFinderInfoWindow()" aria-label="Sluit kaartje">×</button></div><p>${k.address}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${detailUrl}">Bekijk locatie</a></div></div>`
+          `<div class="quiosk-map-card"><div class="quiosk-map-card-head"><img class="quiosk-map-card-icon" src="${safeIconUrl}" alt="" aria-hidden="true" /><h4>${safeName}</h4><button class="quiosk-map-card-close" type="button" onclick="window.closeFinderInfoWindow && window.closeFinderInfoWindow()" aria-label="Sluit kaartje">×</button></div><p>${safeAddress}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${safeDetailUrl}">Bekijk locatie</a></div></div>`
         );
         infoWindow.open({ anchor: marker, map: mapInstance });
       });
@@ -1151,7 +1153,10 @@ const initFinder = () => {
                 (location) => {
                   const city = getLocationCity(location);
                   const cityLabel = city || (location.name || location.title || 'Onbekende plaats');
-                  return `<a class="alpha-city-link" href="#finder-map" data-alpha-location-id="${location.id}">Quiosk ${cityLabel} - ${getStreetFromAddress(location.address)}</a>`;
+                  const safeCityLabel = escapeHtml(cityLabel);
+                  const safeStreet = escapeHtml(getStreetFromAddress(location.address));
+                  const safeLocationId = escapeAttribute(location.id);
+                  return `<a class="alpha-city-link" href="#finder-map" data-alpha-location-id="${safeLocationId}">Quiosk ${safeCityLabel} - ${safeStreet}</a>`;
                 }
               )
               .join('')}</div></div>`;
@@ -1301,14 +1306,19 @@ const initFinder = () => {
             ? `${distanceInKm(referencePoint, k.coords).toFixed(1).replace('.', ',')} km`
             : '';
         const detailUrl = getLocationDetailUrl(k);
+        const safeTitle = escapeHtml(title);
+        const safeAddressLine = escapeHtml(addressLine);
+        const safeKm = escapeHtml(km);
+        const safeDetailUrl = escapeAttribute(detailUrl);
+        const safeCity = escapeAttribute(city);
         return `
-          <a class="card reveal finder-location-card location-page-nearby-item" href="${detailUrl}" aria-label="Bekijk locatiepagina van Quiosk ${city}">
+          <a class="card reveal finder-location-card location-page-nearby-item" href="${safeDetailUrl}" aria-label="Bekijk locatiepagina van Quiosk ${safeCity}">
             <div class="finder-location-media">
               <img class="finder-location-icon" src="Favicon.png" alt="" aria-hidden="true" />
               <div class="finder-location-text">
-                <h3 class="finder-location-name">${title}</h3>
-                ${addressLine ? `<p class="finder-location-address">${addressLine}</p>` : ''}
-                ${km ? `<p class="finder-location-distance">${km}</p>` : ''}
+                <h3 class="finder-location-name">${safeTitle}</h3>
+                ${safeAddressLine ? `<p class="finder-location-address">${safeAddressLine}</p>` : ''}
+                ${safeKm ? `<p class="finder-location-distance">${safeKm}</p>` : ''}
               </div>
             </div>
           </a>`;
@@ -2359,6 +2369,8 @@ const escapeHtml = (value) =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+
+const escapeAttribute = (value) => escapeHtml(value).replace(/`/g, '&#96;');
 
 const fetchMediaFilesFromApi = async (folder, mode = 'images') => {
   const params = new URLSearchParams({ folder, mode });
@@ -3492,15 +3504,18 @@ const initLocationDetailEnhancements = () => {
             const city = row.city || 'Locatie';
             const address = row.address || '';
             const km = `${row._distance.toFixed(1).replace('.', ',')} km`;
-            return `<a class="card reveal finder-location-card location-page-nearby-item" href="${rootPrefix}locaties/${makeSlug(
-              row
-            )}.html" aria-label="Bekijk locatiepagina van Quiosk ${city}">
+            const safeCity = escapeHtml(city);
+            const safeAddress = escapeHtml(address);
+            const safeKm = escapeHtml(km);
+            const safeHref = escapeAttribute(`${rootPrefix}locaties/${makeSlug(row)}.html`);
+            const safeAriaCity = escapeAttribute(city);
+            return `<a class="card reveal finder-location-card location-page-nearby-item" href="${safeHref}" aria-label="Bekijk locatiepagina van Quiosk ${safeAriaCity}">
               <div class="finder-location-media">
                 <img class="finder-location-icon" src="${rootPrefix}Favicon.png" alt="" aria-hidden="true" />
                 <div class="finder-location-text">
-                  <h3 class="finder-location-name">${city}</h3>
-                  <p class="finder-location-address">${address}</p>
-                  <p class="finder-location-distance">${km}</p>
+                  <h3 class="finder-location-name">${safeCity}</h3>
+                  <p class="finder-location-address">${safeAddress}</p>
+                  <p class="finder-location-distance">${safeKm}</p>
                 </div>
               </div>
             </a>`;

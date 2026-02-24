@@ -3281,10 +3281,10 @@ main > .section.quick-search {
 }
 
 .popular-products-wrap {
-  width: 100%;
-  max-width: 100%;
+  width: min(1400px, 95%);
+  max-width: min(1400px, 95%);
   margin: 0 auto;
-  padding: 0 clamp(12px, 2vw, 28px);
+  padding: 0;
 }
 
 .popular-products-wrap > h2 {
@@ -3784,10 +3784,10 @@ main > .section.quick-search {
 }
 
 .insta-wrap {
-  width: 100%;
-  max-width: 100%;
+  width: min(1400px, 95%);
+  max-width: min(1400px, 95%);
   margin: 0 auto;
-  padding: 0 clamp(12px, 2vw, 28px);
+  padding: 0;
 }
 
 .insta-grid {
