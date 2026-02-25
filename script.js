@@ -2944,6 +2944,24 @@ const initOverTabs = () => {
   }
 };
 
+const initOverTeamPlayfulGrid = () => {
+  const grid = document.querySelector('[data-over-team-grid]');
+  if (!grid) return;
+
+  const items = Array.from(grid.querySelectorAll('.over-team-photo'));
+  if (items.length < 2) return;
+
+  // Keep tiles equal for a clean 8-photo layout; randomize order per refresh.
+  for (let i = items.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  items.forEach((item) => {
+    item.classList.remove('is-featured');
+    grid.appendChild(item);
+  });
+};
+
 const initFactCounters = () => {
   const counters = Array.from(document.querySelectorAll('[data-count-to]'));
   if (!counters.length) return;
@@ -3590,6 +3608,7 @@ initProductModal();
 initDynamicProductImages();
 initSpotlight();
 initOverTabs();
+initOverTeamPlayfulGrid();
 initFactCounters();
 initProcessLineAnimation();
 initFansMobileAccordion();
