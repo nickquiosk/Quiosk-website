@@ -143,6 +143,35 @@ const initHeaderCta = () => {
   navList.appendChild(item);
 };
 
+const initFooterSocial = () => {
+  const socialHtml = `
+    <a href="https://www.linkedin.com/company/quiosk-b.v./" target="_blank" rel="noopener noreferrer" aria-label="Volg Quiosk op LinkedIn" title="LinkedIn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.94 8.5V21H2.8V8.5h4.14Zm.27-3.86c0 1.2-.9 2.16-2.34 2.16h-.03c-1.38 0-2.27-.96-2.27-2.16 0-1.24.92-2.17 2.33-2.17s2.28.93 2.31 2.17ZM21 13.83V21h-4.13v-6.7c0-1.69-.6-2.84-2.11-2.84-1.15 0-1.84.78-2.14 1.54-.11.27-.14.65-.14 1.03V21H8.35s.05-11.2 0-12.5h4.13v1.77c.55-.85 1.54-2.07 3.75-2.07 2.74 0 4.77 1.79 4.77 5.63Z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/quiosknl/" target="_blank" rel="noopener noreferrer" aria-label="Volg Quiosk op Instagram" title="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 7.2A4.8 4.8 0 1 0 12 16.8 4.8 4.8 0 0 0 12 7.2Zm0 7.92A3.12 3.12 0 1 1 12 8.88a3.12 3.12 0 0 1 0 6.24Zm6.12-8.1a1.12 1.12 0 1 1-2.24 0 1.12 1.12 0 0 1 2.24 0ZM21 7.08c-.07-1.45-.4-2.73-1.46-3.78-1.05-1.05-2.33-1.38-3.78-1.45C14.3 1.78 9.7 1.78 8.24 1.85c-1.45.07-2.73.4-3.78 1.45C3.4 4.35 3.07 5.63 3 7.08c-.07 1.46-.07 6.06 0 7.52.07 1.45.4 2.73 1.45 3.78 1.05 1.05 2.33 1.38 3.78 1.45 1.46.07 6.06.07 7.52 0 1.45-.07 2.73-.4 3.78-1.45 1.05-1.05 1.38-2.33 1.45-3.78.07-1.46.07-6.06 0-7.52Zm-1.99 9.12c-.31.78-.91 1.38-1.69 1.69-1.17.46-3.95.35-5.32.35-1.36 0-4.15.11-5.32-.35a2.83 2.83 0 0 1-1.69-1.69c-.46-1.17-.35-3.95-.35-5.32 0-1.36-.11-4.15.35-5.32.31-.78.91-1.38 1.69-1.69 1.17-.46 3.96-.35 5.32-.35 1.37 0 4.15-.11 5.32.35.78.31 1.38.91 1.69 1.69.46 1.17.35 3.96.35 5.32 0 1.37.11 4.15-.35 5.32Z"/></svg>
+    </a>
+    <a href="https://www.facebook.com/QuioskNL/" target="_blank" rel="noopener noreferrer" aria-label="Volg Quiosk op Facebook" title="Facebook">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.4 21v-8.2h2.77l.41-3.2H13.4V7.55c0-.93.26-1.56 1.6-1.56h1.71V3.13c-.3-.04-1.3-.13-2.47-.13-2.45 0-4.12 1.5-4.12 4.25v2.37H7.35v3.2h2.77V21h3.28Z"/></svg>
+    </a>
+  `;
+
+  document.querySelectorAll('.site-footer .footer-inner').forEach((footerInner) => {
+    if (footerInner.querySelector('.footer-social')) return;
+    const social = document.createElement('div');
+    social.className = 'footer-social';
+    social.setAttribute('aria-label', 'Volg Quiosk op social media');
+    social.innerHTML = socialHtml;
+
+    const footerCopy = footerInner.querySelector('.footer-copy');
+    if (footerCopy) {
+      footerInner.insertBefore(social, footerCopy);
+    } else {
+      footerInner.appendChild(social);
+    }
+  });
+};
+
 const initPageTransitions = () => {
   // Overgangen uit: standaard browsernavigatie.
   window.__quioskNavigateWithTransition = null;
@@ -3583,6 +3612,7 @@ const initLocationDetailEnhancements = () => {
 initCookieConsent();
 initPageTransitions();
 initHeaderCta();
+initFooterSocial();
 setActiveNav();
 setActiveOverSubnav();
 initMobileNav();

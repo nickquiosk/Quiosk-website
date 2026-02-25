@@ -6633,10 +6633,20 @@ main[data-finder] > .section + .section::before {
   grid-template-areas:
     "brand cta"
     "brand links"
+    "brand social"
     "brand copy";
   gap: 12px 24px;
   align-items: start;
   color: #fff;
+}
+
+.site-footer .footer-social {
+  grid-area: social;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .site-footer .footer-brand {
@@ -6769,6 +6779,7 @@ main[data-finder] > .section + .section::before {
       "brand"
       "cta"
       "links"
+      "social"
       "copy";
     gap: 14px;
     justify-items: center;
@@ -6776,7 +6787,8 @@ main[data-finder] > .section + .section::before {
 
   .site-footer .footer-brand,
   .site-footer .footer-links,
-  .site-footer .footer-cta {
+  .site-footer .footer-cta,
+  .site-footer .footer-social {
     justify-content: center;
     justify-self: center;
   }
@@ -6800,6 +6812,8 @@ main[data-finder] > .section + .section::before {
   border-radius: 999px;
   background: rgb(229, 0, 125);
   border: 1px solid rgb(229, 0, 125);
+  color: #fff;
+  text-decoration: none;
 }
 
 .site-footer .footer-social a:hover {
@@ -6807,11 +6821,10 @@ main[data-finder] > .section + .section::before {
   border-color: var(--brand-strong);
 }
 
-.site-footer .footer-social img {
-  width: 20px;
-  height: 20px;
+.site-footer .footer-social svg {
+  width: 18px;
+  height: 18px;
   display: block;
-  filter: brightness(0) invert(1);
 }
 
 .reveal {
@@ -7518,10 +7531,69 @@ main[data-finder] > .section + .section::before {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .over-team-card {
+    padding: 14px;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+
   .over-team-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0;
+    border-radius: 14px;
     height: auto;
+  }
+
+  .over-team-photo {
+    flex: 0 0 100%;
+    max-width: 100%;
+    scroll-snap-align: start;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .over-team-quote {
+    padding: 18px 16px;
+    gap: 12px;
+  }
+
+  .over-team-quote h3 {
+    font-size: 1.12rem;
+    line-height: 1.35;
+  }
+
+  .over-team-quote-text {
+    font-size: 0.98rem;
+    line-height: 1.72;
+  }
+
+  .over-team-quote-extra {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .over-team-quote-highlight {
+    font-size: 0.95rem;
+    line-height: 1.62;
+    padding: 10px 12px;
+  }
+
+  .over-team-grid::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .over-team-grid::-webkit-scrollbar-thumb {
+    background: rgba(52, 171, 178, 0.45);
+    border-radius: 999px;
   }
 
   .over-topic-gap {
@@ -8041,25 +8113,68 @@ main[data-finder] > .section + .section::before {
   }
 
   .over-team-card {
-    padding: 12px;
-    gap: 12px;
+    padding: 14px;
+    gap: 16px;
     grid-template-columns: 1fr;
   }
 
   .over-team-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: none;
-    gap: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0;
+    border-radius: 14px;
     height: auto;
   }
 
   .over-team-photo {
+    flex: 0 0 100%;
+    max-width: 100%;
+    scroll-snap-align: start;
     aspect-ratio: 1 / 1;
     height: auto;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
   }
 
   .over-team-quote {
-    padding: 14px 14px 16px;
+    padding: 18px 16px;
+    gap: 12px;
+  }
+
+  .over-team-quote h3 {
+    font-size: 1.12rem;
+    line-height: 1.35;
+  }
+
+  .over-team-quote-text {
+    font-size: 0.98rem;
+    line-height: 1.72;
+  }
+
+  .over-team-quote-extra {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .over-team-quote-highlight {
+    font-size: 0.95rem;
+    line-height: 1.62;
+    padding: 10px 12px;
+  }
+
+  .over-team-grid::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .over-team-grid::-webkit-scrollbar-thumb {
+    background: rgba(52, 171, 178, 0.45);
+    border-radius: 999px;
   }
 
   .product-card {
