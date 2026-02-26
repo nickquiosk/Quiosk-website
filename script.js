@@ -2,6 +2,24 @@ const COOKIE_CONSENT_KEY = 'quiosk_cookie_consent_v1';
 const GA_MEASUREMENT_ID = 'G-G8PF2DEK48';
 const CONTENTSQUARE_SRC = 'https://t.contentsquare.net/uxa/8948e1acf2462.js';
 
+const initNoindexForGithubPreview = () => {
+  const host = window.location.hostname.toLowerCase();
+  if (!host.endsWith('github.io')) return;
+
+  const ensureMeta = (name, content) => {
+    let meta = document.querySelector(`meta[name="${name}"]`);
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', name);
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', content);
+  };
+
+  ensureMeta('robots', 'noindex,nofollow,noarchive,nosnippet');
+  ensureMeta('googlebot', 'noindex,nofollow,noarchive,nosnippet');
+};
+
 const readCookieConsent = () => {
   try {
     const value = localStorage.getItem(COOKIE_CONSENT_KEY);
@@ -3609,6 +3627,7 @@ const initLocationDetailEnhancements = () => {
   }
 };
 
+initNoindexForGithubPreview();
 initCookieConsent();
 initPageTransitions();
 initHeaderCta();

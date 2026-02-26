@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /Quiosk-website/
 
 Sitemap: https://www.quiosk.nl/sitemap.xml
