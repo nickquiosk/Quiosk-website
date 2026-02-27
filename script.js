@@ -1087,7 +1087,13 @@ const initFinder = () => {
       mapInstance.setCenter(filtered[0].coords);
       mapInstance.setZoom(14);
     } else if (markers.length > 1) {
-      mapInstance.fitBounds(bounds);
+      const isDesktop = window.matchMedia('(min-width: 921px)').matches;
+      mapInstance.fitBounds(bounds, {
+        top: isDesktop ? 56 : 24,
+        right: isDesktop ? 56 : 24,
+        bottom: isDesktop ? 220 : 32,
+        left: isDesktop ? 56 : 24
+      });
     }
   };
 
@@ -1242,7 +1248,10 @@ const initFinder = () => {
   const updateFinderOverlapHeight = () => {
     if (!finderSummaryCard) return;
     const measured = Math.ceil(finderSummaryCard.getBoundingClientRect().height + 8);
-    const overlapPx = Math.max(120, Math.min(420, measured));
+    const isDesktop = window.matchMedia('(min-width: 921px)').matches;
+    const maxOverlap = isDesktop ? 300 : 420;
+    const minOverlap = isDesktop ? 160 : 120;
+    const overlapPx = Math.max(minOverlap, Math.min(maxOverlap, measured));
     root.style.setProperty('--finder-overlap-dynamic', `${overlapPx}px`);
   };
 
@@ -2753,6 +2762,7 @@ const initDynamicBrandAssets = async () => {
 
   const renderPhotoCards = (files) =>
     files
+      .slice(0, 6)
       .map((file, index) => {
         const title = escapeHtml(prettifyFileStem(file.stem, `Foto ${index + 1}`));
         return `
@@ -2846,6 +2856,40 @@ const initDynamicOverQuioskGallery = async () => {
     });
 
     if (cards.length) strip.innerHTML = cards.join('');
+  } catch (_error) {
+    // Keep static fallback images.
+  }
+};
+
+const initDynamicPartnerLogoGallery = async () => {
+  const strip = document.querySelector('[data-partner-logo-gallery]');
+  if (!strip) return;
+
+  try {
+    const files = await fetchMediaFiles('images/word-partner', 'images').catch(() => []);
+    if (!files.length) return;
+
+    const toNaturalNumber = (stem) => {
+      const match = String(stem || '').match(/(\d+)(?!.*\d)/);
+      return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
+    };
+
+    const preferred = files.filter((file) => /^partner-carousel-\d+$/i.test(file.stem)).sort((a, b) => {
+      const numA = toNaturalNumber(a.stem);
+      const numB = toNaturalNumber(b.stem);
+      if (numA !== numB) return numA - numB;
+      return String(a.stem).localeCompare(String(b.stem), 'nl-NL', { sensitivity: 'base' });
+    });
+
+    if (!preferred.length) return;
+
+    strip.innerHTML = preferred
+      .slice(0, 6)
+      .map((file, index) => {
+        const label = escapeHtml(prettifyFileStem(file.stem, `Partner logo ${index + 1}`));
+        return `<img class="partner-photo-viewable" src="${file.url}" alt="${label}" loading="lazy" decoding="async" />`;
+      })
+      .join('');
   } catch (_error) {
     // Keep static fallback images.
   }
@@ -3644,6 +3688,7 @@ initFinder();
 initHeroSlider();
 initDynamicBrandAssets();
 initDynamicOverQuioskGallery();
+initDynamicPartnerLogoGallery();
 initInstaSlider();
 initInstaLightbox();
 initPartnersHeroBalance();
