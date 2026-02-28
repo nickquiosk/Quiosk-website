@@ -8128,12 +8128,12 @@ main[data-finder] > .section + .section::before {
     height: 40px;
   }
 
-  .quick-search-form {
+  .finder-overlap-search .finder-search-form.quick-search-form {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:
       "input radius"
       "search nearby";
-    gap: 10px 10px;
+    gap: 12px 10px;
     max-width: 100%;
     justify-self: stretch;
     align-items: center;
@@ -8146,66 +8146,79 @@ main[data-finder] > .section + .section::before {
 
   .quick-search-radius-wrap {
     grid-area: radius;
-    width: auto;
+    width: 100%;
   }
 
   .quick-search-radius {
-    width: auto;
-    min-width: 108px;
+    width: 100%;
+    min-width: 0;
     min-height: 54px;
   }
 
   .quick-search-form .btn {
     grid-row: auto;
     width: 100%;
-    min-height: 54px;
-    padding-inline: 14px;
-    font-size: 1.02rem;
+    min-height: 56px;
+    padding-inline: 16px;
+    font-size: 0.95rem;
+    font-weight: 800;
     line-height: 1;
+    white-space: nowrap;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
+    border-width: 2px;
+    letter-spacing: 0;
   }
 
   .quick-search-form [data-search-submit] {
     grid-area: search;
+    min-width: 0;
+    box-shadow: 0 10px 20px rgba(229, 0, 125, 0.24);
   }
 
   .quick-search-nearby-btn {
     grid-area: nearby;
     width: 100%;
     min-width: 0;
-    padding-inline: 12px;
+    padding-inline: 14px;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
+    box-shadow: 0 10px 20px rgba(52, 171, 178, 0.24);
   }
 
   .quick-search-submit-icon {
-    width: 16px;
-    height: 16px;
-    transform: translateY(-0.5px);
+    width: 17px;
+    height: 17px;
+    transform: translateY(-0.25px);
   }
 
   .quick-search-nearby-btn::before {
-    font-size: 1.12rem;
-    line-height: 1;
-    transform: translateY(-0.5px);
+    content: none;
+  }
+
+  .quick-search-nearby-btn svg {
+    display: block;
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    transform: translateY(-0.25px);
   }
 
   .quick-search-nearby-label {
     display: inline;
-    font-size: 1.02rem;
+    font-size: 0.93rem;
     font-weight: 800;
     line-height: 1;
     color: #fff;
   }
 
   .finder-results-line {
-    margin-top: 6px;
+    margin-top: 10px;
   }
 
   .finder-results-overlap {
-    margin-top: calc(-1 * min(var(--finder-overlap-dynamic, var(--finder-overlap)), 108px));
+    margin-top: calc(-1 * min(var(--finder-overlap-dynamic, var(--finder-overlap)), 76px));
   }
 }
 
@@ -8508,7 +8521,7 @@ main[data-finder] > .section + .section::before {
   }
 
   .finder-results-overlap {
-    margin-top: calc(-1 * var(--finder-overlap-dynamic, var(--finder-overlap)));
+    margin-top: calc(-1 * min(var(--finder-overlap-dynamic, var(--finder-overlap)), 76px));
   }
 
   .alpha-accordion {
@@ -8588,7 +8601,7 @@ main[data-finder] > .section + .section::before {
   }
 
   .finder-results-overlap {
-    margin-top: calc(-1 * var(--finder-overlap-dynamic, var(--finder-overlap)));
+    margin-top: calc(-1 * min(var(--finder-overlap-dynamic, var(--finder-overlap)), 76px));
   }
 
   .finder-results-summary {
