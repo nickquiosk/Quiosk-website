@@ -35,10 +35,10 @@
   </header>
 
   <main>
-    <section class="page-hero over-hero">
+    <section class="page-hero over-hero city-overview-hero">
       <div class="container">
         <h1>Quiosk stedenoverzicht</h1>
-        <p>Vind snel de juiste stad en ga direct naar de stadspagina of naar Quiosk zoeken met 25 km straal.</p>
+        <p class="section-lead">Bekijk alle steden met Quiosk locaties in Nederland en vind snel een 24/7 Quiosk voor snacks, dranken en gemaksproducten. Kies een stad of zoek direct op plaats of postcode.</p>
         <div class="cta-row cta-row-center">
           <a href="../../quiosk-zoeken.html" class="btn btn-primary">Terug naar Quiosk zoeken</a>
         </div>
@@ -105,11 +105,9 @@
             return `<a class="alpha-city-link" href="${href}">${city}</a>`;
           }).join('');
 
-          if (!items.length) {
-            return `<details class="alpha-item is-empty"><summary>${letter}</summary></details>`;
-          }
+          if (!items.length) return '';
 
-          return `<details class="alpha-item"><summary>${letter}</summary><div class="alpha-item-body"><div class="alpha-city-list">${links}</div></div></details>`;
+          return `<article class="alpha-item"><h3 class="alpha-item-title">${letter}</h3><div class="alpha-item-body"><div class="alpha-city-list">${links}</div></div></article>`;
         }).join('');
       };
 

@@ -206,6 +206,27 @@ const initPageTransitions = () => {
   window.addEventListener('pageshow', scrollTop);
 };
 
+const initHistoryBackLinks = () => {
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const link = target.closest('a.js-history-back');
+    if (!link) return;
+
+    const fallbackHref = link.getAttribute('href');
+    if (window.history.length > 1) {
+      event.preventDefault();
+      window.history.back();
+      return;
+    }
+
+    if (!fallbackHref) {
+      event.preventDefault();
+      window.location.href = 'quiosk-zoeken.html';
+    }
+  });
+};
+
 const setActiveNav = () => {
   const path = location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('[data-nav]').forEach((link) => {
@@ -3293,17 +3314,24 @@ const initLocationDetailEnhancements = () => {
   if (!hero || !overlay || !mapCanvas) return;
 
   document.body.classList.add('location-concept-v2');
-  const rootPrefix = window.location.pathname.includes('/locaties/') ? '../' : '';
+  const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
+  const pathParts = pathname.split('/').filter(Boolean);
+  const lastPart = pathParts[pathParts.length - 1] || '';
+  const depth = lastPart.includes('.') ? Math.max(pathParts.length - 1, 0) : pathParts.length;
+  const rootPrefix = '../'.repeat(depth);
+  const finderFallback = `${rootPrefix}quiosk-zoeken.html`;
 
-  if (!overlay.querySelector('.location-page-close')) {
-    const closeLink = document.createElement('a');
+  let closeLink = overlay.querySelector('.location-page-close');
+  if (!closeLink) {
+    closeLink = document.createElement('a');
     closeLink.className = 'location-page-close';
-    closeLink.href = `${rootPrefix}quiosk-zoeken.html`;
     closeLink.setAttribute('aria-label', 'Sluit detailpagina en ga terug naar Quiosk zoeken');
     closeLink.title = 'Terug naar Quiosk zoeken';
     closeLink.textContent = '×';
     overlay.prepend(closeLink);
   }
+  closeLink.classList.add('js-history-back');
+  closeLink.href = finderFallback;
 
   const GOOGLE_MAPS_KEY = 'AIzaSyB9SVkW2jpokXe8rUaWZW-UgRjLeb8gM7E';
   const mapFallback = mapCanvas.querySelector('iframe');
@@ -3674,6 +3702,7 @@ const initLocationDetailEnhancements = () => {
 initNoindexForGithubPreview();
 initCookieConsent();
 initPageTransitions();
+initHistoryBackLinks();
 initHeaderCta();
 initFooterSocial();
 setActiveNav();
