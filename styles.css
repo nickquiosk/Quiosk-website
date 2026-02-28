@@ -3250,6 +3250,20 @@ main > .section.quick-search {
   border-radius: 999px;
 }
 
+.quick-search-submit-icon {
+  width: 17px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-search-submit-icon svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+
 .quick-search-nearby-btn {
   width: 52px;
   min-width: 52px;
@@ -8121,36 +8135,83 @@ main[data-finder] > .section + .section::before {
   }
 
   .quick-search-form {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "input radius"
+      "search nearby";
+    gap: 10px 10px;
     max-width: 100%;
     justify-self: stretch;
+    align-items: center;
+  }
+
+  .quick-search-input-wrap {
+    grid-area: input;
+    min-height: 54px;
   }
 
   .quick-search-radius-wrap {
-    width: 100%;
+    grid-area: radius;
+    width: auto;
   }
 
   .quick-search-radius {
-    width: 100%;
+    width: auto;
+    min-width: 108px;
+    min-height: 54px;
   }
 
   .quick-search-form .btn {
+    grid-row: auto;
     width: 100%;
+    min-height: 54px;
+    padding-inline: 14px;
+    font-size: 1.02rem;
+    line-height: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .quick-search-form [data-search-submit] {
+    grid-area: search;
   }
 
   .quick-search-nearby-btn {
+    grid-area: nearby;
     width: 100%;
     min-width: 0;
+    padding-inline: 12px;
     justify-content: center;
     gap: 8px;
   }
 
+  .quick-search-submit-icon {
+    width: 16px;
+    height: 16px;
+    transform: translateY(-0.5px);
+  }
+
+  .quick-search-nearby-btn::before {
+    font-size: 1.12rem;
+    line-height: 1;
+    transform: translateY(-0.5px);
+  }
+
   .quick-search-nearby-label {
     display: inline;
-    font-size: 0.95rem;
+    font-size: 1.02rem;
     font-weight: 800;
     line-height: 1;
     color: #fff;
+  }
+
+  .finder-results-line {
+    margin-top: 6px;
+  }
+
+  .finder-results-overlap {
+    margin-top: calc(-1 * min(var(--finder-overlap-dynamic, var(--finder-overlap)), 108px));
   }
 }
 
