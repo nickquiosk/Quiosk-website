@@ -334,6 +334,9 @@ ${productsHtml}
           });
 
           marker.addListener('click', () => {
+            const navUrl =
+              'https://www.google.com/maps/dir/?api=1&destination=' +
+              encodeURIComponent((location.name || 'Quiosk') + ' ' + (location.address || ''));
             info.setContent(
               '<div class="quiosk-map-card">' +
                 '<div class="quiosk-map-card-head">' +
@@ -342,7 +345,7 @@ ${productsHtml}
                   '<button class="quiosk-map-card-close" type="button" onclick="window.closeCityInfoWindow && window.closeCityInfoWindow()" aria-label="Sluit kaartje">×</button>' +
                 '</div>' +
                 '<p>' + location.address + '</p>' +
-                '<div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="' + location.url + '">Bekijk locatie</a></div>' +
+                '<div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="' + location.url + '">Bekijk locatie</a><a class="btn btn-primary" href="' + navUrl + '" target="_blank" rel="noopener noreferrer">Navigeer direct</a></div>' +
               '</div>'
             );
             info.open({ anchor: marker, map });

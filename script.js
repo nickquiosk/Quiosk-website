@@ -1103,12 +1103,14 @@ const initFinder = () => {
         if (!infoWindow) return;
         setActiveMarker(marker);
         const detailUrl = getLocationDetailUrl(k);
+        const directionsUrl = getDirectionsUrl(k);
         const safeName = escapeHtml(k.name || '');
         const safeAddress = escapeHtml(k.address || '');
         const safeDetailUrl = escapeAttribute(detailUrl);
+        const safeDirectionsUrl = escapeAttribute(directionsUrl);
         const safeIconUrl = escapeAttribute(resolveStaticPath('Favicon.png?v=4'));
         infoWindow.setContent(
-          `<div class="quiosk-map-card"><div class="quiosk-map-card-head"><img class="quiosk-map-card-icon" src="${safeIconUrl}" alt="" aria-hidden="true" /><h4>${safeName}</h4><button class="quiosk-map-card-close" type="button" onclick="window.closeFinderInfoWindow && window.closeFinderInfoWindow()" aria-label="Sluit kaartje">×</button></div><p>${safeAddress}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${safeDetailUrl}">Bekijk locatie</a></div></div>`
+          `<div class="quiosk-map-card"><div class="quiosk-map-card-head"><img class="quiosk-map-card-icon" src="${safeIconUrl}" alt="" aria-hidden="true" /><h4>${safeName}</h4><button class="quiosk-map-card-close" type="button" onclick="window.closeFinderInfoWindow && window.closeFinderInfoWindow()" aria-label="Sluit kaartje">×</button></div><p>${safeAddress}</p><div class="quiosk-map-card-actions"><a class="btn btn-ghost" href="${safeDetailUrl}">Bekijk locatie</a><a class="btn btn-primary" href="${safeDirectionsUrl}" target="_blank" rel="noopener noreferrer">Navigeer direct</a></div></div>`
         );
         infoWindow.open({ anchor: marker, map: mapInstance });
       });
