@@ -328,11 +328,23 @@ const initMobileNav = () => {
 const initHeaderScroll = () => {
   const header = document.querySelector('.site-header');
   if (!header) return;
+  let lastOffset = '';
+
+  const syncHeaderOffset = () => {
+    const height = Math.ceil(header.getBoundingClientRect().height);
+    if (!Number.isFinite(height) || height <= 0) return;
+    const nextOffset = `${height}px`;
+    if (nextOffset === lastOffset) return;
+    lastOffset = nextOffset;
+    document.documentElement.style.setProperty('--header-offset', nextOffset);
+  };
 
   const syncHeaderState = () => {
     const y = window.scrollY;
     header.classList.toggle('header-compact', y > 20);
     header.classList.remove('header-hidden');
+    // Keep the layout offset equal to the real fixed header height.
+    syncHeaderOffset();
   };
 
   window.addEventListener(
@@ -340,6 +352,8 @@ const initHeaderScroll = () => {
     syncHeaderState,
     { passive: true }
   );
+
+  window.addEventListener('resize', syncHeaderOffset, { passive: true });
 
   syncHeaderState();
 };

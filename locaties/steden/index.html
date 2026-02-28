@@ -51,6 +51,9 @@
           <h2>Alle steden met Quiosk locaties</h2>
           <p><strong data-city-count>0</strong> steden gevonden</p>
         </div>
+        <nav class="alpha-jump-nav" aria-label="Ga direct naar letter" data-city-alpha-jump>
+          <span class="city-overview-loading">Alfabet wordt geladen...</span>
+        </nav>
         <div class="alpha-accordion" data-city-alpha-list>
           <p class="city-overview-loading">Steden worden geladen...</p>
         </div>
@@ -65,6 +68,7 @@
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
       const cityCountEl = document.querySelector('[data-city-count]');
       const alphaEl = document.querySelector('[data-city-alpha-list]');
+      const alphaJumpEl = document.querySelector('[data-city-alpha-jump]');
       const directCityPages = new Set(['tilburg']);
 
       const normalize = (value) => String(value || '').trim();
@@ -98,6 +102,16 @@
           byLetter.get(key).push(city);
         });
 
+        if (alphaJumpEl) {
+          alphaJumpEl.innerHTML = letters.map((letter) => {
+            const hasCities = (byLetter.get(letter) || []).length > 0;
+            if (!hasCities) {
+              return `<span class="alpha-jump-link is-disabled" aria-disabled="true">${letter}</span>`;
+            }
+            return `<a class="alpha-jump-link" href="#alpha-${letter}">${letter}</a>`;
+          }).join('');
+        }
+
         alphaEl.innerHTML = letters.map((letter) => {
           const items = byLetter.get(letter) || [];
           const links = items.map((city) => {
@@ -107,9 +121,24 @@
 
           if (!items.length) return '';
 
-          return `<article class="alpha-item"><h3 class="alpha-item-title">${letter}</h3><div class="alpha-item-body"><div class="alpha-city-list">${links}</div></div></article>`;
+          return `<article class="alpha-item" id="alpha-${letter}"><h3 class="alpha-item-title">${letter}</h3><div class="alpha-item-body"><div class="alpha-city-list">${links}</div></div></article>`;
         }).join('');
       };
+
+      if (alphaJumpEl) {
+        alphaJumpEl.addEventListener('click', (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const link = target.closest('a.alpha-jump-link');
+          if (!link) return;
+          const href = link.getAttribute('href') || '';
+          if (!href.startsWith('#')) return;
+          const section = document.querySelector(href);
+          if (!section) return;
+          event.preventDefault();
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
 
       fetch('../../data/locations.json', { cache: 'no-store' })
         .then((res) => res.ok ? res.json() : [])
@@ -123,6 +152,9 @@
           render(cities);
         })
         .catch(() => {
+          if (alphaJumpEl) {
+            alphaJumpEl.innerHTML = '<p class="city-overview-loading">Alfabet kon niet geladen worden.</p>';
+          }
           alphaEl.innerHTML = '<p class="city-overview-loading">Steden konden niet geladen worden. Gebruik Quiosk zoeken.</p>';
           cityCountEl.textContent = '0';
         });
