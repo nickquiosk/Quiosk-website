@@ -5091,6 +5091,117 @@ main[data-finder] > .section + .section::before {
   overflow: visible;
 }
 
+.location-page-compact .location-page-map-hero {
+  display: flex;
+  flex-direction: row;
+  min-height: calc(100vh - var(--header-offset));
+  height: calc(100vh - var(--header-offset));
+  overflow: hidden;
+}
+
+.location-page-compact .location-page-map-canvas {
+  flex: 0 0 50%;
+  position: relative;
+  inset: auto;
+  min-height: 100%;
+  width: 50%;
+  max-width: 50%;
+}
+
+.location-page-compact .location-page-map-canvas iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.location-page-compact .location-page-overlay-wrap {
+  flex: 0 0 50%;
+  position: relative;
+  z-index: 2;
+  width: 50%;
+  max-width: 50%;
+  height: 100%;
+  display: block;
+  pointer-events: auto;
+}
+
+.location-page-compact .location-page-overlay {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  border: 0;
+  border-left: 1px solid rgba(52, 171, 178, 0.35);
+  box-shadow: -16px 0 34px rgba(0, 0, 0, 0.12);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 921px) {
+  body.location-page-compact .location-page-map-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "content map";
+    min-height: calc(100vh - var(--header-offset));
+    height: calc(100vh - var(--header-offset));
+  }
+
+  body.location-page-compact .location-page-overlay-wrap {
+    grid-area: content;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+  }
+
+  body.location-page-compact .location-page-overlay {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+  }
+
+  body.location-page-compact .location-page-map-canvas {
+    grid-area: map;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+  }
+}
+
+@media (max-width: 920px) {
+  .location-page-compact .location-page-map-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(46vh, 54vh) auto;
+    min-height: auto;
+    height: auto;
+  }
+
+  .location-page-compact .location-page-map-canvas {
+    flex: initial;
+    width: 100%;
+    max-width: 100%;
+    min-height: min(54vh, 480px);
+  }
+
+  .location-page-compact .location-page-overlay-wrap {
+    flex: initial;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .location-page-compact .location-page-overlay {
+    height: auto;
+    max-height: none;
+    border-left: 0;
+    border-top: 1px solid rgba(52, 171, 178, 0.35);
+    box-shadow: 0 -10px 22px rgba(0, 0, 0, 0.14);
+    overflow-y: visible;
+  }
+}
+
 .location-page-close {
   position: absolute;
   top: 24px;
@@ -6699,6 +6810,15 @@ main[data-finder] > .section + .section::before {
   margin-bottom: 18px;
 }
 
+.finder-city-overview-section {
+  padding-top: 14px;
+  padding-bottom: 0;
+}
+
+.finder-city-overview-section .finder-city-overview-bar {
+  margin: 0;
+}
+
 .finder-city-overview-link {
   display: flex;
   align-items: center;
@@ -6949,10 +7069,44 @@ main[data-finder] > .section + .section::before {
 
 .city-locations-overlap .section-head {
   margin-bottom: 12px;
+  text-align: center;
+}
+
+.city-locations-overlap .location-page-nearby-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
 }
 
 .city-locations-overlap .location-page-nearby-item {
   min-height: 104px;
+  width: min(100%, 360px);
+}
+
+.city-tip-location-card {
+  display: grid;
+  gap: 12px;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  padding: 18px;
+  background: linear-gradient(180deg, #f3f5f6 0%, #eceff1 100%);
+  border: 1px solid rgba(10, 38, 44, 0.12);
+  box-shadow: 0 10px 22px rgba(9, 24, 31, 0.08);
+}
+
+.city-tip-location-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+  text-align: center;
+  color: #11343a;
+  max-width: 28ch;
+}
+
+.city-tip-location-card .btn {
+  justify-self: center;
 }
 
 .city-benefits-list {
@@ -8219,6 +8373,10 @@ main[data-finder] > .section + .section::before {
 
   .finder-results-overlap {
     margin-top: calc(-1 * min(var(--finder-overlap-dynamic, var(--finder-overlap)), 76px));
+  }
+
+  .finder-city-overview-section {
+    padding-top: 10px;
   }
 }
 

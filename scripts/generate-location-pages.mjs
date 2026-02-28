@@ -6,21 +6,6 @@ const DATA_FILE = path.join(ROOT, 'data', 'locations.json');
 const OUTPUT_DIR = path.join(ROOT, 'locaties');
 const SITEMAP_FILE = path.join(ROOT, 'sitemap.xml');
 
-const DEFAULT_PRODUCTS = [
-  { name: 'Coca-Cola', image: '../images/producten/Coca-Cola.jpeg' },
-  { name: 'Coca-Cola Zero', image: '../images/producten/Coca-Cola Zero.jpeg' },
-  { name: 'Fanta', image: '../images/producten/Fanta.jpeg' },
-  { name: 'Red Bull Regular', image: '../images/producten/Red Bull Regular.jpeg' },
-  { name: 'Snickers', image: '../images/producten/Snickers.jpeg' },
-  { name: 'Doritos Nacho Cheese', image: '../images/producten/Doritos Nacho Cheese.jpeg' },
-  { name: 'Twix White', image: '../images/producten/Twix White.jpeg' },
-  { name: 'M&M', image: '../images/producten/M&M.jpeg' },
-  { name: 'Kinder Bueno White', image: '../images/producten/Kinder Bueno.jpeg' },
-  { name: 'Spa', image: '../images/producten/Powerade Acquarius.jpeg' },
-  { name: "Lay's Paprika", image: "../images/producten/Lay's Paprika.jpeg" },
-  { name: 'Monster', image: '../images/instagram-feed/Quiosk_Monster-combi.png' }
-];
-
 const slugify = (value) =>
   String(value || '')
     .normalize('NFD')
@@ -58,24 +43,25 @@ const buildLocationPage = (location) => {
   const street = String(location.address || '').trim();
   const { streetName, houseNumber } = parseStreetParts(street);
   const postcode = String(location.postcode || '').trim();
-  const wijkOfGebied = city;
   const partnerLocatie = `Quiosk locatie in ${city}`;
-  const addressFull = [street, [postcode, city].filter(Boolean).join(' '), 'Nederland'].filter(Boolean).join(', ');
   const name = `Quiosk ${city}`;
-  const description = `Bekijk Quiosk ${city}: adres, kaart, navigatie en standaard assortiment op deze locatiepagina.`;
+  const description = `Bekijk Quiosk ${city}: adres, kaart, navigatie, probleem melden en assortiment-suggestie op deze locatiepagina.`;
   const canonical = `https://www.quiosk.nl/locaties/${buildSlug(location)}.html`;
   const mapQuery = encodeURIComponent(`${street}, ${postcode} ${city}, Nederland`);
   const navQuery = encodeURIComponent(`${name} ${street} ${postcode} ${city}`);
+  const supportHref = '../feedback-terugbetaling.html';
+  const suggestSubject = encodeURIComponent(`Assortiment suggestie - ${name}`);
+  const suggestBody = encodeURIComponent(
+    [
+      `Locatie: ${name}`,
+      `Adres: ${street}, ${postcode} ${city}`,
+      '',
+      'Mijn assortiment suggestie:'
+    ].join('\n')
+  );
+  const suggestHref = `mailto:info@quiosk.nl?subject=${suggestSubject}&body=${suggestBody}`;
   const lat = Number(location?.coords?.lat || 52.1326);
   const lng = Number(location?.coords?.lng || 5.2913);
-
-  const productsHtml = DEFAULT_PRODUCTS.map(
-    (product) => `
-            <article class="location-page-product">
-              <img src="${encodeURI(product.image)}" alt="${escapeHtml(product.name)} bij ${escapeHtml(name)}" loading="lazy" decoding="async" />
-              <span>${escapeHtml(product.name)}</span>
-            </article>`
-  ).join('');
 
   return `<!doctype html>
 <html lang="nl">
@@ -101,7 +87,7 @@ const buildLocationPage = (location) => {
   <link rel="stylesheet" href="../styles.css" />
   <link rel="icon" type="image/png" href="../Favicon.png?v=4" />
 </head>
-<body>
+<body class="location-page-compact">
   <header class="site-header"><div class="container nav-wrap"><a href="../index.html" class="brand"><img src="../logo-quiosk.png" alt="Quiosk logo" /></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button><nav class="site-nav" id="site-menu"><ul><li><a data-nav href="../index.html">Home</a></li><li><a data-nav href="../word-partner.html">Word partner</a></li><li><a data-nav href="../voor-onze-fans.html">Voor onze fans</a></li><li><a data-nav href="../quiosk-zoeken.html">Quiosk zoeken</a></li><li><a data-nav href="../feedback-terugbetaling.html">Support</a></li><li class="nav-has-dropdown"><button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">Over ons</button><ul class="nav-dropdown" aria-label="Over ons submenu"><li><a data-nav href="../over-ons.html">Ons verhaal</a></li><li><a data-nav href="../blog.html">Blog</a></li><li><a data-nav href="../persberichten.html">Persberichten</a></li><li><a data-nav href="../beeldmateriaal.html">Beeldmateriaal</a></li></ul></li><li><a data-nav href="../contact.html">Contact</a></li></ul></nav></div></header>
 
   <main>
@@ -119,23 +105,17 @@ const buildLocationPage = (location) => {
           <p class="location-page-address"><a href="https://www.google.com/maps/dir/?api=1&destination=${navQuery}" target="_blank" rel="noopener noreferrer">${escapeHtml(street)}, ${escapeHtml(postcode)} ${escapeHtml(city)}</a></p>
           <div class="location-page-actions">
             <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&destination=${navQuery}" target="_blank" rel="noopener noreferrer">Navigeer</a>
-            <a class="btn btn-secondary" href="../quiosk-zoeken.html?q=${encodeURIComponent(city)}&radius=25">Terug naar Quiosk zoeken</a>
+            <a class="btn btn-secondary" href="${supportHref}">Probleem melden</a>
+            <a class="btn btn-ghost" href="${suggestHref}">Assortiment suggestie</a>
           </div>
-          <p class="location-page-subtitle">Op zoek naar een avondwinkel of nachtwinkel in ${escapeHtml(city)}?</p>
           <div class="location-seo-placeholder location-seo-placeholder-inline">
             <p>Quiosk ${escapeHtml(city)} is een moderne 24/7 self service kiosk waar je dag en nacht terechtkunt voor snacks, dranken en gemaksproducten.</p>
-            <p>Onze locatie in ${escapeHtml(wijkOfGebied)} is volledig onbemand en altijd toegankelijk. Of je nu vroeg op pad bent, laat thuiskomt of tussendoor iets nodig hebt: Quiosk in ${escapeHtml(city)} is er wanneer het jou uitkomt.</p>
             <h3>Quiosk ${escapeHtml(city)} – Locatiegegevens</h3>
             <ul>
               <li>Adres: ${escapeHtml(streetName || street)}${houseNumber ? ` ${escapeHtml(houseNumber)}` : ''}, ${escapeHtml(postcode)} ${escapeHtml(city)}</li>
               <li>Openingstijden: 24/7 geopend</li>
               <li>Gelegen bij: ${escapeHtml(partnerLocatie)}</li>
             </ul>
-            <h3>Wat vind je bij Quiosk ${escapeHtml(city)}?</h3>
-            <p>Quiosk ${escapeHtml(city)} is meer dan een avondwinkel. Het is een compacte, slimme gemakswinkel waar je snel en zelfstandig je aankopen doet.</p>
-          </div>
-          <div class="location-page-products">
-${productsHtml}
           </div>
         </article>
       </div>

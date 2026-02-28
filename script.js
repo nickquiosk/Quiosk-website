@@ -3402,6 +3402,107 @@ const initLocationDetailEnhancements = () => {
         actions.appendChild(supportBtn);
       }
     }
+
+    const suggestBtn = links.find((link) =>
+      /assortiment suggestie/i.test(link.textContent || '')
+    );
+    if (suggestBtn) {
+      const openSuggestModal = () => {
+        let modal = document.querySelector('[data-location-suggest-modal]');
+        if (!modal) {
+          modal = document.createElement('div');
+          modal.className = 'finder-tip-modal';
+          modal.setAttribute('data-location-suggest-modal', 'true');
+          modal.setAttribute('aria-hidden', 'true');
+          modal.setAttribute('role', 'dialog');
+          modal.setAttribute('aria-modal', 'true');
+          modal.setAttribute('aria-labelledby', 'location-suggest-title');
+          modal.innerHTML = `
+            <div class="finder-tip-dialog">
+              <button class="finder-tip-close" type="button" aria-label="Sluit formulier" data-close-location-suggest-modal>&times;</button>
+              <h3 id="location-suggest-title">Assortiment suggestie</h3>
+              <p>Mis je een product op deze locatie? Laat het ons weten.</p>
+              <form class="finder-tip-form" data-location-suggest-form>
+                <label>Naam
+                  <input type="text" name="name" required />
+                </label>
+                <label>E-mail
+                  <input type="email" name="email" required />
+                </label>
+                <label>Product suggestie
+                  <textarea name="tip" rows="4" required placeholder="Bijv. merk, smaak of productcategorie..."></textarea>
+                </label>
+                <button type="submit" class="btn btn-primary">Verstuur suggestie</button>
+              </form>
+            </div>
+          `;
+          document.body.appendChild(modal);
+
+          modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+              modal.classList.remove('is-open');
+              modal.setAttribute('aria-hidden', 'true');
+              document.body.style.overflow = '';
+            }
+          });
+
+          modal.querySelector('[data-close-location-suggest-modal]')?.addEventListener('click', () => {
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+          });
+
+          modal.querySelector('[data-location-suggest-form]')?.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            if (!(form instanceof HTMLFormElement)) return;
+            const formData = new FormData(form);
+            const nameValue = String(formData.get('name') || '').trim();
+            const emailValue = String(formData.get('email') || '').trim();
+            const tipValue = String(formData.get('tip') || '').trim();
+            const locationTitle = (overlay.querySelector('h1')?.textContent || '').trim();
+            const locationAddress =
+              (overlay.querySelector('.location-page-address a')?.textContent ||
+                overlay.querySelector('.location-page-address')?.textContent ||
+                '')
+                .trim();
+            const subject = `Assortiment suggestie - ${locationTitle || 'Quiosk locatie'}`;
+            const body = [
+              `Locatie: ${locationTitle || '-'}`,
+              `Adres: ${locationAddress || '-'}`,
+              '',
+              `Naam: ${nameValue}`,
+              `E-mail: ${emailValue}`,
+              '',
+              'Suggestie:',
+              tipValue
+            ].join('\n');
+            window.location.href = `mailto:info@quiosk.nl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            form.reset();
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+          });
+
+          document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+            if (!modal.classList.contains('is-open')) return;
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+          });
+        }
+
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      };
+
+      suggestBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        openSuggestModal();
+      });
+    }
   }
 
   const locationTitle = overlay.querySelector('h1');

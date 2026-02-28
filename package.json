@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "generate:locations": "node scripts/generate-location-pages.mjs"
+    "generate:locations": "node scripts/generate-location-pages.mjs",
+    "generate:cities": "node scripts/generate-city-pages.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
