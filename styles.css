@@ -6809,24 +6809,18 @@ main[data-finder] > .section + .section::before {
   }
 
   .alpha-jump-nav {
-    display: flex !important;
-    grid-template-columns: none !important;
-    overflow-x: auto;
-    gap: 8px;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-  }
-
-  .alpha-jump-nav::-webkit-scrollbar {
-    display: none;
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 6px;
+    overflow: visible;
+    padding-bottom: 0;
+    scroll-snap-type: none;
   }
 
   .alpha-jump-link {
-    flex: 0 0 42px;
-    min-height: 40px;
-    scroll-snap-align: start;
+    min-height: 38px;
+    font-size: 0.92rem;
+    padding: 0;
   }
 
   .alpha-accordion {
