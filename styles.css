@@ -6949,6 +6949,111 @@ main[data-finder] > .section + .section::before {
   }
 }
 
+@media (max-width: 640px) {
+  .page-jobs .jobs-hero h1 {
+    font-size: clamp(1.9rem, 8.2vw, 2.35rem);
+    line-height: 1.06;
+    max-width: 12ch;
+  }
+
+  .page-jobs .jobs-hero p {
+    font-size: 0.98rem;
+    line-height: 1.56;
+    max-width: 30ch;
+  }
+
+  .page-jobs .jobs-intro-card {
+    text-align: left;
+  }
+
+  .page-jobs .jobs-intro-card .section-kicker-row {
+    justify-content: flex-start;
+  }
+
+  .page-jobs .jobs-intro-card .cta-row {
+    display: grid;
+  }
+
+  .page-jobs .jobs-intro-card .cta-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page-jobs #vacatures .section-head {
+    text-align: left;
+  }
+
+  .page-jobs .over-tabs {
+    padding: 12px;
+  }
+
+  .page-jobs .over-tab-panel {
+    margin-top: 8px;
+    border: 1px solid rgba(52, 171, 178, 0.28);
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  .page-jobs .over-panel-toggle {
+    min-height: 56px;
+    padding: 0 16px;
+    font-size: 1.02rem;
+  }
+
+  .page-jobs .over-tab-panel.is-open .over-panel-body {
+    padding: 14px 16px 16px;
+  }
+
+  .page-jobs .jobs-route-visual {
+    padding: 12px;
+  }
+
+  .page-jobs .jobs-route-kpi {
+    padding: 12px;
+  }
+
+  .page-jobs .jobs-route-kpi-value {
+    font-size: 1.55rem;
+  }
+
+  .page-jobs .jobs-vacancy-grid {
+    padding-left: 0;
+    gap: 10px;
+  }
+
+  .page-jobs .jobs-vacancy-timeline::before,
+  .page-jobs .jobs-vacancy-timeline .jobs-vacancy-block::before {
+    display: none;
+  }
+
+  .page-jobs .jobs-vacancy-block {
+    padding: 14px;
+  }
+
+  .page-jobs .jobs-vacancy-title {
+    font-size: 1.02rem;
+    line-height: 1.34;
+  }
+
+  .page-jobs .jobs-vacancy-list {
+    gap: 9px;
+  }
+
+  .page-jobs .jobs-vacancy-list li {
+    line-height: 1.58;
+  }
+
+  .page-jobs .cta-row {
+    display: grid;
+    gap: 10px;
+  }
+
+  .page-jobs .cta-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 .over-photo-strip {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
