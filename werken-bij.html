@@ -166,7 +166,14 @@
                       <span class="jobs-route-dot jobs-route-dot-end"></span>
                     </div>
                     <figure class="jobs-route-map">
-                      <img src="images/werken-bij/route-voorbeeld.svg" alt="Voorbeeld van een dagelijkse route met meerdere stops in Nederland" loading="lazy" decoding="async" />
+                      <img
+                        src="images/werken-bij/route-voorbeeld.png"
+                        alt="Voorbeeld van een dagelijkse route met meerdere stops in Nederland"
+                        loading="lazy"
+                        decoding="async"
+                        onerror="if(this.dataset.fallbackStep==='1'){this.dataset.fallbackStep='2';this.src='images/werken-bij/route-voorbeeld.jpg';return;}if(this.dataset.fallbackStep==='2'){this.dataset.fallbackStep='3';this.src='images/werken-bij/route-voorbeeld.webp';return;}if(this.dataset.fallbackStep==='3'){this.dataset.fallbackStep='4';this.src='images/werken-bij/route-voorbeeld.svg';return;}this.onerror=null;"
+                        data-fallback-step="1"
+                      />
                       <figcaption>Voorbeeldroute met meerdere stops op één werkdag</figcaption>
                     </figure>
                   </section>
