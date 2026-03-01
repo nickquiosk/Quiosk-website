@@ -1993,20 +1993,67 @@ const initImageLightbox = () => {
   const closeBtn = document.querySelector('[data-image-lightbox-close]');
   if (!lightbox || !lightboxImg || !closeBtn) return;
 
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.className = 'image-lightbox-nav image-lightbox-nav-prev';
+  prevBtn.setAttribute('aria-label', 'Vorige foto');
+  prevBtn.innerHTML = '&#10094;';
+  lightbox.appendChild(prevBtn);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.className = 'image-lightbox-nav image-lightbox-nav-next';
+  nextBtn.setAttribute('aria-label', 'Volgende foto');
+  nextBtn.innerHTML = '&#10095;';
+  lightbox.appendChild(nextBtn);
+
+  let items = [];
+  let currentIndex = -1;
+
   const close = () => {
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
     lightboxImg.removeAttribute('src');
     lightboxImg.removeAttribute('alt');
     document.body.style.overflow = '';
+    currentIndex = -1;
   };
 
-  const open = (src, alt) => {
-    lightboxImg.src = src;
-    lightboxImg.alt = alt || 'Vergrote afbeelding';
+  const renderByIndex = (idx) => {
+    if (!items.length) return;
+    const normalized = ((idx % items.length) + items.length) % items.length;
+    currentIndex = normalized;
+    const entry = items[normalized];
+    lightboxImg.src = entry.src;
+    lightboxImg.alt = entry.alt || 'Vergrote afbeelding';
+
+    const hasMultiple = items.length > 1;
+    prevBtn.style.display = hasMultiple ? 'inline-flex' : 'none';
+    nextBtn.style.display = hasMultiple ? 'inline-flex' : 'none';
+  };
+
+  const open = (clickedImg) => {
+    items = Array.from(document.querySelectorAll('.partner-photo-viewable')).filter(
+      (img) => img instanceof HTMLImageElement && img.src
+    );
+    if (!items.length) return;
+
+    const idx = items.findIndex((img) => img === clickedImg);
+    renderByIndex(idx >= 0 ? idx : 0);
+
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+  };
+
+  const showPrev = () => {
+    if (!lightbox.classList.contains('is-open') || currentIndex < 0) return;
+    renderByIndex(currentIndex - 1);
+  };
+
+  const showNext = () => {
+    if (!lightbox.classList.contains('is-open') || currentIndex < 0) return;
+    renderByIndex(currentIndex + 1);
   };
 
   document.addEventListener('click', (event) => {
@@ -2014,17 +2061,28 @@ const initImageLightbox = () => {
     if (!(target instanceof HTMLElement)) return;
     const img = target.closest('.partner-photo-viewable');
     if (!(img instanceof HTMLImageElement)) return;
-    open(img.src, img.alt);
+    open(img);
   });
 
   closeBtn.addEventListener('click', close);
+  prevBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showPrev();
+  });
+  nextBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showNext();
+  });
 
   lightbox.addEventListener('click', (e) => {
     if (e.target === lightbox) close();
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && lightbox.classList.contains('is-open')) close();
+    if (!lightbox.classList.contains('is-open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') showPrev();
+    if (e.key === 'ArrowRight') showNext();
   });
 };
 
@@ -2034,40 +2092,100 @@ const initMediaAssetLightbox = () => {
   const closeBtn = document.querySelector('[data-media-lightbox-close]');
   if (!modal || !modalImg || !closeBtn) return;
 
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.className = 'image-lightbox-nav image-lightbox-nav-prev';
+  prevBtn.setAttribute('aria-label', 'Vorige afbeelding');
+  prevBtn.innerHTML = '&#10094;';
+  modal.appendChild(prevBtn);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.className = 'image-lightbox-nav image-lightbox-nav-next';
+  nextBtn.setAttribute('aria-label', 'Volgende afbeelding');
+  nextBtn.innerHTML = '&#10095;';
+  modal.appendChild(nextBtn);
+
+  let items = [];
+  let currentIndex = -1;
+
   const close = () => {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
     modalImg.removeAttribute('src');
     modalImg.removeAttribute('alt');
     document.body.style.overflow = '';
+    currentIndex = -1;
   };
 
-  const open = (src, alt) => {
-    if (!src) return;
-    modalImg.src = src;
-    modalImg.alt = alt || 'Preview afbeelding';
+  const collectItems = () =>
+    Array.from(document.querySelectorAll('[data-media-preview]'))
+      .map((trigger) => {
+        const src = trigger.getAttribute('href') || trigger.dataset.previewSrc || '';
+        const linkedImg = trigger.querySelector('img');
+        const alt = linkedImg?.alt || trigger.getAttribute('aria-label') || 'Preview afbeelding';
+        return { src, alt, trigger };
+      })
+      .filter((entry) => entry.src);
+
+  const renderByIndex = (idx) => {
+    if (!items.length) return;
+    const normalized = ((idx % items.length) + items.length) % items.length;
+    currentIndex = normalized;
+    const item = items[normalized];
+    modalImg.src = item.src;
+    modalImg.alt = item.alt || 'Preview afbeelding';
+
+    const hasMultiple = items.length > 1;
+    prevBtn.style.display = hasMultiple ? 'inline-flex' : 'none';
+    nextBtn.style.display = hasMultiple ? 'inline-flex' : 'none';
+  };
+
+  const open = (clickedTrigger) => {
+    items = collectItems();
+    if (!items.length) return;
+    const idx = items.findIndex((entry) => entry.trigger === clickedTrigger);
+    renderByIndex(idx >= 0 ? idx : 0);
+
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+  };
+
+  const showPrev = () => {
+    if (!modal.classList.contains('is-open') || currentIndex < 0) return;
+    renderByIndex(currentIndex - 1);
+  };
+
+  const showNext = () => {
+    if (!modal.classList.contains('is-open') || currentIndex < 0) return;
+    renderByIndex(currentIndex + 1);
   };
 
   document.addEventListener('click', (event) => {
     const trigger = event.target instanceof HTMLElement ? event.target.closest('[data-media-preview]') : null;
     if (!trigger) return;
     event.preventDefault();
-
-    const href = trigger.getAttribute('href') || trigger.dataset.previewSrc || '';
-    const linkedImg = trigger.querySelector('img');
-    const alt = linkedImg?.alt || trigger.getAttribute('aria-label') || '';
-    open(href, alt);
+    open(trigger);
   });
 
   closeBtn.addEventListener('click', close);
+  prevBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showPrev();
+  });
+  nextBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showNext();
+  });
   modal.addEventListener('click', (event) => {
     if (event.target === modal) close();
   });
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && modal.classList.contains('is-open')) close();
+    if (!modal.classList.contains('is-open')) return;
+    if (event.key === 'Escape') close();
+    if (event.key === 'ArrowLeft') showPrev();
+    if (event.key === 'ArrowRight') showNext();
   });
 };
 
@@ -3120,6 +3238,35 @@ const initOverTeamPlayfulGrid = () => {
   });
 };
 
+const initJobsPhotoShuffle = () => {
+  const collage = document.querySelector('[data-jobs-photo-collage]');
+  if (!collage) return;
+
+  const images = Array.from(collage.querySelectorAll('img'));
+  if (images.length < 2) return;
+
+  const items = images
+    .map((img) => ({
+      src: img.getAttribute('src') || '',
+      alt: img.getAttribute('alt') || 'Werken bij Quiosk foto'
+    }))
+    .filter((item) => item.src);
+
+  if (items.length < 2) return;
+
+  for (let i = items.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+
+  images.forEach((img, idx) => {
+    const item = items[idx];
+    if (!item) return;
+    img.src = item.src;
+    img.alt = item.alt;
+  });
+};
+
 const initFactCounters = () => {
   const counters = Array.from(document.querySelectorAll('[data-count-to]'));
   if (!counters.length) return;
@@ -3879,6 +4026,7 @@ initDynamicProductImages();
 initSpotlight();
 initOverTabs();
 initOverTeamPlayfulGrid();
+initJobsPhotoShuffle();
 initFactCounters();
 initProcessLineAnimation();
 initFansMobileAccordion();

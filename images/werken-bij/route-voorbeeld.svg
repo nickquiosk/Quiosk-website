@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Voorbeeldroute Quiosk Vending Operator</title>
+  <desc id="desc">Gestileerde kaart van Nederland met een voorbeeldroute, meerdere stops en terugkeer naar startlocatie.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#edf6f7"/>
+      <stop offset="100%" stop-color="#f8fbfb"/>
+    </linearGradient>
+    <linearGradient id="route" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34abb2"/>
+      <stop offset="100%" stop-color="#e5007d"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#12383b" flood-opacity=".16"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="700" fill="url(#bg)"/>
+
+  <!-- abstracte vlakken -->
+  <path d="M90 160C180 120 250 115 330 130C420 147 510 190 560 160C625 121 705 104 780 130C857 157 940 175 1030 150V325C944 352 872 378 780 365C690 352 620 314 547 326C450 343 370 387 270 380C190 374 132 340 90 360Z" fill="#d9ecef"/>
+  <path d="M112 445C205 430 274 447 351 470C434 495 523 530 607 514C691 497 763 451 842 446C920 441 987 468 1088 462V650H112Z" fill="#e7f4e9"/>
+
+  <!-- route -->
+  <polyline points="165,595 230,525 310,500 388,420 465,390 550,300 645,255 760,210 875,240 940,330 1010,405 915,485 790,500 650,475 560,520 470,575 330,610 230,620 165,595"
+    fill="none" stroke="url(#route)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)"/>
+
+  <!-- stops -->
+  <g fill="#fff" stroke="#34abb2" stroke-width="4" filter="url(#shadow)">
+    <circle cx="230" cy="525" r="16"/><circle cx="310" cy="500" r="16"/>
+    <circle cx="388" cy="420" r="16"/><circle cx="465" cy="390" r="16"/>
+    <circle cx="550" cy="300" r="16"/><circle cx="645" cy="255" r="16"/>
+    <circle cx="760" cy="210" r="16"/><circle cx="875" cy="240" r="16"/>
+    <circle cx="940" cy="330" r="16"/><circle cx="1010" cy="405" r="16"/>
+    <circle cx="915" cy="485" r="16"/><circle cx="790" cy="500" r="16"/>
+    <circle cx="650" cy="475" r="16"/><circle cx="560" cy="520" r="16"/>
+    <circle cx="470" cy="575" r="16"/><circle cx="330" cy="610" r="16"/>
+  </g>
+
+  <!-- start/eind -->
+  <g filter="url(#shadow)">
+    <circle cx="165" cy="595" r="23" fill="#34abb2"/>
+    <circle cx="165" cy="595" r="11" fill="#fff"/>
+  </g>
+  <g filter="url(#shadow)">
+    <circle cx="230" cy="620" r="23" fill="#e5007d"/>
+    <path d="M223 620l5 5 10-10" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- labels -->
+  <g font-family="Nunito Sans, Arial, sans-serif" fill="#1b3d40" font-size="30" font-weight="700">
+    <text x="575" y="72" text-anchor="middle">Voorbeeld dagroute - Vending Operator</text>
+  </g>
+  <g font-family="Nunito Sans, Arial, sans-serif" fill="#2b575b" font-size="20" font-weight="700">
+    <text x="130" y="563">Start</text>
+    <text x="244" y="653">Einde</text>
+    <text x="520" y="332">Zwolle regio</text>
+    <text x="880" y="360">Twente regio</text>
+    <text x="505" y="615">Arnhem/Nijmegen regio</text>
+    <text x="210" y="470">Midden Nederland</text>
+  </g>
+</svg>
