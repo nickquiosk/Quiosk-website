@@ -2899,36 +2899,66 @@ const initDynamicOverQuioskGallery = async () => {
 };
 
 const initDynamicPartnerLogoGallery = async () => {
-  const strip = document.querySelector('[data-partner-logo-gallery]');
-  if (!strip) return;
+  const strips = Array.from(document.querySelectorAll('[data-partner-logo-gallery]'));
+  if (!strips.length) return;
 
-  try {
-    const files = await fetchMediaFiles('images/word-partner', 'images').catch(() => []);
-    if (!files.length) return;
+  const toNaturalNumber = (stem) => {
+    const match = String(stem || '').match(/(\d+)(?!.*\d)/);
+    return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
+  };
 
-    const toNaturalNumber = (stem) => {
-      const match = String(stem || '').match(/(\d+)(?!.*\d)/);
-      return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
-    };
+  for (const strip of strips) {
+    try {
+      const source = String(strip.getAttribute('data-partner-logo-source') || '').toLowerCase();
+      const isLogoCarousel = source === 'logos';
+      const dir = isLogoCarousel ? 'logos/partners' : 'images/word-partner';
+      const type = isLogoCarousel ? 'logos' : 'images';
+      const stemPattern = isLogoCarousel ? /^partner-\d+$/i : /^partner-carousel-\d+$/i;
+      const baseClass = isLogoCarousel ? 'logo-item' : 'partner-photo-viewable';
 
-    const preferred = files.filter((file) => /^partner-carousel-\d+$/i.test(file.stem)).sort((a, b) => {
-      const numA = toNaturalNumber(a.stem);
-      const numB = toNaturalNumber(b.stem);
-      if (numA !== numB) return numA - numB;
-      return String(a.stem).localeCompare(String(b.stem), 'nl-NL', { sensitivity: 'base' });
-    });
+      const files = await fetchMediaFiles(dir, type).catch(() => []);
+      if (!files.length) continue;
 
-    if (!preferred.length) return;
+      const preferred = files
+        .filter((file) => stemPattern.test(file.stem))
+        .sort((a, b) => {
+          const numA = toNaturalNumber(a.stem);
+          const numB = toNaturalNumber(b.stem);
+          if (numA !== numB) return numA - numB;
+          return String(a.stem).localeCompare(String(b.stem), 'nl-NL', { sensitivity: 'base' });
+        });
 
-    strip.innerHTML = preferred
-      .slice(0, 6)
-      .map((file, index) => {
-        const label = escapeHtml(prettifyFileStem(file.stem, `Partner logo ${index + 1}`));
-        return `<img class="partner-photo-viewable" src="${file.url}" alt="${label}" loading="lazy" decoding="async" />`;
-      })
-      .join('');
-  } catch (_error) {
-    // Keep static fallback images.
+      if (!preferred.length) continue;
+
+      if (isLogoCarousel) {
+        const groups = [];
+        const groupSize = 4;
+        for (let i = 0; i < preferred.length; i += groupSize) {
+          groups.push(preferred.slice(i, i + groupSize));
+        }
+        const renderGroup = (group, duplicate = false) =>
+          `<div class="logo-group"${duplicate ? ' aria-hidden="true"' : ''}>${group
+            .map((file, idx) => {
+              const label = escapeHtml(prettifyFileStem(file.stem, `Partner ${idx + 1}`));
+              return `<div class="${baseClass}"><img src="${file.url}" alt="${duplicate ? '' : label}" loading="lazy" decoding="async" /></div>`;
+            })
+            .join('')}</div>`;
+
+        strip.innerHTML = `${groups.map((group) => renderGroup(group)).join('')}${groups
+          .map((group) => renderGroup(group, true))
+          .join('')}`;
+      } else {
+        strip.innerHTML = preferred
+          .slice(0, 6)
+          .map((file, index) => {
+            const label = escapeHtml(prettifyFileStem(file.stem, `Partner logo ${index + 1}`));
+            return `<img class="${baseClass}" src="${file.url}" alt="${label}" loading="lazy" decoding="async" />`;
+          })
+          .join('');
+      }
+    } catch (_error) {
+      // Keep static fallback images per strip.
+    }
   }
 };
 
