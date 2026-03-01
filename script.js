@@ -3142,6 +3142,7 @@ const initOverTabs = () => {
   const toggles = Array.from(root.querySelectorAll('[data-over-toggle]'));
   if (!tabs.length || !panels.length || !toggles.length) return;
   const mobileQuery = window.matchMedia('(max-width: 920px)');
+  const mobileDefaultClosed = root.dataset.overMobileDefault === 'closed';
 
   const setDesktopActive = (targetId) => {
     tabs.forEach((tab) => {
@@ -3168,6 +3169,16 @@ const initOverTabs = () => {
     if (mobileQuery.matches) {
       root.classList.add('is-accordion');
       tabs.forEach((tab) => tab.setAttribute('aria-selected', 'false'));
+
+      if (mobileDefaultClosed) {
+        panels.forEach((panel) => {
+          panel.classList.remove('is-open');
+          const toggle = panel.querySelector('[data-over-toggle]');
+          if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        });
+        return;
+      }
+
       let hasOpen = false;
       panels.forEach((panel, idx) => {
         const shouldOpen = idx === 0;
