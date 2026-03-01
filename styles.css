@@ -7002,6 +7002,9 @@ main[data-finder] > .section + .section::before {
 
   .page-jobs .over-tab-panel.is-open .over-panel-body {
     padding: 14px 16px 16px;
+    max-height: none;
+    overflow: visible;
+    transition: none;
   }
 
   .page-jobs .jobs-route-visual {
@@ -8325,6 +8328,11 @@ main[data-finder] > .section + .section::before {
     max-height: 1200px;
     opacity: 1;
     padding: 12px 14px 14px;
+  }
+
+  .page-jobs .over-tab-panel.is-open .over-panel-body {
+    max-height: none;
+    overflow: visible;
   }
 
   #proces .process-flow {
