@@ -5961,7 +5961,7 @@ main[data-finder] > .section + .section::before {
   }
 
   .location-page-sticky-nav {
-    display: inline-flex;
+    display: none;
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
@@ -6638,6 +6638,14 @@ main[data-finder] > .section + .section::before {
 .jobs-intro-card h2 {
   margin-top: 4px;
   margin-bottom: 10px;
+  text-align: center;
+}
+
+.jobs-intro-card p {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 70ch;
 }
 
 .jobs-intro-card .feature-list {
@@ -6645,13 +6653,27 @@ main[data-finder] > .section + .section::before {
 }
 
 .jobs-intro-highlights {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 16px;
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
 
 .jobs-intro-highlights li {
   margin: 0;
+  padding: 8px 14px;
+  border: 1px solid rgba(52, 171, 178, 0.42);
+  border-radius: 999px;
+  background: rgba(52, 171, 178, 0.1);
+  color: #134043;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.jobs-intro-card .cta-row {
+  justify-content: center;
 }
 
 #vacatures {
@@ -6921,7 +6943,7 @@ main[data-finder] > .section + .section::before {
 
 @media (max-width: 920px) {
   .jobs-intro-highlights {
-    grid-template-columns: 1fr;
+    justify-content: center;
   }
 
   .jobs-photo-collage {
@@ -6971,11 +6993,11 @@ main[data-finder] > .section + .section::before {
   }
 
   .page-jobs .jobs-intro-card {
-    text-align: left;
+    text-align: center;
   }
 
   .page-jobs .jobs-intro-card .section-kicker-row {
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .page-jobs .jobs-intro-card .cta-row {
@@ -6988,7 +7010,7 @@ main[data-finder] > .section + .section::before {
   }
 
   .page-jobs #vacatures .section-head {
-    text-align: left;
+    text-align: center;
   }
 
   .page-jobs .over-tabs {

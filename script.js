@@ -3049,10 +3049,20 @@ const initDynamicPartnerLogoGallery = async () => {
       if (!preferred.length) continue;
 
       if (isLogoCarousel) {
+        const normalized = [...preferred];
         const groups = [];
         const groupSize = 4;
-        for (let i = 0; i < preferred.length; i += groupSize) {
-          groups.push(preferred.slice(i, i + groupSize));
+        const remainder = normalized.length % groupSize;
+        if (remainder !== 0 && normalized.length) {
+          const seed = normalized.slice();
+          const needed = groupSize - remainder;
+          for (let i = 0; i < needed; i += 1) {
+            normalized.push(seed[i % seed.length]);
+          }
+        }
+
+        for (let i = 0; i < normalized.length; i += groupSize) {
+          groups.push(normalized.slice(i, i + groupSize));
         }
         const renderGroup = (group, duplicate = false) =>
           `<div class="logo-group"${duplicate ? ' aria-hidden="true"' : ''}>${group
@@ -3066,8 +3076,17 @@ const initDynamicPartnerLogoGallery = async () => {
           .map((group) => renderGroup(group, true))
           .join('')}`;
       } else {
-        strip.innerHTML = preferred
-          .slice(0, 6)
+        const targetCount = 6;
+        const normalized = preferred.slice(0, targetCount);
+        if (normalized.length && normalized.length < targetCount) {
+          const seed = normalized.slice();
+          const needed = targetCount - normalized.length;
+          for (let i = 0; i < needed; i += 1) {
+            normalized.push(seed[i % seed.length]);
+          }
+        }
+
+        strip.innerHTML = normalized
           .map((file, index) => {
             const label = escapeHtml(prettifyFileStem(file.stem, `Partner logo ${index + 1}`));
             return `<img class="${baseClass}" src="${file.url}" alt="${label}" loading="lazy" decoding="async" />`;
@@ -3991,17 +4010,7 @@ const initLocationDetailEnhancements = () => {
       });
   }
 
-  if (!document.querySelector('.location-page-sticky-nav')) {
-    const sticky = document.createElement('a');
-    sticky.className = 'location-page-sticky-nav btn btn-primary';
-    sticky.href = navUrl;
-    sticky.target = '_blank';
-    sticky.rel = 'noopener noreferrer';
-    const locationName =
-      overlay.querySelector('h1')?.textContent?.trim()?.split('|')[0]?.trim() || 'Quiosk locatie';
-    sticky.textContent = `Navigeer naar ${locationName}`;
-    document.body.appendChild(sticky);
-  }
+  // Mobile sticky nav button disabled by design.
 };
 
 initNoindexForGithubPreview();
