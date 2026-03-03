@@ -5178,6 +5178,12 @@ main[data-finder] > .section + .section::before {
 }
 
 @media (min-width: 921px) {
+  body.location-page-compact main {
+    max-width: var(--content-shell-width);
+    width: 100%;
+    margin: 0 auto;
+  }
+
   body.location-page-compact .location-page-map-hero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -9455,7 +9461,7 @@ main[data-finder] > .section + .section::before {
 
   .location-concept-v2 .location-page-map-hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas: "content map";
     min-height: 0;
     height: auto;
@@ -9482,10 +9488,11 @@ main[data-finder] > .section + .section::before {
   }
 
   .location-concept-v2 .location-page-overlay {
-    --location-content-gutter: max(28px, max(calc((100vw - 1400px) / 2), 2.5vw));
+    --location-content-gutter: clamp(22px, 2.4vw, 48px);
     height: auto;
     min-height: calc(100vh - var(--header-offset));
-    overflow: visible;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding-left: var(--location-content-gutter);
     padding-right: var(--location-content-gutter);
   }
