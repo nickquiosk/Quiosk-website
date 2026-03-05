@@ -1,11 +1,21 @@
-Plaats hier de referentielogo's voor de sectie 'Onze referenties' op de pagina Word partner.
+Referenties op de pagina `Word partner` gebruiken deze bestanden:
 
-Aanbevolen bestandsnamen:
-- reference-1.png
-- reference-2.png
-- reference-3.png
+Kaart 1 (echte referentie):
+- `joep-fassaert.jpg` (profielfoto)
+- logo staat nu op `images/instagram-feed/Quiosk_X-AVIA.png`
+
+Kaart 2 (dummy, vervangbaar):
+- `partner-2-logo.svg`
+- `partner-2-profiel.svg`
+
+Kaart 3 (dummy, vervangbaar):
+- `partner-3-logo.svg`
+- `partner-3-profiel.svg`
+
+Werkwijze:
+- Houd dezelfde bestandsnaam aan en vervang het bestand.
+- Dan update de website automatisch zonder codewijziging.
 
 Tips:
-- Gebruik bij voorkeur PNG met transparante achtergrond.
-- Logo's worden in ronde vorm getoond, dus houd het logo gecentreerd.
-- Adviesformaat: minimaal 600x600 px.
+- Logo: liggend formaat werkt het best (bijv. 800x240 px).
+- Profielfoto: vierkant formaat (bijv. 800x800 px).

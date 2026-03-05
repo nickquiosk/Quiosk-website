@@ -1693,6 +1693,184 @@ const initHeroSlider = () => {
   start();
 };
 
+const initPartnerReferencesSlider = () => {
+  const root = document.querySelector('[data-partner-references-slider]');
+  if (!root) return;
+
+  const viewport = root.querySelector('[data-partner-references-viewport]');
+  const track = root.querySelector('[data-partner-references-track]');
+  const prev = root.querySelector('[data-partner-references-prev]');
+  const next = root.querySelector('[data-partner-references-next]');
+  const dotsRoot = root.querySelector('[data-partner-references-dots]');
+  if (!viewport || !track || !prev || !next) return;
+
+  const cards = Array.from(track.querySelectorAll('.partner-reference-card'));
+  if (!cards.length) return;
+
+  const toggles = cards
+    .map((card) => card.querySelector('.partner-reference-toggle'))
+    .filter(Boolean);
+
+  let index = 0;
+  let userInteracted = false;
+  let dots = [];
+  const desktopQuery = window.matchMedia('(max-width: 920px)');
+  const isMobileAccordion = () => desktopQuery.matches;
+
+  const maxIndex = () => Math.max(0, cards.length - 1);
+  const cardStep = () => cards[0]?.getBoundingClientRect().width || 0;
+  const trackGap = () => {
+    const styles = window.getComputedStyle(track);
+    return parseFloat(styles.columnGap || styles.gap || '0') || 0;
+  };
+  const maxDesktopOffset = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+  const centeredOffsetForIndex = (targetIndex) => {
+    const step = cardStep() + trackGap();
+    const cardWidth = cardStep();
+    if (!step || !cardWidth) return 0;
+    const rawOffset = targetIndex * step - (viewport.clientWidth - cardWidth) / 2;
+    return Math.max(0, Math.min(maxDesktopOffset(), rawOffset));
+  };
+  const clampIndex = (value) => Math.max(0, Math.min(maxIndex(), value));
+  const setActiveDot = () => {
+    if (!dots.length) return;
+    dots.forEach((dot, dotIndex) => {
+      dot.classList.toggle('is-active', dotIndex === index);
+      dot.setAttribute('aria-current', dotIndex === index ? 'true' : 'false');
+    });
+  };
+
+  const setExpandedCard = (targetCard) => {
+    cards.forEach((card) => {
+      const expanded = card === targetCard;
+      card.classList.toggle('is-expanded', expanded);
+      const btn = card.querySelector('.partner-reference-toggle');
+      if (btn) btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    });
+  };
+
+  const applyAccordionMode = () => {
+    if (!isMobileAccordion()) {
+      cards.forEach((card) => {
+        card.classList.remove('is-expanded');
+        const btn = card.querySelector('.partner-reference-toggle');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+      });
+      return;
+    }
+    const expanded = cards.find((card) => card.classList.contains('is-expanded'));
+    setExpandedCard(expanded || cards[0]);
+  };
+
+  if (dotsRoot) {
+    dotsRoot.innerHTML = '';
+    dots = cards.map((_, dotIndex) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'partner-references-dot';
+      dot.setAttribute('aria-label', `Ga naar referentie ${dotIndex + 1}`);
+      dot.addEventListener('click', () => {
+        userInteracted = true;
+        index = clampIndex(dotIndex);
+        update();
+      });
+      dotsRoot.appendChild(dot);
+      return dot;
+    });
+  }
+
+  const update = () => {
+    if (isMobileAccordion()) {
+      track.style.transform = '';
+      prev.disabled = true;
+      next.disabled = true;
+      setActiveDot();
+      return;
+    }
+
+    const max = maxIndex();
+    if (index > max) index = max;
+    if (index < 0) index = 0;
+    const offset = centeredOffsetForIndex(index);
+    track.style.transform = `translateX(-${offset}px)`;
+    prev.disabled = index <= 0;
+    next.disabled = index >= max;
+    setActiveDot();
+  };
+
+  const bootstrapStartPosition = () => {
+    if (userInteracted || isMobileAccordion()) return;
+    index = Math.floor(maxIndex() / 2);
+    update();
+  };
+
+  prev.addEventListener('click', () => {
+    userInteracted = true;
+    if (index <= 0) return;
+    index -= 1;
+    update();
+  });
+
+  next.addEventListener('click', () => {
+    userInteracted = true;
+    if (index >= maxIndex()) return;
+    index += 1;
+    update();
+  });
+
+  bindHorizontalSwipe(viewport, {
+    onSwipeLeft: () => {
+      if (isMobileAccordion()) return;
+      userInteracted = true;
+      if (index >= maxIndex()) return;
+      index += 1;
+      update();
+    },
+    onSwipeRight: () => {
+      if (isMobileAccordion()) return;
+      userInteracted = true;
+      if (index <= 0) return;
+      index -= 1;
+      update();
+    }
+  });
+
+  toggles.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!isMobileAccordion()) return;
+      userInteracted = true;
+      const card = button.closest('.partner-reference-card');
+      if (!card) return;
+      const isOpen = card.classList.contains('is-expanded');
+      if (isOpen) {
+        card.classList.remove('is-expanded');
+        button.setAttribute('aria-expanded', 'false');
+      } else {
+        setExpandedCard(card);
+      }
+    });
+  });
+
+  let resizeTimer;
+  window.addEventListener(
+    'resize',
+    () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        applyAccordionMode();
+        update();
+      }, 120);
+    },
+    { passive: true }
+  );
+
+  applyAccordionMode();
+  setActiveDot();
+  requestAnimationFrame(bootstrapStartPosition);
+  window.setTimeout(bootstrapStartPosition, 250);
+  window.addEventListener('load', bootstrapStartPosition, { once: true });
+};
+
 const initInstaSlider = () => {
   const roots = document.querySelectorAll('[data-insta-slider]');
   if (!roots.length) return;
@@ -4029,6 +4207,7 @@ initCalculator();
 initRefundForm();
 initFinder();
 initHeroSlider();
+initPartnerReferencesSlider();
 initDynamicBrandAssets();
 initDynamicOverQuioskGallery();
 initDynamicPartnerLogoGallery();

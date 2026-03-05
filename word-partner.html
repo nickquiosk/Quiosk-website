@@ -306,19 +306,86 @@
           <p class="section-kicker section-kicker-row"><img src="Favicon.png" alt="" class="section-kicker-logo" />Onze referenties</p>
           <h2>Waarom partners met ons samenwerken</h2>
         </div>
-        <div class="grid-3 partner-references-grid">
-          <article class="card partner-reference-card">
-            <img class="partner-reference-avatar" src="images/word-partner/referenties/reference-1.png" alt="Partner 1 logo" loading="lazy" decoding="async" />
-            <p class="partner-reference-quote">"Sinds de plaatsing merken we direct extra gemak voor bezoekers en een stabiele extra omzet."</p>
-          </article>
-          <article class="card partner-reference-card">
-            <img class="partner-reference-avatar" src="images/word-partner/referenties/reference-2.png" alt="Partner 2 logo" loading="lazy" decoding="async" />
-            <p class="partner-reference-quote">"Quiosk schakelt snel, communiceert helder en ontzorgt ons volledig in dagelijks beheer."</p>
-          </article>
-          <article class="card partner-reference-card">
-            <img class="partner-reference-avatar" src="images/word-partner/referenties/reference-3.png" alt="Partner 3 logo" loading="lazy" decoding="async" />
-            <p class="partner-reference-quote">"De combinatie van 24/7 beschikbaarheid en contactloos betalen sluit perfect aan op onze locatie."</p>
-          </article>
+        <div class="partner-references-slider" data-partner-references-slider>
+          <button class="partner-references-arrow partner-references-arrow-prev" type="button" data-partner-references-prev aria-label="Vorige referentie">‹</button>
+          <div class="partner-references-viewport" data-partner-references-viewport>
+            <div class="partner-references-track" data-partner-references-track>
+              <article class="card partner-reference-card partner-reference-card-template">
+                <div class="partner-reference-featured-head">
+                  <div class="partner-reference-logo-slot" aria-label="Placeholder klantlogo">
+                    <img class="partner-reference-logo" src="images/word-partner/referenties/partner-2-logo.svg" alt="Placeholder partner 2 logo" loading="lazy" decoding="async" onerror="this.remove(); this.parentNode.classList.add('is-empty')" />
+                    <span>Logo klant</span>
+                  </div>
+                </div>
+                <button class="partner-reference-toggle" type="button" aria-expanded="true">Lees referentie</button>
+                <div class="partner-reference-content">
+                  <p class="partner-reference-quote">“Placeholder referentie: Quiosk sluit goed aan bij onze locatie en bezoekers waarderen het extra gemak. Vervang deze tekst met een echte partnerquote.”</p>
+                </div>
+                <div class="partner-reference-footer">
+                  <div class="partner-reference-person-wrap">
+                    <div class="partner-reference-person-shell" aria-label="Placeholder profielfoto">
+                      <img class="partner-reference-person-photo" src="images/word-partner/referenties/partner-2-profiel.svg" alt="Placeholder partner 2 profiel foto" loading="lazy" decoding="async" onerror="this.remove(); this.parentNode.classList.add('is-empty')" />
+                      <span class="partner-reference-person-fallback">Foto</span>
+                    </div>
+                    <div class="partner-reference-meta">
+                      <p class="partner-reference-client">Klantnaam</p>
+                      <p class="partner-reference-name">Naam contactpersoon</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              <article class="card partner-reference-card partner-reference-card-template">
+                <div class="partner-reference-featured-head">
+                  <div class="partner-reference-logo-slot" aria-label="Avia Vollenhoven logo">
+                    <img class="partner-reference-logo" src="logos/partners/partner-15.png" alt="Avia Vollenhoven logo" loading="lazy" decoding="async" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='images/word-partner/referenties/reference-1.png';}else{this.remove();this.parentNode.classList.add('is-empty');}" />
+                    <span>Logo klant</span>
+                  </div>
+                </div>
+                <button class="partner-reference-toggle" type="button" aria-expanded="false">Lees referentie</button>
+                <div class="partner-reference-content">
+                  <p class="partner-reference-quote">“In 2019 zijn we vanuit Vollenhoven een samenwerking gestart met Quiosk. We begonnen bewust klein, met een pilot op drie locaties, om te onderzoeken hoe deze service zou worden ontvangen door onze klanten. Al snel bleek dat we een goede keuze hadden gemaakt. Uit klantenonderzoek kwam duidelijk naar voren dat bezoekers van onze tankstations de vending machines en het extra gemak zeer waardeerden.<br /><br />De positieve resultaten van de pilot gaven het vertrouwen om verder op te schalen. Uiteindelijk hebben we binnen ons netwerk 27 locaties geselecteerd waar de vending machines zijn geplaatst. Een mooie stap waarmee we onze dienstverlening voor onze klanten verder hebben uitgebreid.”</p>
+                </div>
+                <div class="partner-reference-footer">
+                  <div class="partner-reference-person-wrap">
+                    <div class="partner-reference-person-shell" aria-label="Profielfoto Joep Fassaert">
+                      <img class="partner-reference-person-photo" src="images/word-partner/referenties/Partner-1-profiel.jpeg" alt="Joep Fassaert" loading="lazy" decoding="async" onerror="this.remove(); this.parentNode.classList.add('is-empty')" />
+                      <span class="partner-reference-person-fallback">JF</span>
+                    </div>
+                    <div class="partner-reference-meta">
+                      <p class="partner-reference-client">Avia Vollenhoven</p>
+                      <p class="partner-reference-name">Joep Fassaert</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              <article class="card partner-reference-card partner-reference-card-template">
+                <div class="partner-reference-featured-head">
+                  <div class="partner-reference-logo-slot" aria-label="Placeholder klantlogo">
+                    <img class="partner-reference-logo" src="images/word-partner/referenties/partner-3-logo.svg" alt="Placeholder partner 3 logo" loading="lazy" decoding="async" onerror="this.remove(); this.parentNode.classList.add('is-empty')" />
+                    <span>Logo klant</span>
+                  </div>
+                </div>
+                <button class="partner-reference-toggle" type="button" aria-expanded="false">Lees referentie</button>
+                <div class="partner-reference-content">
+                  <p class="partner-reference-quote">“Placeholder referentie: De samenwerking met Quiosk verloopt soepel en professioneel. Vervang deze tekst met een echte referentie en klantresultaten.”</p>
+                </div>
+                <div class="partner-reference-footer">
+                  <div class="partner-reference-person-wrap">
+                    <div class="partner-reference-person-shell" aria-label="Placeholder profielfoto">
+                      <img class="partner-reference-person-photo" src="images/word-partner/referenties/partner-3-profiel.svg" alt="Placeholder partner 3 profiel foto" loading="lazy" decoding="async" onerror="this.remove(); this.parentNode.classList.add('is-empty')" />
+                      <span class="partner-reference-person-fallback">Foto</span>
+                    </div>
+                    <div class="partner-reference-meta">
+                      <p class="partner-reference-client">Klantnaam</p>
+                      <p class="partner-reference-name">Naam contactpersoon</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+          <button class="partner-references-arrow partner-references-arrow-next" type="button" data-partner-references-next aria-label="Volgende referentie">›</button>
+          <div class="partner-references-dots" data-partner-references-dots aria-label="Referentie indicator"></div>
         </div>
       </div>
     </section>
