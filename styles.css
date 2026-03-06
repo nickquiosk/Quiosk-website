@@ -6084,7 +6084,9 @@ main[data-finder] > .section + .section::before {
   .location-concept-v2 .location-page-map-canvas {
     position: relative;
     width: 100%;
-    height: 45vh;
+    height: 42vh;
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
   }
 
   .location-concept-v2 .location-page-overlay-wrap {
@@ -6098,8 +6100,8 @@ main[data-finder] > .section + .section::before {
     border-radius: 0;
     box-shadow: none;
     border-top: 0;
-    padding: 20px 16px 20px;
-    gap: 14px;
+    padding: 22px 18px 24px;
+    gap: 16px;
   }
 
   .location-page-close {
@@ -6119,8 +6121,8 @@ main[data-finder] > .section + .section::before {
 
   .location-concept-v2 .location-page-overlay h1 {
     max-width: 100%;
-    font-size: clamp(1.35rem, 6.3vw, 1.9rem);
-    line-height: 1.22;
+    font-size: clamp(1.28rem, 5.8vw, 1.72rem);
+    line-height: 1.2;
   }
 
   .location-concept-v2 .location-page-address,
@@ -6132,14 +6134,14 @@ main[data-finder] > .section + .section::before {
   }
 
   .location-concept-v2 .location-page-address {
-    font-size: 0.98rem;
-    line-height: 1.5;
+    font-size: 1rem;
+    line-height: 1.58;
   }
 
   .location-concept-v2 .location-page-updated,
   .location-concept-v2 .location-page-subtitle {
-    font-size: 0.94rem;
-    line-height: 1.58;
+    font-size: 0.95rem;
+    line-height: 1.64;
   }
 
   .location-concept-v2 .location-page-eyebrow {
@@ -6151,27 +6153,33 @@ main[data-finder] > .section + .section::before {
   .location-concept-v2 .location-page-facts {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    gap: 8px;
   }
 
   .location-concept-v2 .location-page-fact {
     width: 100%;
     justify-content: center;
-    font-size: 0.76rem;
-    min-height: 28px;
-    padding: 0 9px;
+    font-size: 0.8rem;
+    min-height: 34px;
+    padding: 0 10px;
   }
 
   .location-concept-v2 .location-page-actions {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .location-concept-v2 .location-page-actions .btn {
     width: 100%;
     justify-content: center;
     min-height: 46px;
+    font-size: 0.98rem;
+    padding-inline: 14px;
+  }
+
+  .location-concept-v2 .location-page-actions .btn:nth-child(n + 3) {
+    grid-column: 1 / -1;
   }
 
   .location-concept-v2 .location-seo-placeholder-inline {
@@ -6182,14 +6190,14 @@ main[data-finder] > .section + .section::before {
   .location-concept-v2 .location-seo-placeholder-inline h3 {
     font-size: 1.03rem;
     line-height: 1.36;
-    margin-top: 12px;
-    margin-bottom: 2px;
+    margin-top: 14px;
+    margin-bottom: 3px;
   }
 
   .location-concept-v2 .location-seo-placeholder-inline p,
   .location-concept-v2 .location-seo-placeholder-inline li {
-    font-size: 0.95rem;
-    line-height: 1.7;
+    font-size: 0.98rem;
+    line-height: 1.75;
   }
 
   .location-concept-v2 .location-products-head h3 {
@@ -6302,6 +6310,31 @@ main[data-finder] > .section + .section::before {
 
   .location-page-map-canvas iframe {
     left: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .location-concept-v2 .location-page-map-canvas {
+    height: 40vh;
+    border-radius: 0 0 14px 14px;
+  }
+
+  .location-concept-v2 .location-page-overlay {
+    padding: 20px 14px 22px;
+    gap: 14px;
+  }
+
+  .location-concept-v2 .location-page-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .location-concept-v2 .location-page-actions .btn:nth-child(n + 3) {
+    grid-column: auto;
+  }
+
+  .location-concept-v2 .location-page-facts {
+    gap: 7px;
   }
 }
 
