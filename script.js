@@ -4090,29 +4090,38 @@ const initLocationDetailEnhancements = () => {
     initMap();
   }
 
+  const hideNearbyOnMobile = window.matchMedia('(max-width: 920px)').matches;
   let nearbySection = document.querySelector('.location-page-nearby');
-  if (!nearbySection) {
-    const main = document.querySelector('main');
-    if (main) {
-      const section = document.createElement('section');
-      section.className = 'section';
-      section.innerHTML = `
-        <div class="container">
-          <article class="card location-page-nearby">
-            <h2>Dichtstbijzijnde Quiosk’s binnen 25 km</h2>
-            <div class="location-page-nearby-grid" id="nearbyLocationsGrid">
-              <p class="location-page-nearby-loading">Locaties worden geladen...</p>
-            </div>
-          </article>
-        </div>
-      `;
-      main.appendChild(section);
-      nearbySection = section.querySelector('.location-page-nearby');
+  if (hideNearbyOnMobile) {
+    const nearbySectionWrapper = nearbySection?.closest('.section');
+    if (nearbySectionWrapper instanceof HTMLElement) {
+      nearbySectionWrapper.remove();
+    } else if (nearbySection instanceof HTMLElement) {
+      nearbySection.remove();
     }
-  }
+  } else {
+    if (!nearbySection) {
+      const main = document.querySelector('main');
+      if (main) {
+        const section = document.createElement('section');
+        section.className = 'section';
+        section.innerHTML = `
+          <div class="container">
+            <article class="card location-page-nearby">
+              <h2>Dichtstbijzijnde Quiosk’s binnen 25 km</h2>
+              <div class="location-page-nearby-grid" id="nearbyLocationsGrid">
+                <p class="location-page-nearby-loading">Locaties worden geladen...</p>
+              </div>
+            </article>
+          </div>
+        `;
+        main.appendChild(section);
+        nearbySection = section.querySelector('.location-page-nearby');
+      }
+    }
 
-  const nearbyGrid = nearbySection?.querySelector('#nearbyLocationsGrid');
-  if (nearbyGrid) {
+    const nearbyGrid = nearbySection?.querySelector('#nearbyLocationsGrid');
+    if (nearbyGrid) {
     const toRad = (d) => (d * Math.PI) / 180;
     const distanceKm = (a, b) => {
       const R = 6371;
@@ -4133,59 +4142,64 @@ const initLocationDetailEnhancements = () => {
         .replace(/^-+|-+$/g, '');
 
     const makeSlug = (loc) =>
-      [slugify(loc.city || loc.name || 'locatie'), slugify(loc.address || ''), Number(loc.id || 0)]
+      [
+        slugify(loc.city || loc.name || 'locatie'),
+        slugify(String(loc.address || '').split(',')[0] || ''),
+        Number(loc.id || 0)
+      ]
         .filter(Boolean)
         .join('-');
 
-    fetch(`${rootPrefix}data/locations.json`)
-      .then((r) => r.json())
-      .then((rows) => {
-        const nearest = (Array.isArray(rows) ? rows : [])
-          .map((row) => {
-            const lat = Number(row?.coords?.lat ?? row?.lat);
-            const lng = Number(row?.coords?.lng ?? row?.lng);
-            return {
+      fetch(`${rootPrefix}data/locations.json`)
+        .then((r) => r.json())
+        .then((rows) => {
+          const nearest = (Array.isArray(rows) ? rows : [])
+            .map((row) => {
+              const lat = Number(row?.coords?.lat ?? row?.lat);
+              const lng = Number(row?.coords?.lng ?? row?.lng);
+              return {
+                ...row,
+                _coords: Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null
+              };
+            })
+            .filter((row) => row._coords)
+            .map((row) => ({
               ...row,
-              _coords: Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null
-            };
-          })
-          .filter((row) => row._coords)
-          .map((row) => ({
-            ...row,
-            _distance: distanceKm(mapCenter, row._coords)
-          }))
-          .filter((row) => row._distance > 0.05 && row._distance <= 25)
-          .sort((a, b) => a._distance - b._distance)
-          .slice(0, 6);
+              _distance: distanceKm(mapCenter, row._coords)
+            }))
+            .filter((row) => row._distance > 0.05 && row._distance <= 25)
+            .sort((a, b) => a._distance - b._distance)
+            .slice(0, 6);
 
-        if (!nearest.length) throw new Error('No nearby');
-        nearbyGrid.innerHTML = nearest
-          .map((row) => {
-            const city = row.city || 'Locatie';
-            const address = row.address || '';
-            const km = `${row._distance.toFixed(1).replace('.', ',')} km`;
-            const safeCity = escapeHtml(city);
-            const safeAddress = escapeHtml(address);
-            const safeKm = escapeHtml(km);
-            const safeHref = escapeAttribute(`${rootPrefix}locaties/${makeSlug(row)}.html`);
-            const safeAriaCity = escapeAttribute(city);
-            return `<a class="card reveal finder-location-card location-page-nearby-item" href="${safeHref}" aria-label="Bekijk locatiepagina van Quiosk ${safeAriaCity}">
-              <div class="finder-location-media">
-                <img class="finder-location-icon" src="${rootPrefix}Favicon.png" alt="" aria-hidden="true" />
-                <div class="finder-location-text">
-                  <h3 class="finder-location-name">${safeCity}</h3>
-                  <p class="finder-location-address">${safeAddress}</p>
-                  <p class="finder-location-distance">${safeKm}</p>
+          if (!nearest.length) throw new Error('No nearby');
+          nearbyGrid.innerHTML = nearest
+            .map((row) => {
+              const city = row.city || 'Locatie';
+              const address = row.address || '';
+              const km = `${row._distance.toFixed(1).replace('.', ',')} km`;
+              const safeCity = escapeHtml(city);
+              const safeAddress = escapeHtml(address);
+              const safeKm = escapeHtml(km);
+              const safeHref = escapeAttribute(`${rootPrefix}locaties/${makeSlug(row)}.html`);
+              const safeAriaCity = escapeAttribute(city);
+              return `<a class="card reveal finder-location-card location-page-nearby-item" href="${safeHref}" aria-label="Bekijk locatiepagina van Quiosk ${safeAriaCity}">
+                <div class="finder-location-media">
+                  <img class="finder-location-icon" src="${rootPrefix}Favicon.png" alt="" aria-hidden="true" />
+                  <div class="finder-location-text">
+                    <h3 class="finder-location-name">${safeCity}</h3>
+                    <p class="finder-location-address">${safeAddress}</p>
+                    <p class="finder-location-distance">${safeKm}</p>
+                  </div>
                 </div>
-              </div>
-            </a>`;
-          })
-          .join('');
-      })
-      .catch(() => {
-        nearbyGrid.innerHTML =
-          '<p class="location-page-nearby-loading">Geen locaties binnen 25 km gevonden.</p>';
-      });
+              </a>`;
+            })
+            .join('');
+        })
+        .catch(() => {
+          nearbyGrid.innerHTML =
+            '<p class="location-page-nearby-loading">Geen locaties binnen 25 km gevonden.</p>';
+        });
+    }
   }
 
   // Mobile sticky nav button disabled by design.

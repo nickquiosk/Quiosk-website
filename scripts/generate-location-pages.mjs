@@ -22,8 +22,18 @@ const escapeHtml = (value) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
+const getStreetFromAddress = (addressRaw) =>
+  String(addressRaw || '')
+    .split(',')
+    .map((part) => String(part || '').trim())
+    .filter(Boolean)[0] || String(addressRaw || '').trim();
+
 const buildSlug = (location) =>
-  [slugify(location.city || location.name || 'locatie'), slugify(location.address || ''), Number(location.id || 0)]
+  [
+    slugify(location.city || location.name || 'locatie'),
+    slugify(getStreetFromAddress(location.address || '')),
+    Number(location.id || 0)
+  ]
     .filter(Boolean)
     .join('-');
 

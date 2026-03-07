@@ -3,6 +3,8 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,6 +13,10 @@ app.disable('x-powered-by');
 
 const PORT = Number(process.env.PORT || 8000);
 const { ALLOWED_ORIGINS, DATA_FILE } = process.env;
+const IMPORT_TOKEN = process.env.IMPORT_TOKEN || 'quiosk-import-2026';
+const GOOGLE_GEOCODING_API_KEY_RAW =
+  process.env.GOOGLE_GEOCODING_API_KEY || process.env.GOOGLE_MAPS_API_KEY || '';
+const execFileAsync = promisify(execFile);
 
 const dataFilePath = DATA_FILE
   ? path.resolve(__dirname, DATA_FILE)
@@ -28,6 +34,7 @@ const allowedOrigins = (ALLOWED_ORIGINS || '')
   .filter(Boolean);
 
 const normalizeText = (value) => String(value || '').trim();
+const GOOGLE_GEOCODING_API_KEY = normalizeText(GOOGLE_GEOCODING_API_KEY_RAW);
 const normalizeIp = (ip) => normalizeText(ip).split(',')[0].trim().toLowerCase();
 
 const isLoopbackIp = (ip) => {
@@ -102,6 +109,7 @@ app.use((req, res, next) => {
 
   next();
 });
+app.use(express.json({ limit: '1mb' }));
 
 const parseNumber = (value) => {
   const normalized = normalizeText(value);
@@ -148,6 +156,148 @@ const normalizeLocationRecord = (record, index) => {
       ? record.products.map((p) => normalizeText(p)).filter(Boolean)
       : parseProducts(record.products)
   };
+};
+
+const decodeXmlEntities = (value) =>
+  String(value || '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+
+const normalizeKeyToken = (value) =>
+  normalizeText(value)
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .trim();
+
+const columnNameToIndex = (columnName) => {
+  let n = 0;
+  for (const ch of columnName) n = n * 26 + (ch.charCodeAt(0) - 64);
+  return n - 1;
+};
+
+const normalizePostcode = (value) => {
+  const compact = normalizeText(value).replace(/\s+/g, '').toUpperCase();
+  if (/^\d{4}[A-Z]{2}$/.test(compact)) return `${compact.slice(0, 4)} ${compact.slice(4)}`;
+  return normalizeText(value).toUpperCase();
+};
+
+const buildAddressFromMachineRow = (row) => {
+  const street = normalizeText(row.Straatnaam);
+  const house = normalizeText(row.Huisnummer);
+  const addition = normalizeText(row.Huisnummertoevoeging);
+  const housePart = [house, addition].filter(Boolean).join(' ').trim();
+  return [street, housePart].filter(Boolean).join(' ').trim();
+};
+
+const buildGeocodeAddressFromMachineRow = (row) => {
+  const streetLine = buildAddressFromMachineRow(row);
+  const postcode = normalizePostcode(row.Postcode);
+  const city = normalizeText(row.Plaatsnaam);
+  const countryCode = normalizeText(row.CountryCode).toUpperCase() || 'NL';
+  return [streetLine, [postcode, city].filter(Boolean).join(' '), countryCode]
+    .filter(Boolean)
+    .join(', ');
+};
+
+const parseXlsxRows = async (filePath) => {
+  const [{ stdout: sharedStringsXml }, { stdout: sheetXml }] = await Promise.all([
+    execFileAsync('unzip', ['-p', filePath, 'xl/sharedStrings.xml'], {
+      maxBuffer: 20 * 1024 * 1024
+    }),
+    execFileAsync('unzip', ['-p', filePath, 'xl/worksheets/sheet1.xml'], {
+      maxBuffer: 20 * 1024 * 1024
+    })
+  ]);
+
+  const sharedStrings = [...sharedStringsXml.matchAll(/<si[\s\S]*?<\/si>/g)].map((match) => {
+    const parts = [...match[0].matchAll(/<t[^>]*>([\s\S]*?)<\/t>/g)].map((t) => t[1]);
+    return decodeXmlEntities(parts.join(''));
+  });
+
+  const rows = [];
+  for (const rowMatch of sheetXml.matchAll(/<row[^>]*r="(\d+)"[^>]*>([\s\S]*?)<\/row>/g)) {
+    const rowNumber = Number(rowMatch[1]);
+    const rowBody = rowMatch[2];
+    const cells = [...rowBody.matchAll(/<c[^>]*r="([A-Z]+)\d+"([^>]*)>([\s\S]*?)<\/c>/g)]
+      .map((cellMatch) => {
+        const col = cellMatch[1];
+        const attrs = cellMatch[2];
+        const inner = cellMatch[3];
+        const valueMatch = inner.match(/<v>([\s\S]*?)<\/v>/);
+        if (!valueMatch) return null;
+        const raw = valueMatch[1];
+        const isSharedString = /t="s"/.test(attrs);
+        const value = isSharedString ? sharedStrings[Number(raw)] || '' : raw;
+        return { index: columnNameToIndex(col), value: decodeXmlEntities(value) };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.index - b.index);
+
+    rows.push({ rowNumber, cells });
+  }
+
+  if (!rows.length) return [];
+  const headerRow = rows[0];
+  const headersByIndex = new Map(
+    headerRow.cells.map((cell) => [cell.index, normalizeText(cell.value)])
+  );
+
+  return rows.slice(1).map((row) => {
+    const output = {};
+    row.cells.forEach((cell) => {
+      const header = headersByIndex.get(cell.index);
+      if (!header) return;
+      output[header] = normalizeText(cell.value);
+    });
+    return output;
+  });
+};
+
+const buildMatchKeys = ({ city = '', postcode = '', street = '', house = '' }) => {
+  const k1 = [
+    normalizeKeyToken(postcode),
+    normalizeKeyToken(city),
+    normalizeKeyToken(street),
+    normalizeKeyToken(house)
+  ].join('|');
+  const k2 = [normalizeKeyToken(postcode), normalizeKeyToken(city)].join('|');
+  return [k1, k2];
+};
+
+const extractAddressBits = (address = '') => {
+  const raw = normalizeText(address);
+  if (!raw) return { street: '', house: '', postcode: '', city: '' };
+  const [streetHouse = '', postCity = ''] = raw.split(',').map((p) => normalizeText(p));
+  const streetHouseMatch = streetHouse.match(/^(.*?)(\d+[A-Za-z\-\/\s]*)$/);
+  const postCityMatch = postCity.match(/^(\d{4}\s?[A-Za-z]{2})\s+(.+)$/);
+  return {
+    street: normalizeText(streetHouseMatch?.[1] || streetHouse),
+    house: normalizeText(streetHouseMatch?.[2] || ''),
+    postcode: normalizePostcode(postCityMatch?.[1] || ''),
+    city: normalizeText(postCityMatch?.[2] || '')
+  };
+};
+
+const geocodeAddress = async (address) => {
+  if (!GOOGLE_GEOCODING_API_KEY) return { coords: null, status: 'NO_API_KEY' };
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${encodeURIComponent(GOOGLE_GEOCODING_API_KEY)}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return { coords: null, status: `HTTP_${response.status}` };
+    const payload = await response.json();
+    if (payload.status !== 'OK') return { coords: null, status: payload.status || 'GEOCODE_ERROR' };
+    const location = payload.results?.[0]?.geometry?.location;
+    const lat = Number(location?.lat);
+    const lng = Number(location?.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return { coords: null, status: 'NO_COORDS' };
+    return { coords: { lat, lng }, status: 'OK' };
+  } catch {
+    return { coords: null, status: 'NETWORK_ERROR' };
+  }
 };
 
 const readManualLocations = async () => {
@@ -256,6 +406,149 @@ app.get('/api/health', async (_req, res) => {
     manualCount,
     timestamp: new Date().toISOString()
   });
+});
+
+app.post('/api/import-machines', async (req, res) => {
+  if (!isLocalRequest(req)) {
+    res.status(403).json({ error: 'Import only allowed from localhost' });
+    return;
+  }
+  const token = normalizeText(req.get('X-Import-Token'));
+  if (!token || token !== IMPORT_TOKEN) {
+    res.status(401).json({ error: 'Invalid import token' });
+    return;
+  }
+
+  const requestedFilename = normalizeText(req.body?.filename) || 'Machines Import.xlsx';
+  const importPath = path.join(__dirname, 'data', 'import', requestedFilename);
+  if (path.extname(importPath).toLowerCase() !== '.xlsx') {
+    res.status(400).json({ error: 'Only .xlsx is supported for this endpoint' });
+    return;
+  }
+
+  try {
+    await fs.access(importPath);
+  } catch {
+    res.status(404).json({ error: 'Import file not found', file: `data/import/${requestedFilename}` });
+    return;
+  }
+
+  try {
+    const machineRows = await parseXlsxRows(importPath);
+    const filteredRows = machineRows.filter(
+      (row) =>
+        normalizeText(row.MachineId) &&
+        normalizeText(row.Plaatsnaam) &&
+        normalizeText(row.Straatnaam)
+    );
+
+    await ensureDataFile();
+    const existingRaw = JSON.parse(await fs.readFile(dataFilePath, 'utf8'));
+    const existingRows = Array.isArray(existingRaw) ? existingRaw : [];
+
+    const coordsByKey = new Map();
+    for (const existing of existingRows) {
+      const lat = parseNumber(existing?.coords?.lat ?? existing?.lat);
+      const lng = parseNumber(existing?.coords?.lng ?? existing?.lng);
+      if (lat === null || lng === null) continue;
+      const bitsFromAddress = extractAddressBits(existing?.address);
+      const city = normalizeText(existing?.city || bitsFromAddress.city);
+      const postcode = normalizePostcode(existing?.postcode || bitsFromAddress.postcode);
+      const street = bitsFromAddress.street;
+      const house = bitsFromAddress.house;
+      const keys = buildMatchKeys({ city, postcode, street, house });
+      keys.forEach((key) => coordsByKey.set(key, { lat, lng }));
+    }
+
+    const geocodeErrors = {};
+    let reusedCount = 0;
+    let geocodedCount = 0;
+    let skippedNoCoords = 0;
+    const imported = [];
+
+    for (const row of filteredRows) {
+      const machineId = Number(row.MachineId);
+      const city = normalizeText(row.Plaatsnaam);
+      const postcode = normalizePostcode(row.Postcode);
+      const street = normalizeText(row.Straatnaam);
+      const house = [normalizeText(row.Huisnummer), normalizeText(row.Huisnummertoevoeging)]
+        .filter(Boolean)
+        .join(' ')
+        .trim();
+      const address = buildAddressFromMachineRow(row);
+      const geocodeAddressLine = buildGeocodeAddressFromMachineRow(row);
+      const name = normalizeText(row.Name) || `Quiosk ${city}`;
+      const title = `Quiosk ${city}`;
+
+      let coords =
+        coordsByKey.get(buildMatchKeys({ city, postcode, street, house })[0]) ||
+        coordsByKey.get(buildMatchKeys({ city, postcode, street, house })[1]) ||
+        null;
+
+      if (coords) {
+        reusedCount += 1;
+      } else {
+        const geocode = await geocodeAddress(geocodeAddressLine);
+        if (geocode.coords) {
+          coords = geocode.coords;
+          geocodedCount += 1;
+        } else {
+          skippedNoCoords += 1;
+          const key = geocode.status || 'UNKNOWN';
+          geocodeErrors[key] = (geocodeErrors[key] || 0) + 1;
+          continue;
+        }
+      }
+
+      imported.push(
+        normalizeLocationRecord(
+          {
+            id: Number.isFinite(machineId) ? machineId : imported.length + 1,
+            title,
+            name,
+            city,
+            postcode,
+            address,
+            lat: coords.lat,
+            lng: coords.lng,
+            isOpen: true,
+            environment: 'Outdoor',
+            contactless: true,
+            products: ['Drinks', 'Snacks']
+          },
+          imported.length
+        )
+      );
+    }
+
+    if (!imported.length) {
+      res.status(422).json({
+        error: 'Import processed but no mappable locations found',
+        file: `data/import/${requestedFilename}`,
+        skippedNoCoords,
+        geocodeErrors
+      });
+      return;
+    }
+
+    await fs.writeFile(dataFilePath, `${JSON.stringify(imported, null, 2)}\n`, 'utf8');
+    res.json({
+      ok: true,
+      source: 'machine-import-xlsx',
+      fromFile: `data/import/${requestedFilename}`,
+      imported: imported.length,
+      reusedCount,
+      geocodedCount,
+      skippedNoCoords,
+      geocodeErrors,
+      savedTo: path.relative(__dirname, dataFilePath)
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Import failed',
+      detail: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 app.get(['/import-locaties', '/import-locaties.html'], (_req, res) => {

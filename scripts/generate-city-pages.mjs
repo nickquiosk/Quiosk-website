@@ -60,9 +60,15 @@ const parseStreetParts = (streetRaw) => {
   };
 };
 
+const getStreetFromAddress = (addressRaw) =>
+  String(addressRaw || '')
+    .split(',')
+    .map((part) => String(part || '').trim())
+    .filter(Boolean)[0] || String(addressRaw || '').trim();
+
 const buildLocationSlug = (location) => {
   const city = slugify(location.city || location.name || 'locatie');
-  const address = slugify(location.address || '');
+  const address = slugify(getStreetFromAddress(location.address || ''));
   const id = Number(location.id || 0);
   return [city, address, id].filter(Boolean).join('-');
 };
